@@ -1,0 +1,35 @@
+<plug-in xmlns="http://mundo.org/2004/plugin/">
+  <service xmlns="http://mundo.org/2004/plugin/service"
+           xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+    <classname>org.mundo.service.autohotkey.AHKService</classname>
+    <new-instance xsi:type="map">
+      <name>AutoHotKey</name>
+      <classname>AHKService</classname>
+      <config xsi:type="map" activeClass="org.mundo.service.autohotkey.AHKService$Config">
+        <channel>mttable.ahk</channel>
+        <ahk>C:/Program Files (x86)/AutoHotkey/AutoHotkey.exe</ahk>
+        <temp-file>C:/Users/MTTable/AppData/Local/Temp/ahkservice.ahk</temp-file>
+      </config>
+      <!-- config.d-poly xsi:type="map" activeClass="org.mundo.service.autohotkey.AHKService$Config">
+        <channel>d-poly.ahk</channel>
+        <ahk>c:/Programme/AutoHotkey/AutoHotkey.exe</ahk>
+        <temp-file>c:/temp/ahkservice.ahk</temp-file>
+      </config.d-poly>
+      <config.smart-ng xsi:type="map" activeClass="org.mundo.service.autohotkey.AHKService$Config">
+        <channel>smart.ahk</channel>
+        <ahk>c:/Program Files/AutoHotkey/AutoHotkey.exe</ahk>
+        <temp-file>c:/temp/ahkservice.ahk</temp-file>
+      </config.smart-ng>
+      <config.mars xsi:type="map" activeClass="org.mundo.service.autohotkey.AHKService$Config">
+        <channel>mars.ahk</channel>
+        <ahk>c:/Programme/AutoHotkey/AutoHotkey.exe</ahk>
+        <temp-file>c:/temp/ahkservice.ahk</temp-file>
+      </config.mars>
+      <config xsi:type="map" activeClass="org.mundo.service.autohotkey.AHKService$Config">
+        <channel>localhost.ahk</channel>
+        <ahk>c:/Programme/AutoHotkey/AutoHotkey.exe</ahk>
+        <temp-file>c:/temp/ahkservice.ahk</temp-file>
+      </config -->
+    </new-instance>
+  </service>
+</plug-in>

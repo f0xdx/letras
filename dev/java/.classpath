@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="prep"/>
+	<classpathentry kind="src" path="tst"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="lib/mundocore.jar" sourcepath="mundo/lib/se/sources.zip"/>
+	<classpathentry kind="lib" path="tst/junit/junit-4.7.jar"/>
+	<classpathentry kind="lib" path="lib/bluecove-2.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/bluecove-gpl-2.1.0.jar"/>
+	<classpathentry kind="output" path="out"/>
+</classpath>

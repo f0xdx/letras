@@ -1,0 +1,883 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.net.broker;
+
+#ifdef CFG_JAVA15
+import org.mundo.annotation.*;
+#endif
+import org.mundo.rt.Channel;
+import org.mundo.rt.GUID;
+import org.mundo.rt.IActivate;
+import org.mundo.rt.IBCLProvider;
+import org.mundo.rt.IMessageHandler;
+import org.mundo.rt.IReceiver;
+import org.mundo.rt.Message;
+import org.mundo.rt.MessageContext;
+import org.mundo.rt.Mundo;
+import org.mundo.rt.Publisher;
+import org.mundo.rt.Service;
+import org.mundo.rt.Session;
+import org.mundo.rt.Signal;
+import org.mundo.rt.Subscriber;
+import org.mundo.rt.TypedArray;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.Logger;
+import org.mundo.net.ProtocolCoordinator;
+import org.mundo.net.routing.IRoutingService;
+import org.mundo.net.transport.ITransportConnection;
+import org.mundo.net.transport.TransportLink;
+import org.mundo.service.DebugService;
+
+import java.util.Hashtable;
+#ifdef CFG_CLDC
+import org.mundo.rt.Iterator;
+#else
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.HashSet;
+#endif
+
+//#define TRACE log.trace(__LINE__);
+#define TRACE
+
+#ifdef CFG_CHECKED_BUILD
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+/**
+ * The basic communication layer (BCL) provides a channel-based Publish/Subscribe
+ * system that interconnects local services. All subscriptions that specify
+ * the zone <code>"rt"</code> are handled by the BCL directly. The
+ * <code>P2PTopicBroker</code> now interfaces with the BCL and handles
+ * all other subscriptions. This way, it interconnects multiple nodes
+ * by forwarding messages from the BCL to remote nodes and vice versa.
+ */
+public class P2PTopicBroker
+       extends Service
+       implements IBCLProvider.ISignal, IRoutingService.IConn, IMessageHandler, IReceiver
+       emits IMessageHandler
+{
+  /**
+   * Options to open a connection to a specific host.
+   */
+  @mcSerialize(className="P2PTopicBroker$Options")
+  public static class Options implements IActivate
+  {
+    /**
+     * The default timeout for messages, in milliseconds.
+     */
+    @mcField(name="message-timeout", optional=true)
+    public Integer  messageTimeout;
+    /**
+     *
+     */
+    @mcField(optional=true)
+    public String   zone;
+  }
+
+  /**
+   * Sets configuration options for this service.
+   */
+  @Override
+  public void setServiceConfig(Object cfg)
+  {
+    if (conf!=null)
+      throw new IllegalStateException("reconfiguration not supported");
+    conf=(Options)cfg;
+  }
+  /**
+   * Returns the configuration options for this service.
+   */
+  @Override
+  public Object getServiceConfig()
+  {
+    return conf;
+  }
+  /**
+   * Initializes a new <code>P2PTopicBroker</code>.
+   */
+  public P2PTopicBroker()
+  {
+  }
+  /**
+   * Initializes the service.
+   */
+  public void init()
+  {
+    msgQueue=new MessageQueue();
+    msgQueue.start();
+
+    if (conf!=null)
+    {
+      if (conf.messageTimeout!=null)
+        messageTimeout=conf.messageTimeout.intValue();
+      if (conf.zone!=null)
+        responsibleZone=conf.zone;
+    }
+
+    msgSubscriber = session.subscribe("rt", null, this);
+
+#ifdef CFG_CLDC
+    // monitor new subscriptions in the local runtime
+    //Signal.connect("rt", "org.mundo.rt.IBCLProvider$ISignal", this);
+    
+    // monitor coming and leaving peers
+    Signal.connect("rt", "org.mundo.net.IRoutingService$IConn", this);
+
+    // monitor incoming data packets
+    //Signal.connect("rt", "org.mundo.net.ITransportService$IMsg", this);
+#else
+    // monitor new subscriptions in the local runtime
+    //Signal.connect("rt", IBCLProvider.ISignal.class, this);
+    
+    // monitor coming and leaving peers
+    Signal.connect("rt", IRoutingService.IConn.class, this);
+
+    // monitor incoming data packets
+    //Signal.connect("rt", ITransportService.IMsg.class, this);
+#endif
+
+    ProtocolCoordinator.register(mimeType, this);
+  }
+  /**
+   * Shuts down the service.
+   */
+  public void shutdown()
+  {
+//  System.out.println("+ERS.shutdown");
+    setState(STATE_SHUTDOWN);
+//    msgQueue.interrupt();
+    try
+    {
+      msgQueue.join();
+    }
+    catch(InterruptedException x)
+    {
+      x.printStackTrace();
+    }
+//  System.out.println("-ERS.shutdown");
+    super.shutdown();
+  }
+  /**
+   * Receives all local messages. Messages are forwarded to the topmost
+   * protocol handler in the protocol stack.
+   */
+  public void received(Message msg, MessageContext c) // IReceiver
+  {
+    if ("rt".equals(c.channel.getZone()))
+      return;
+
+    TypedMap pmap = msg.getMap("ers", "param");
+    // If the message should only be dispatched once and the message has already
+    // been dispatched locally, then abort.
+    if (pmap!=null && pmap.getBoolean("once", false) && c.dispatched>0)
+    {
+      log.finest("omitting once message: dispatched=" + c.dispatched + ", msg=" + msg);
+      return;
+    }
+
+    msg = msg.copyFrame();
+    if (pmap == null)
+    {
+      pmap = new TypedMap();
+      msg.put("ers", "param", pmap);
+    }
+    pmap.putString("channel", c.channel.getName());
+    pmap.putString("zone", c.channel.getZone());
+    ProtocolCoordinator.getInstance().firstDown(msg);
+/*    
+    IMessageHandler h = c.channel.getStack().get(0).getHandler();
+    if (h==null)
+    {
+      LOG.error("can't get service for first handler in stack");
+      return;
+    }
+#ifdef CFG_CHECKED_BUILD
+    int hc=msg.hashCode();
+    h.down(msg);
+    if (msg.hashCode()!=hc)
+      throw new IllegalStateException("down: illegal modification of message by handler "+h);
+#else
+    h.down(msg);
+#endif
+*/
+  }
+  /**
+   *
+   */
+  public boolean down(Message msg) // IMessageHandler
+  {
+    String channelName;
+    try
+    {
+      channelName=msg.getMap("ers", "param").getString("channel");
+    }
+    catch(NullPointerException x)
+    {
+      log.severe("missing channel name parameter in down");
+      return false;
+    }
+    String zoneName;
+    try
+    {
+      zoneName=msg.getMap("ers", "param").getString("channel");
+    }
+    catch(NullPointerException x)
+    {
+      log.severe("missing zone name parameter in down");
+      return false;
+    }
+    if ("rt".equals(zoneName))
+    {
+      log.warning("discarding message with zone=='rt' - wrong protocol stack?");
+      return true;
+    }
+    if (msgQueue==null)
+      throw new IllegalStateException("service is not initialized");
+    msgQueue.received(msg, channelName);
+    return true;
+  }
+  /**
+   *
+   */
+  public boolean up(Message msg) // IMessageHandler
+  {
+    TRACE
+    try
+    {
+      // P2PTopicBroker control message
+      TypedMap map = msg.getMap("ers", "passive");
+      if (map==null)
+      {
+        LOG.warning("no 'ers' header in message");
+        return false;
+      }
+
+      TRACE
+      // Message
+      TypedMap payload = msg.getMap("main", "passive");
+      TRACE
+      if (payload!=null)
+      {
+/*
+#ifdef CFG_JAVA15
+        if (!noActChannels.contains(map.getString("channel")))
+#else
+        if (!noActChannels.containsKey(map.getString("channel")))
+#endif
+        try
+        {
+          msg.activate();
+        }
+        catch(Throwable t)
+        {
+          LOG.exception(t);
+        }
+*/
+        LOG.fine("out "+map.getString("channel"));
+//          Mundo.bcl.send(new Channel("rt", map.getString("channel")), msg, session);
+
+        TypedMap amap=msg.getOrCreateMap("address", "passive");
+        amap.put("channel", map.getString("channel"));
+        amap.put("session", session);
+        return emit.up(msg);
+      }
+      
+      TRACE
+      if ("Subscribe".equals(map.getString("request", null)))
+      {
+        TRACE
+        GUID remoteId=GUID.parse(map.getString("vpId"));
+        LOG.info("subscribe "+map.getString("zone")+":"+map.getString("channel")+" < "+remoteId.shortString());
+        String channelId=map.getString("channel");
+        getOrCreateExport(channelId, remoteId);
+        TRACE
+        return true;
+      }
+
+      LOG.info("unknown request: "+map.getString("request"));
+      return true;
+    }
+    catch(Exception x)
+    {
+      TRACE
+      LOG.exception(x);
+    }
+    return false;
+  }
+  /**
+   *
+   */
+  public void publisherAdded(Publisher p) /* IBCLProvider.ISignal */
+  {
+    if (p.getChannel().getZone().equals("rt"))
+      return;
+    if (responsibleZone!=null && !p.getChannel().getZone().equals(responsibleZone))
+      return;
+
+    // FIXME: ChannelSubscriptions are obsolete
+/*
+    ChannelSubscription cp=(ChannelSubscription)p.getParam();
+    if (cp==null)
+    {
+      cp=new ChannelSubscription();
+      cp.ers=this;
+      p.setParam(cp);
+    }
+*/
+  }
+  public void publisherRemoved(Publisher p)  /* IBCLProvider.ISignal */
+  {
+  }
+  public void subscriberAdded(Subscriber s) /* IBCLProvider.ISignal */
+  {
+    if (s.getChannel().getZone().equals("rt"))
+      return;
+    if (responsibleZone!=null && !s.getChannel().getZone().equals(responsibleZone))
+      return;
+
+    TypedMap doc=new TypedMap();
+    Channel c=s.getChannel();
+    doc.putString("request", "Subscribe");
+    doc.putString("channel", c.getName());
+    doc.putString("zone", c.getZone());
+    doc.putString("vpId", Mundo.getNodeId().toString());
+
+    String channelId=s.getChannel().getZone()+":"+s.getChannel().getName();
+    synchronized(imports)
+    {
+      Message msg=new Message("ers", "passive", doc);
+      TypedMap amap=new TypedMap();
+      amap.putString("destType", "zone");
+      msg.put("rs", "param", amap);
+      msg.setType(mimeType);
+      msg.setStack(ProtocolCoordinator.getInstance().getDefaultStack(), IBCLProvider.ISignal.class);
+      emit.down(msg);
+      imports.put(channelId, s.getChannel());
+    }
+    LOG.fine("subscribe "+c.getZone()+":"+c.getName()+" > ZONE");
+  }
+  public void subscriberRemoved(Subscriber s) /* IBCLProvider.ISignal */
+  {
+  }
+  public void linkAdded(TransportLink link) /* ITransportService.ISignal */
+  {
+  }
+  public void linkRemoved(TransportLink link) /* ITransportService.ISignal */
+  {
+  }
+  public void nodeAdded(GUID remoteId) /* IRoutingService.IConn */
+  {
+#ifdef CFG_CHECKED_BUILD
+    if (remoteId == null)
+      throw new IllegalArgumentException("P2PTopicBroker.nodeAdded: remoteId==null");
+#endif
+    LOG.finer("+nodeAdded");
+    // send import list to new peer
+    TypedMap doc=new TypedMap();
+    doc.putString("vpId", Mundo.getNodeId().toString());
+    synchronized(imports)
+    {
+      for (Iterator i=imports.valueIterator(); i.hasNext();)
+      {
+        Channel c=(Channel)i.next();
+        doc.putString("request", "Subscribe");
+        doc.putString("channel", c.getName());
+        doc.putString("zone", c.getZone());
+        LOG.fine("subscribe "+c.getZone()+":"+c.getName()+" > "+remoteId.shortString());
+        
+        Message msg=new Message("ers", "passive", doc);
+        TypedMap amap=new TypedMap();
+        amap.put("destType", "node");
+        amap.put("destId", remoteId);
+        msg.put("rs", "param", amap);
+        msg.setType(mimeType);
+        msg.setStack(ProtocolCoordinator.getInstance().getDefaultStack(), IBCLProvider.ISignal.class);
+        
+        if (!emit.down(msg))
+        {
+          System.out.println("forwarding failed!");
+        }
+//        System.out.println("forwarding subscription "+c.getZone()+":"+c.getName()+" to new node "+conn.getRemoteId());
+      }
+    }
+    LOG.finer("-nodeAdded");
+  }
+  public void nodeRemoved(GUID remoteId) /* IRoutingService.IConn */
+  {
+#ifdef CFG_CHECKED_BUILD
+    if (remoteId == null)
+      throw new IllegalArgumentException("P2PTopicBroker.nodeRemoved: remoteId==null");
+#endif
+    LOG.finer("+nodeRemoved");
+    synchronized(exports)
+    {
+      for (Iterator i=exports.valueIterator(); i.hasNext();)
+      {
+        ExportEntry ee=(ExportEntry)i.next();
+        ee.removeReceiver(remoteId);
+        ee.unsubscribe(session);
+      }
+    }
+    LOG.finer("-nodeRemoved");
+  }
+  
+  // FIXME: see received
+  public void discontinued(ITransportConnection conn) /* ITransportConnection.ISignal */
+  {
+  }
+  public TypedArray debugGetExports()
+  {
+    TypedArray rList=new TypedArray();
+#ifndef CFG_CLDC
+    synchronized(exports)
+    {
+      try
+      {
+        for (Iterator expIter=exports.valueIterator(); expIter.hasNext();)
+        {
+          ExportEntry ee=(ExportEntry)expIter.next();
+          for (Iterator rcvIter=ee.getReceivers().valueIterator(); rcvIter.hasNext();)
+          {
+            ExportEntry.ExportReceiver rcv=(ExportEntry.ExportReceiver)rcvIter.next();
+            DebugService.ERSExportEntry rEntry=new DebugService.ERSExportEntry();
+            rEntry.channelName=ee.getChannelId();
+            rEntry.receiverId=rcv.id;
+            rList.add(rEntry);
+          }
+        }
+      }
+      catch(Exception x)
+      {
+        x.printStackTrace();
+      }
+    }
+#endif
+    return rList;
+  }
+  public TypedArray debugGetImports()
+  {
+    TypedArray rList=new TypedArray();
+#ifndef CFG_CLDC
+    synchronized(imports)
+    {
+      for (Iterator iter=imports.valueIterator(); iter.hasNext();)
+      {
+        Channel ch=(Channel)iter.next();
+        DebugService.ERSImportEntry rEntry=new DebugService.ERSImportEntry();
+        rEntry.channelName=ch.getName();
+        rEntry.zoneName=ch.getZone();
+        rList.add(rEntry);
+      }
+    }
+#endif
+    return rList;
+  }
+
+  /**
+   * Returns whether the specified publisher is relevant. A publisher is relevant
+   * iff there exists a subscriber on the same channel.
+   */
+  boolean isRelevant(Publisher p)
+  {
+    ExportEntry ee=getExport(p.getChannel().getName());
+    if (ee==null)
+      return false;
+    return !ee.isEmpty();
+  }
+
+  private ExportEntry getExport(String channelName)
+  {
+    return (ExportEntry)exports.get(channelName);
+  }
+  private ExportEntry getOrCreateExport(String channelName, GUID receiver)
+  {
+    synchronized(exports)
+    {
+      ExportEntry ee=(ExportEntry)exports.get(channelName);
+      if (ee==null)
+      {
+        LOG.fine("create channel "+channelName);
+        ee=new ExportEntry(channelName);
+        exports.put(channelName, ee);
+      }
+      if (receiver!=null)
+      {
+        ee.addReceiver(receiver);
+        ee.subscribe(session);
+      }
+      return ee;
+    }
+  }
+
+  private class ExportEntry // implements IReceiver
+  {
+    ExportEntry(String id)
+    {
+      channelId=id;
+    }
+/*
+    void setSubscriber(Subscriber s)
+    {
+      subscriber=s;
+      subscriber.setReceiver(this);
+    }
+*/
+    synchronized void addReceiver(GUID id)
+    {
+      LOG.fine("sendq: "+channelId+" + "+id.shortString());
+      if (!receivers.containsKey(id.toString()))
+        receivers.put(id.toString(), new ExportReceiver(id));
+      sendQueuedMessages(id);
+    }
+    synchronized boolean removeReceiver(GUID id)
+    {
+      LOG.fine("sendq: "+channelId+" - "+id.shortString());
+      receivers.remove(id.toString());
+      return receivers.size()>0;
+    }
+    synchronized boolean isEmpty()
+    {
+      return receivers.size()==0;
+    }
+    /**
+     * Sends a message to the registered external receivers. A message header
+     * is added.
+     *
+     * @return  Encapsulated message.
+     */
+    synchronized Message send(Message msg) throws Exception
+    {
+      LOG.fine("in "+channelId+" ("+seq+")");
+
+      ExportReceiver rcv;
+      Iterator i = receivers.valueIterator();
+      while (i.hasNext())
+      {
+        rcv = (ExportReceiver)i.next();
+        
+        // If more than just the current message has not already been sent
+        // to the receiver, then send the missing range of messages from
+        // the queue first.
+        if (rcv.seq < seq-1)
+          sendQueue(rcv, rcv.seq, seq);
+
+//        System.out.println("send "+channelId+", seq="+seq);
+        LOG.fine("send > "+rcv.id.shortString());
+
+        Message dmsg = msg.copyFrame();
+        addHeader(dmsg);
+        TypedMap amap = new TypedMap();
+        amap.put("destType", "node");
+        amap.put("destId", rcv.id);
+        dmsg.put("rs", "param", amap);
+        if (!emit.down(dmsg))
+        {
+          LOG.severe("send failed > "+rcv.id.shortString());
+        }
+        else
+        {
+          rcv.seq = seq;
+          TypedMap pmap = msg.getMap("ers", "param");
+          if (pmap.getBoolean("once", false))
+          {
+            // If the once flag is set, then we stop after a single successful send.
+            // The message is neither sent to other receivers nor it is queued.
+            seq++;
+            return msg;
+          }
+        }
+      }
+
+      if (messageTimeout>0)
+        queue.add(new QEntry(msg, seq, System.currentTimeMillis()+messageTimeout));
+
+      seq++;
+      return msg;
+    }
+    /**
+     * Sends the specified range of messages from inclusively,
+     * to exclusively, to the specified receiver.
+     */
+    void sendQueue(ExportReceiver rcv, int from, int to)
+    {
+//      System.out.println(rcv.id+", "+from+", "+to);
+      for (Iterator i=queue.iterator(); i.hasNext();)
+      {
+        QEntry e=(QEntry)i.next();
+        if (e.seq>=from && e.seq<to && e.enabled)
+        {
+//          System.out.println("sendQueue: "+e.seq);
+          LOG.fine("send Q > "+rcv.id);
+          try
+          {
+            Message msg = e.msg.copyFrame();
+            addHeader(msg);
+            TypedMap amap=new TypedMap();
+            amap.put("destType", "node");
+            amap.put("destId", rcv.id);
+            msg.put("rs", "param", amap);
+            if (!emit.down(msg))
+            {
+              LOG.severe("send Q failed > "+rcv.id);
+            }
+            else
+            {
+              TypedMap pmap = msg.getMap("ers", "param");
+              if (pmap.getBoolean("once", false))
+              {
+                // If the once flag is set, then we stop after a single successful send.
+                // To prevent that the current queue entry is sent to different targets,
+                // we disable the entry.
+                e.enabled = false;
+              }
+            }
+          }
+          catch(Exception x)
+          {
+            LOG.exception(x);
+          }
+        }
+      }
+    }
+    private void addHeader(Message msg) throws Exception
+    {
+      if (msg.getMap("ers", "passive")!=null)
+        return;
+//      msg.passivate();
+
+      TypedMap map=new TypedMap();
+      map.put("request", "message");
+      map.put("channel", channelId);
+      map.put("contentType", msg.getType());
+      map.putInt("seq", seq);
+      msg.put("ers", "passive", map);
+
+      msg.setType(mimeType);
+    }
+    /**
+     * Sends all queued messages that have not been already been sent to
+     * the specified node.
+     */
+    synchronized void sendQueuedMessages(GUID id)
+    {
+      ExportReceiver rcv=(ExportReceiver)receivers.get(id.toString());
+      if (rcv==null)
+        throw new IllegalStateException("no ExportReceiver for "+id);
+//      System.out.println("sendQueued: rcv.seq="+rcv.seq+", seq="+seq);
+      if (rcv.seq<seq-1)
+      {
+        sendQueue(rcv, rcv.seq+1, seq);
+        rcv.seq=seq-1;
+      }
+    }
+    /**
+     * Remove expired messages from queue.
+     */
+    synchronized boolean removeExpired()
+    {
+      int i, s=queue.size();
+      if (s==0)
+        return false;
+      long t = System.currentTimeMillis();
+      QEntry entry;
+      for (i=0; i<s; i++)
+      {
+        entry=(QEntry)queue.get(i);
+        if (entry.expires>t)
+          break;
+      }
+      if (i==0)
+        return true;
+      TypedArray newQ = new TypedArray();
+      for (; i<s; i++)
+        newQ.add(queue.get(i));
+      queue = newQ;
+      return !queue.isEmpty();
+/*
+      long t = System.currentTimeMillis();
+      QEntry entry;
+      Iterator iter = queue.iterator();
+      while (iter.hasNext())
+      {
+        entry=(QEntry)iter.next();
+        if (entry.expires<t)
+          iter.remove();
+        else
+          break;
+      }
+      return !queue.isEmpty();
+*/
+    }
+    /**
+     *
+     */
+    void subscribe(Session session)
+    {
+      if (subscriber==null && receivers.size()>0)
+      {
+        LOG.fine("subscribe: "+channelId);
+        subscriber = session.subscribe("rt", channelId);
+//        LOG.fine("subscribe (1)");
+        subscriber.enable();
+//        LOG.fine("subscribe (2)");
+      }
+    }
+    /**
+     *
+     */
+    void unsubscribe(Session session)
+    {
+      if (subscriber!=null && receivers.size()==0)
+      {
+        LOG.fine("unsubscribe: "+channelId);
+        session.unsubscribe(subscriber);
+        subscriber=null;
+      }
+    }
+
+    class ExportReceiver
+    {
+      ExportReceiver(GUID g)
+      {
+        id=g;
+      }
+    
+      GUID  id;
+      int   seq=-1;     // sequence number of last message sent
+    }
+
+    private class QEntry
+    {
+      QEntry(Message m, int s, long e)
+      {
+        msg=m;
+        seq=s;
+        expires=e;
+      }
+      Message msg;
+      int seq;          // sequence number of next message
+      long expires;
+      boolean enabled = true;
+    }
+
+    String getChannelId()
+    {
+      return channelId;
+    }
+    TypedMap getReceivers()
+    {
+      return receivers;
+    }
+    
+    private String channelId;
+    private int seq=0;
+//    private Subscriber subscriber;
+    private TypedMap receivers=new TypedMap();
+    private TypedArray queue=new TypedArray();
+    private Subscriber subscriber;
+  }
+
+  private class MessageQueue extends Thread
+  {
+    MessageQueue()
+    {
+#ifndef CFG_CLDC
+      super(Mundo.getThreadGroup(), "ers.mq");
+#endif
+    }
+    /**
+     * Remove expired messages from all queues.
+     */
+    boolean removeExpired()
+    {
+      boolean notempty=false, ne;
+      synchronized(exports)
+      {
+        for (Iterator i=exports.valueIterator(); i.hasNext();)
+          notempty |= ((ExportEntry)i.next()).removeExpired();
+      }
+      return notempty;
+    }
+    void received(Message msgIn, String channelName)
+    {
+      ExportEntry ee=getOrCreateExport(channelName, null);
+      try
+      {
+        ee.send(msgIn);
+      }
+      catch(Exception x)
+      {
+        x.printStackTrace();
+      }
+    }
+    public void run()
+    {
+      try
+      {
+        while(P2PTopicBroker.this.getState()<STATE_SHUTDOWN)
+        {
+          removeExpired();
+          Thread.sleep(1000);
+        }
+      }
+      catch(InterruptedException x)
+      {
+      }
+      try
+      {
+        while (removeExpired())
+          Thread.sleep(1000);
+      }
+      catch(InterruptedException x)
+      {
+        x.printStackTrace();
+      }
+//      System.out.println("message queue size="+exports.size());
+    }
+  }
+
+  private Options conf;
+  private TypedMap exports = new TypedMap();
+  private TypedMap imports = new TypedMap();
+  private MessageQueue msgQueue;
+  private Subscriber msgSubscriber;
+#ifdef CFG_ANDROID
+  private int messageTimeout = 10000;
+#else
+  private int messageTimeout = 3000;
+#endif
+  private String responsibleZone = null;
+  private static final String mimeType = "message/mc-p2pbroker";
+
+  // Channels where the subscribers want to receive passive messages
+#ifdef CFG_JAVA15
+  private HashSet<String> noActChannels=new HashSet<String>();
+#else
+  private Hashtable noActChannels=new Hashtable();
+#endif
+
+  private static Logger log=Logger.getLogger("p2ptb");
+}

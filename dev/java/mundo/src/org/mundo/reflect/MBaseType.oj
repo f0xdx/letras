@@ -1,0 +1,86 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.reflect;
+
+import java.util.HashMap;
+
+/**
+ * Objects of this class represent Java-native types.
+ */
+public class MBaseType extends MType
+{
+  public MBaseType(Class c)
+  {
+    cls=c;
+  }
+  public MBaseType(String code)
+  {
+    cls = (Class)code2type.get(code);
+    if (cls==null)
+      throw new IllegalArgumentException("unknown type code "+code);
+  }
+  /**
+   * Returns a string representation for this object.
+   */
+  public String toString()
+  {
+    return cls.toString();
+  }
+  /**
+   * Returns the type code.
+   */
+  public String getCode()
+  {
+    return (String)type2code.get(cls);
+  }
+  public Class getType()
+  {
+    return cls;
+  }
+  
+  private Class cls;
+#ifdef CFG_JAVA15
+  private static HashMap<Class,String> type2code=new HashMap<Class,String>();
+  private static HashMap<String,Class> code2type=new HashMap<String,Class>();
+#else
+  private static HashMap type2code = new HashMap();
+  private static HashMap code2type = new HashMap();
+#endif
+  private static void put(Class c, String s)
+  {
+    type2code.put(c, s);
+    code2type.put(s, c);
+  }
+  static
+  {
+    put(Void.TYPE, "v");
+    put(Byte.TYPE, "b");
+    put(Character.TYPE, "c");
+    put(Short.TYPE, "j");
+    put(Integer.TYPE, "i");
+    put(Long.TYPE, "l");
+    put(Float.TYPE, "f");
+    put(Double.TYPE, "d");
+    put(Boolean.TYPE, "t");
+  }
+}

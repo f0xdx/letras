@@ -1,0 +1,594 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+#ifdef CFG_CLDC
+import org.mundo.rt.TypedArray;
+import org.mundo.rt.Iterator;
+#else
+import java.util.ArrayList;
+import java.util.Iterator;
+#endif
+
+import org.mundo.rt.Message;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.Logger;
+
+#ifdef CFG_CHECKED_BUILD
+#define LOGF log
+#else
+#define LOGF //
+#endif
+
+/**
+ * Encapsulates a custom protocol stack.
+ */
+public class ProtocolStack implements Cloneable
+{
+  /**
+   * Initializes an empty protocol stack.
+   */
+  public ProtocolStack()
+  {
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+    list = new ArrayList<Handler>();
+#else
+    list = new ArrayList();
+#endif
+#else
+    list = new TypedArray();
+#endif
+  }
+  /**
+   * Initializes a new protocol stack.
+   */
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+  public ProtocolStack(ArrayList<Handler> l)
+  {
+    list = l;
+  }
+#else
+  public ProtocolStack(ArrayList l)
+  {
+    list = l;
+  }
+#endif
+#else
+  public ProtocolStack(TypedArray l)
+  {
+    list = l;
+  }
+#endif
+  /**
+   * Initializes a protocol stack as a copy of the specified stack.
+   */
+  public ProtocolStack(ProtocolStack s)
+  {
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+    list = new ArrayList<Handler>();
+    for (Handler h : s.list)
+      list.add((Handler)h.clone());
+    Handler prev = null;
+    for (Handler h : list)
+    {
+      h.setUp(prev);
+      if (prev!=null)
+        prev.setDown(h);
+      prev = h;
+    }
+#else
+    list = new ArrayList();
+    for (Iterator iter = s.list.iterator(); iter.hasNext();)
+      list.add(((Handler)iter.next()).clone());
+    Handler prev = null;
+    for (Iterator iter = list.iterator(); iter.hasNext();)
+    {
+      Handler h = (Handler)iter.next();
+      h.setUp(prev);
+      if (prev!=null)
+        prev.setDown(h);
+      prev = h;
+    }
+#endif
+#else
+    list = new TypedArray();
+    for (Iterator iter = s.list.iterator(); iter.hasNext();)
+      list.add(((Handler)iter.next()).clone());
+    Handler prev = null;
+    for (Iterator iter = list.iterator(); iter.hasNext();)
+    {
+      Handler h = (Handler)iter.next();
+      h.setUp(prev);
+      if (prev!=null)
+        prev.setDown(h);
+      prev = h;
+    }
+#endif
+  }
+  /**
+   * Creates a deep copy of the protocol stack.
+   */
+  public Object clone()
+  {
+    ProtocolStack s = new ProtocolStack();
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+    s.list = new ArrayList<Handler>();
+    for (Handler h : list)
+      s.list.add((Handler)h.clone());
+#else
+    s.list = new ArrayList();
+    for (Iterator iter = list.iterator(); iter.hasNext();)
+      s.list.add(((Handler)iter.next()).clone());
+#endif
+#else
+    s.list = new TypedArray();
+    for (Iterator iter = list.iterator(); iter.hasNext();)
+      s.list.add(((Handler)iter.next()).clone());
+#endif
+    return s;
+  }
+  /**
+   * Returns the handler at the specified position.
+   */
+  public Handler get(int i)
+  {
+    return (Handler)list.get(i);
+  }
+  /**
+   *
+   */
+  public Handler findHandler(Class c)
+  {
+#ifdef CFG_JAVA15
+    for (Handler g : list)
+    {
+#else
+    for (Iterator iter = list.iterator(); iter.hasNext();)
+    {
+      Handler g = (Handler)iter.next();
+#endif
+      Handler h = g.findHandler(c);
+      if (h!=null)
+        return h;
+    }
+    return null;
+  }
+  /**
+   * Returns the number of handlers in the stack.
+   */
+  public int size()
+  {
+    return list.size();
+  }
+  /**
+   * Returns a string representation of this stack.
+   */
+  public String toString()
+  {
+    StringBuffer sb = new StringBuffer();
+#ifdef CFG_JAVA15
+    for (Handler h : list)
+      sb.append(h.toString()).append(" ");
+#else
+    for (Iterator iter = list.iterator(); iter.hasNext();)
+      sb.append(iter.next().toString()).append(" ");
+#endif
+    return sb.toString();
+  }
+
+  /**
+   * This class encapsulates information about a message handler.
+   */
+  public static class Handler implements Cloneable
+  {
+    /**
+     * Initializes an empty handler object.
+     */
+    private Handler()
+    {
+    }
+    /**
+     * Initializes a new handler object.
+     */
+    public Handler(Class c, TypedMap o)
+    {
+      handlerClass = c;
+      opts = o;
+    }
+    /**
+     * Initializes a new handler object.
+     */
+    public Handler(IMessageHandler h, TypedMap o)
+    {
+      handler = h;
+      opts = o;
+    }
+    /**
+     * Creates a deep copy of the handler object.
+     */
+    public Object clone()
+    {
+      Handler h = new Handler();
+      h.handlerClass = handlerClass;
+      h.handler = handler;
+      if (opts!=null)
+        h.opts = (TypedMap)opts.clone();
+      h.up = up;
+      h.down = down;
+      return h;
+    }
+    /**
+     * Returns the message handler.
+     */
+    public IMessageHandler getMsgHandler()
+    {
+      if (handler != null)
+        return handler;
+      if (handlerClass == null)
+        throw new NullPointerException("handlerClass==null");
+      handler = (IMessageHandler)Mundo.getServiceByType(handlerClass);
+
+      // FIXME: the ad-hoc instantiation of handlers is problematic,
+      // because handlers will only be instantiated the first time a message
+      // is passed down. If a message is passed up before, the handler has
+      // not registered with its MIME type and the message cannot be processed.
+      // Thus, it is necessary to manually start all handlers in the
+      // configuration file.
+      if (handler == null)
+      {
+        log.warning("instantiating missing handler: " + handlerClass);
+        try
+        {
+          Service svc = (Service)handlerClass.newInstance();
+          Mundo.registerService(svc);
+          handler = (IMessageHandler)svc;
+        }
+        catch(Exception x)
+        {
+          log.exception(x);
+        }
+      }
+      if (handler == null)
+        throw new IllegalStateException("can't find or create protocol handler: "+handlerClass);
+      return handler;
+    }
+    /**
+     *
+     */
+    public Handler findHandler(Class c)
+    {
+      if (handler!=null && c.isAssignableFrom(handler.getClass()))
+        return this;
+      if (c.isAssignableFrom(handlerClass))
+        return this;
+      return null;
+    }
+    /**
+     *
+     */
+    public Handler nextDown()
+    {
+      return down;
+    }
+    /**
+     *
+     */
+    public Handler nextUp()
+    {
+      return up;
+    }
+    /**
+     * Returns the options map.
+     */
+    public TypedMap getOptions()
+    {
+      return opts;
+    }
+    /**
+     * Returns a string representation of this object.
+     */
+    public String toString()
+    {
+      StringBuffer sb = new StringBuffer();
+      if (handler!=null)
+        sb.append(handler.toString());
+      else if (handlerClass!=null)
+        sb.append(handlerClass.getName());
+      else
+        sb.append(getClass().getName()+"?");
+      if (opts!=null && opts.size()>0)
+        sb.append("(").append(opts.toString()).append(")");
+      return sb.toString();
+    }
+    /**
+     *
+     */
+    public void setUp(Handler h)
+    {
+      up = h;
+    }
+    /**
+     *
+     */
+    public void setDown(Handler h)
+    {
+      down = h;
+    }
+    /**
+     *
+     */
+    public Handler forMsg(Message msg)
+    {
+      return this;
+    }
+    /**
+     *
+     */
+/*
+    public boolean down(Message msg)
+    {
+      LOGF.finest("down: "+getHandler());
+      msg.setHandler(this);
+#ifdef CFG_CHECKED_BUILD
+      int hc = msg.hashCode();
+      boolean success = getHandler().down(msg);
+      if (msg.hashCode() != hc)
+        log.severe("down: illegal modification of message by handler "+getHandler());
+      return success;
+#else
+      return getHandler().down(msg);
+#endif
+    }
+*/
+    protected Class handlerClass;
+    protected IMessageHandler handler;
+    protected TypedMap opts;
+    protected Handler up;
+    protected Handler down;
+  }
+
+  /**
+   * A protocol handler for branching in protocol stacks.
+   */
+  public static class BranchHandler extends Handler
+  {
+    /**
+     * Initializes a new branch handler.
+     */
+    public BranchHandler(IProtocolCondition c)
+    {
+      cond = c;
+      opts = new TypedMap();
+    }
+    /**
+     * Creates a deep copy of the handler object.
+     */
+    @Override
+    public Object clone()
+    {
+      BranchHandler h = new BranchHandler(cond);
+      h.up = up;
+      h.down = down;
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+      h.thenList = new ArrayList<Handler>(thenList);
+      h.elseList = new ArrayList<Handler>(elseList);
+#else
+      h.thenList = new ArrayList(thenList);
+      h.elseList = new ArrayList(elseList);
+#endif
+#else
+      h.thenList = new TypedArray(thenList);
+      h.elseList = new TypedArray(elseList);
+#endif
+      return h;
+    }
+    /**
+     *
+     */
+    @Override
+    public Handler forMsg(Message msg)
+    {
+      boolean b = cond.test(this, msg);
+      LOGF.finest("down: condition "+getClass().getName()+" is "+b);
+      Handler h;
+      if (b)
+        h = (Handler)thenList.get(0);
+      else
+        h = (Handler)elseList.get(0);
+      return h;
+    }
+    /**
+     *
+     */
+/*
+    @Override
+    public boolean down(Message msg)
+    {
+      boolean b = cond.test(this, msg);
+      LOGF.finest("down: condition "+getClass().getName()+" is "+b);
+      Handler h;
+      if (b)
+        h = (Handler)thenList.get(0);
+      else
+        h = (Handler)elseList.get(0);
+      return h.down(msg);
+    }
+*/
+    /**
+     * Sets the handler sublist that is processed when the condition is true.
+     */
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+    public void setThen(ArrayList<Handler> l)
+#else
+    public void setThen(ArrayList l)
+#endif
+#else
+    public void setThen(TypedArray l)
+#endif
+    {
+      thenList = l;
+      Handler prev = null;
+#ifdef CFG_JAVA15
+      for (Handler h : thenList)
+      {
+#else
+      for (Iterator iter = thenList.iterator(); iter.hasNext();)
+      {
+        Handler h = (Handler)iter.next();
+#endif
+        h.up = prev;
+        if (prev!=null)
+          prev.down = h;
+        prev = h;
+      }
+    }
+    /**
+     * Sets the handler sublist that is processed when the condition is false.
+     */
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+    public void setElse(ArrayList<Handler> l)
+#else
+    public void setElse(ArrayList l)
+#endif
+#else
+    public void setElse(TypedArray l)
+#endif
+    {
+      elseList = l;
+      Handler prev = null;
+#ifdef CFG_JAVA15
+      for (Handler h : elseList)
+      {
+#else
+      for (Iterator iter = elseList.iterator(); iter.hasNext();)
+      {
+        Handler h = (Handler)iter.next();
+#endif
+        h.up = prev;
+        if (prev!=null)
+          prev.down = h;
+        prev = h;
+      }
+    }
+    /**
+     *
+     */
+    @Override
+    public void setUp(Handler h)
+    {
+      up = h;
+      ((Handler)thenList.get(0)).setUp(h);
+      ((Handler)elseList.get(0)).setUp(h);
+    }
+    /**
+     *
+     */
+    @Override
+    public void setDown(Handler h)
+    {
+      down = h;
+      ((Handler)thenList.get(thenList.size()-1)).setDown(h);
+      ((Handler)elseList.get(elseList.size()-1)).setDown(h);
+    }
+    /**
+     *
+     */
+    public Handler findHandler(Class c)
+    {
+      Handler h;
+#ifdef CFG_JAVA15
+      for (Handler g : thenList)
+      {
+#else
+      for (Iterator iter = thenList.iterator(); iter.hasNext();)
+      {
+        Handler g = (Handler)iter.next();
+#endif
+        h = g.findHandler(c);
+        if (h!=null)
+          return h;
+      }
+#ifdef CFG_JAVA15
+      for (Handler g : elseList)
+      {
+#else
+      for (Iterator iter = elseList.iterator(); iter.hasNext();)
+      {
+        Handler g = (Handler)iter.next();
+#endif
+        h = g.findHandler(c);
+        if (h!=null)
+          return h;
+      }
+      return null;
+    }
+    /**
+     *
+     */
+    @Override
+    public String toString()
+    {
+      StringBuffer sb = new StringBuffer();
+      sb.append(cond.toString());
+      sb.append("[");
+      sb.append(thenList.toString());
+      sb.append("|");
+      sb.append(elseList.toString());
+      sb.append("]");
+      return sb.toString();
+    }
+
+    protected IProtocolCondition cond;
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+    protected ArrayList<Handler> thenList;
+    protected ArrayList<Handler> elseList;
+#else
+    protected ArrayList thenList;
+    protected ArrayList elseList;
+#endif
+#else
+    protected TypedArray thenList;
+    protected TypedArray elseList;
+#endif
+  }
+
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+  protected ArrayList<Handler> list;
+#else
+  protected ArrayList list;
+#endif
+#else
+  protected TypedArray list;
+#endif
+  private static ProtocolStack defaultStack;
+  private static Logger log = Logger.getLogger("ps");
+}

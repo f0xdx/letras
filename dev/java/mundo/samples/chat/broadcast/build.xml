@@ -1,0 +1,47 @@
+<project name="BroadcastChat" default="compile" basedir=".">
+  <property file="../../../config/build.properties"/>
+
+  <target name="init">
+    <mkdir dir="prep"/>
+    <mkdir dir="bin"/>
+  </target>
+
+  <target name="compile-config" depends="init">
+    <java jar="../../../tools/x2j.jar" fork="true">
+      <arg value="node.conf.xml" />
+      <arg value="prep/NodeConf.java" />
+      <arg value="NodeConf" />
+    </java>
+  </target>
+
+  <target name="compile" depends="init">
+    <javac srcdir="src" destdir="bin" source="1.5" target="1.5">
+      <classpath>
+        <pathelement path="../../../lib/mundocore.jar"/>
+      </classpath>
+      <src path="src" />
+      <src path="prep" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile"
+          description="Pack all compiled files into a single jar">
+    <jar jarfile="mundo-chat.jar" compress="true">
+      <zipfileset dir="." prefix="META-INF">
+        <include name="node.conf.xml"/>
+      </zipfileset>
+      <fileset dir="bin">
+        <include name="**/*.class" />
+      </fileset>
+      <zipfileset src="../../../lib/mundocore.jar"/>
+      <manifest>
+        <attribute name="Main-Class" value="SimpleChat"/>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="common">
+          <attribute name="Implementation-Vendor" value="TU Darmstadt"/>
+          <attribute name="Implementation-Title" value="MundoCore SimpleChat Example"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+</project>

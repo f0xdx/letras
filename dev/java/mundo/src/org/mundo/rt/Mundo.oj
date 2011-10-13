@@ -1,0 +1,908 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Vector;
+import java.util.Enumeration;
+import java.io.InputStream;
+#ifndef CFG_CLDC
+import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import org.mundo.net.ISerialize;
+import org.mundo.net.BinDeserializer;
+#ifdef CFG_XML
+import java.io.Reader;
+import org.mundo.xml.XMLDeserializer;
+#endif
+#endif
+import org.mundo.service.ServiceManager;
+#ifndef CFG_CLDC
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+#endif
+
+/**
+ * <p>The <code>Mundo</code> class provides some basic functions, that every
+ * application requires. It has static methods and cannot be instantiated.</p>
+ *
+ * <p>By default, MundoCore reads the configuration file <code>node.conf.xml</code>
+ * at startup.
+ *
+ * @author Erwin Aitenbichler
+ * @author Andreas Hartl
+ */
+public class Mundo
+{
+  /**
+   * Registers a new service. This involves the following actions:<ul>
+   * <li>The service is assigned a unique identifier.</li>
+   * <li>The service is assigned a <code>Session</code>. Sessions allow
+   *     services to publish and consume messages.</li>
+   * <li>Finally, the <code>init</code> method of the service is called
+   *     to initialize publisher and subscriber objects, etc.</li>
+   * </ul>
+   * @param service  the service to register.
+   * @throws IllegalStateException  if the node is currently shutting down.
+   */
+  public static boolean registerService(Service service)
+  {
+#ifdef CFG_CHECKED_BUILD
+    if (state == STATE_UNINITIALIZED)
+      throw new IllegalStateException("can't register services before Mundo.init");
+    if (state == STATE_SHUTDOWN)
+      throw new IllegalStateException("can't register services during Mundo.shutdown");
+    if (state == STATE_DOWN)
+      throw new IllegalStateException("can't register services after Mundo.shutdown");
+#endif
+    GUID id = service.getServiceId();
+    if (id==null)
+    {
+      id = new GUID();
+      service.setServiceId(id);
+    }
+    if (service.getSession() == null) 
+      service.setSession(new Session(service));
+    services.addElement(service);
+    service.init();
+    if (rootService!=null)
+      rootService.serviceRegistered(service);
+    return true;
+  }
+  /**
+   * Registers a migrated service at the new location.
+   */
+  public static void registerMovedService(Service service)
+  {
+#ifdef CFG_CHECKED_BUILD
+    if (state == STATE_UNINITIALIZED)
+      throw new IllegalStateException("can't register services before Mundo.init");
+    if (state == STATE_SHUTDOWN)
+      throw new IllegalStateException("can't register services during Mundo.shutdown");
+    if (state == STATE_DOWN)
+      throw new IllegalStateException("can't register services after Mundo.shutdown");
+#endif
+    if (service.getSession() == null) 
+      service.setSession(new Session(service));
+    services.addElement(service);
+  }
+  /**
+   * Unregisters the specified service by calling its <code>shutdown</code>
+   * method and removing it from the list of active services. Runtime
+   * exceptions thrown by the service are masked.
+   * @param service  the service to unregister.
+   * @return  <code>true</code> if the service's <code>shutdown</code>
+   *          method succeeds; <code>false</code> otherwise.
+   * @throws IllegalStateException  if the node is currently shutting down.
+   * @throws IllegalArgumentException  if the service is not registered.
+   */
+  public static boolean unregisterService(Service service)
+  {
+    if (state>=STATE_SHUTDOWN)
+      throw new IllegalStateException("unregister during shutdown is currently not supported");
+    GUID id=service.getServiceId();
+    synchronized(services)
+    {
+      boolean found=false;
+      int i, s=services.size();
+      for (i=0; i<s; i++)
+      {
+        if (((Service)services.elementAt(i)).getServiceId().equals(id))
+        {
+          services.removeElementAt(i);
+          found=true;
+          break;
+        }
+      }
+      if (!found)
+        throw new IllegalArgumentException("service not registered");
+    }
+    if (rootService!=null)
+      rootService.serviceUnregistered(service);
+    try
+    {
+      service.shutdown();
+      return true;
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+    }
+    return false;
+  }
+  /**
+   * Unregisters a service at the current location before migration.
+   */
+  public static void unregisterMovedService(Service service)
+  {
+    if (state>=STATE_SHUTDOWN)
+      throw new IllegalStateException("unregister during shutdown is currently not supported");
+    GUID id=service.getServiceId();
+    synchronized(services)
+    {
+      boolean found=false;
+      int i, s=services.size();
+      for (i=0; i<s; i++)
+      {
+        if (((Service)services.elementAt(i)).getServiceId().equals(id))
+        {
+          services.removeElementAt(i);
+          found=true;
+          break;
+        }
+      }
+      if (!found)
+        throw new IllegalArgumentException("service not registered");
+    }
+    if (rootService!=null)
+      rootService.serviceUnregistered(service);
+  }
+  /**
+   * Returns the GUID identifying this <em>node</em>. Typically, there is a
+   * one-to-one relationship between <em>nodes</em> and Java VMs running.
+   * @return  the GUID of this node.
+   */
+  public static GUID getNodeId()
+  {
+    return nodeId;
+  }
+  /**
+   * Returns the friendly name of the node.
+   */
+  public static String getNodeName()
+  {
+    if (nodeName==null)
+    {
+      nodeName=System.getProperty("mc.nodeName");
+      if (nodeName==null)
+        nodeName="Java";
+    }
+    return nodeName;
+  }
+  
+  /**
+   * Sets the friendly name of the node.
+   */
+  public static void setNodeName(String name)
+  {
+    nodeName=name;
+  }
+  
+  /**
+   * Returns a list of the registered services.
+   * @return  the registered services.
+   */
+#ifdef CFG_JAVA15
+  public static Vector<Service> getServices()
+#else
+  public static Vector getServices()
+#endif
+  {
+    return services;
+  }
+  /**
+   * Finds a service by type. Searches in the list of registered services
+   * for a service that matches the specified class.
+   * @param c  class of service to find.
+   * @return  the service found, and <code>null</code> if no matching
+   *          service is available.
+   */
+//#ifdef CFG_JAVA15
+//  public static Service getServiceByType(Class<? extends Service> c)
+//#else
+  public static Service getServiceByType(Class c)
+//#endif
+  {
+    if (state==STATE_DOWN)
+      throw new IllegalStateException("node is down");
+//    if (state==STATE_SHUTDOWN)
+//      throw new IllegalStateException("node is shutting down");
+    if (state==STATE_UNINITIALIZED)
+      throw new IllegalStateException("node is uninitialized");
+    synchronized(services)
+    {
+#ifdef CFG_JAVA15
+      for (Service s : services)
+      {
+        if (c.isAssignableFrom(s.getClass()))
+          return s;
+      }
+#else
+      for (Enumeration e=services.elements(); e.hasMoreElements();)
+      {
+        Service s=(Service)e.nextElement();
+        if (c.isAssignableFrom(s.getClass()))
+          return s;
+      }
+#endif
+    }
+    return null;
+  }
+  /**
+   * Finds a service by type. Searches in the list of registered services
+   * for a service that matches the specified class.
+   * @param className  class name of service to find.
+   * @return  the service found, or <code>null</code> if no matching
+   *          service is available; or <code>null</code> if the specified
+   *          class name does not exist.
+   */
+  public static Service getServiceByType(String className)
+  {
+    try
+    {
+#ifdef CFG_JAVA15
+      return getServiceByType(Class.forName(className).asSubclass(Service.class));
+#else
+      return getServiceByType(Class.forName(className));
+#endif
+    }
+    catch(ClassNotFoundException x)
+    {
+    }
+    return null;
+  }
+  /**
+   * Sets the root service. This method must be called before <code>Mundo.init</code>.
+   * The root service is the first service created during initialization and it
+   * is the parent of all other services. It will receive notifications when
+   * other services are registered or unregistered. If no root service is
+   * explicitly specified, <code>Mundo.init</code> will automatically create a
+   * <code>org.mundo.service.ServiceManager</code> that will create services
+   * as specified in the node configuration file.
+   */
+  public static void setRootService(RootService service)
+  {
+    rootService = service;
+  }
+  /**
+   * Initializes this MundoCore node. This method must be called from the
+   * user application prior to using any publisher and subscriber objects,
+   * etc.
+   */
+  public static void init()
+  {
+#ifdef CFG_CHECKED_BUILD
+    if (!(state == STATE_UNINITIALIZED || state == STATE_DOWN))
+      throw new IllegalStateException("state must either be STATE_UNINITIALIZED or STATE_DOWN when calling init");
+#endif
+    long startTime = System.currentTimeMillis();
+    nodeId = new GUID();
+    bcl = new BCLProvider();
+    if (state == STATE_UNINITIALIZED)
+    {
+#ifdef CFG_CHECKED_BUILD
+      if (!services.isEmpty())
+        throw new IllegalStateException("internal error: the services list is not empty");
+#endif
+      state = STATE_INITIALIZING;
+
+      // Register serializable classes
+      Metaclasses.init();
+    
+#ifndef CFG_CLDC
+      // Install a hook for SIGINT so that terminated Mundo services end nicely
+      Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+        public void run() {
+          if (state < STATE_SHUTDOWN)
+            Mundo.shutdown();
+        }
+      }));
+
+      if (configFileName!=null)
+        readConfig(configFileName);
+#endif
+
+      if (config==null)
+        config = DefaultConfig.getMap();
+
+      if (config!=null)
+      {
+        try
+        {
+          TypedMap ctx = new TypedMap();
+          ctx.putBoolean("ignoreErrors", true);
+          config=config.activateMap(ctx);
+        }
+        catch(Exception x)
+        {
+          x.printStackTrace();
+          config = null;
+        }
+      }
+
+      Logger.global.finer("readConfig took "+(System.currentTimeMillis()-startTime)+" ms");
+      Logger.setConfig(getConfig().getMap("Logger", null));
+    }
+    else
+      state = STATE_INITIALIZING;
+    
+    if (rootService == null)
+      rootService = new org.mundo.service.ServiceManager();
+    Mundo.registerService(rootService);
+
+    state = STATE_INITIALIZED;
+    nBaseServices = services.size();
+    Logger.global.finer("Mundo.init took "+(System.currentTimeMillis()-startTime)+" ms");
+  }
+  /**
+   * <p>Shuts down the current node. <code>shutdown</code> terminates all
+   * registered services by calling their <code>shutdown</code> methods
+   * in the reverse order they were registered. After that, <code>shutdown</code>
+   * waits until all threads in the <code>mundocore</code> thread group
+   * have terminated.</p>
+   *
+   * <p>This method should be called from the user application before the
+   * application exits. Not calling <code>shutdown</code> before
+   * program termination has consequences like:</p>
+   * <ul>
+   * <li>Neighbor nodes do not receive the information that we have
+   *   shut down. They might try (several times) to reconnect to this
+   *   node. This causes unnecessary network traffic.</li>
+   * <li>Log files will be truncated, because the log file is not closed.</li>
+   * </ul>
+   */
+  // <code>init()</code> adds a shutdown hook that calls <code>shutdown()</code>
+  // on termination of the VM if necessary. Thus, <code>shutdown</code> is
+  // automatically called under normal circumstances even if the user
+  // presses Ctrl-C in the shell.
+  public static void shutdown()
+  {
+    if (services.isEmpty())
+      throw new IllegalStateException("not initialized");
+    
+    // Shutdown user services in reverse order
+    synchronized(services)
+    {
+      for (int i=services.size()-1; i>=nBaseServices; i--)
+      {
+        try
+        {
+          ((Service)services.elementAt(i)).shutdown();
+        }
+        catch(Exception x)
+        {
+          x.printStackTrace();
+        }
+      }
+    }
+
+    // FIXME: The routing services currently have to be shutdown in this order
+#ifdef CFG_CLDC
+    try
+    {
+      unregisterService(getServiceByType("org.mundo.net.broker.P2PTopicBroker"));
+      nBaseServices--;
+    }
+    catch(Exception x) {}
+    try
+    {
+      unregisterService(getServiceByType("org.mundo.net.routing.RoutingService"));
+      nBaseServices--;
+    }
+    catch(Exception x) {}
+#else
+    try
+    {
+      unregisterService(getServiceByType(org.mundo.net.broker.P2PTopicBroker.class));
+      nBaseServices--;
+    }
+    catch(Exception x) {}
+    try
+    {
+      unregisterService(getServiceByType(org.mundo.net.routing.RoutingService.class));
+      nBaseServices--;
+    }
+    catch(Exception x) {}
+#endif
+    
+    // FIXME: do this earlier
+    state = STATE_SHUTDOWN;
+    // Shutdown the remaining services
+    synchronized(services)
+    {
+      for (int i=0; i<nBaseServices; i++)
+      {
+        try
+        {
+          ((Service)services.elementAt(i)).shutdown();
+        }
+        catch(Exception x)
+        {
+          x.printStackTrace();
+        }
+      }
+      services.removeAllElements();
+    }
+    rootService = null;
+#ifndef CFG_CLDC
+    waitForThreads();
+#endif
+    state = STATE_DOWN;
+    Logger.shutdown();
+  }
+#ifndef CFG_CLDC
+  /**
+   * Returns the <code>mundocore</code> thread group. If services create
+   * additional threads, these threads should be created in the
+   * <code>mundocore</code> thread group. When the node is shutting down,
+   * the <code>shutdown</code> method will wait until all threads in this
+   * group have terminated.
+   * @return  the mundocore thread group.
+   */
+  public static ThreadGroup getThreadGroup()
+  {
+    return threadGroup;
+  }
+#endif
+  /**
+   * Returns the current state.
+   * @return  the current state, which is one of <code>STATE_*</code>.
+   */
+  public static int getState()
+  {
+    return state;
+  }
+  /**
+   * Compares two objects for identity, regardless whether they are local or
+   * distributed objects. Two distribued objects are considered identical if
+   * they are equal. A local and a distributed object is considered identical if
+   * the distributed object's local object is identical to the other one. Two
+   * local objects are considered identical if the == operator returns true.
+   * 
+   * The following holds true:
+   * <pre>
+   *   X a = new X(), b = new X();
+   *   DoX doA = new DoX(a), doA1 = new DoX(a1), doB = new DoX(b);
+   *   
+   *   distributedIdentity(null, null) == (null == null) == true
+   *   distributedIdentity(a, null) == (a == null) == false
+   *   distributedIdentity(a, a) == (a == a) == true
+   *   distributedIdentity(a, b) == (a == b) == false
+   *   distributedIdentity(doA, doA) == doA.equals(doA) == true
+   *   distributedIdentity(doA, doA1) == doA.equals(doA1) == true
+   *   distributedIdentity(doA, doB) == doA.equals(doB) == false
+   *   distributedIdentity(a, doA) == (a == doA._getDistributedObject()) == true
+   * </pre> 
+   * 
+   * @param a The first object to compare
+   * @param b The second object to compare
+   * @return true if both objects are either the same or would be the same if
+   *         one wouldn't be a distributed object
+   */
+  public static boolean distributedIdentity(Object a, Object b)
+  {
+    if (a instanceof DoObject && b instanceof DoObject)
+      return a.equals(b);
+    
+    // convert possible client stubs into local objects
+    if (a instanceof DoObject) 
+      a = ((DoObject)a)._getLocalObject();
+    if (b instanceof DoObject) 
+      b = ((DoObject)b)._getLocalObject();
+    return a == b;
+  }
+  /**
+   * Returns the node configuration. User services can also make use of the
+   * node configuration file to read their settings from.
+   * @return  the node configuration as map.
+   */
+  public static TypedMap getConfig()
+  {
+    if (config==null)
+      config=new TypedMap();
+    return config;
+  }
+  /**
+   * Sets the node configuration.
+   * The field <code>config-type</code> of the specified map defines how the
+   * current configuration and the new configuration are merged.
+   * If <code>config-type=="full"</code> (default), then the specified map
+   * replaces the configuration.
+   * If <code>config-type=="overlay"</code>, then the existing configuration
+   * is extended and duplicate fields are overridden.
+   */
+  public static void setConfig(TypedMap in)
+  {
+    if ("overlay".equals(in.getString("config-type", null)))
+    {
+      if (config==null)
+        config = DefaultConfig.getMap();
+      mergeMap(config, in);
+    }
+    else
+      config = in;
+    if (config!=null)
+      nodeName = config.getString("name", nodeName);
+  }
+  
+  private static void mergeMap(TypedMap dmap, TypedMap smap)
+  {
+    for (String key : smap.keySet())
+    {
+      if (dmap.containsKey(key))
+      {
+        Object s = smap.get(key);
+        Object d = dmap.get(key);
+        if (d instanceof TypedMap && s instanceof TypedMap)
+        {
+          mergeMap((TypedMap)d, (TypedMap)s);
+          continue;
+        }
+        if (d instanceof TypedArray && s instanceof TypedArray)
+        {
+          mergeArray((TypedArray)d, (TypedArray)s);
+          continue;
+        }
+      }
+      dmap.put(key, smap.get(key));
+    }
+  }
+
+  private static void mergeArray(TypedArray darr, TypedArray sarr)
+  {
+    int i, n=sarr.size();
+    Object[] sobj = new Object[n];
+    String[] sname = new String[n];
+    for (i=0; i<n; i++)
+    {
+      sobj[i] = sarr.get(i);
+      if (sobj[i] instanceof TypedMap)
+        sname[i] = ((TypedMap)sobj[i]).getString("name", null);
+    }
+    for (Object obj : darr)
+    {
+      if (obj instanceof TypedMap)
+      {
+        TypedMap d = (TypedMap)obj;
+        String name = d.getString("name", null);
+        if (name != null)
+        {
+          for (i=0; i<n; i++)
+          {
+            if (name.equals(sname[i]))
+            {
+              mergeMap(d, (TypedMap)sobj[i]);
+              sobj[i] = null;
+            }
+          }
+        }
+      }
+    }
+    for (i=0; i<n; i++)
+    {
+      if (sobj[i] != null)
+        darr.add(sobj[i]);
+    }
+  }
+  
+  /**
+   * Sets the name of the configuration file. The configuration file is read
+   * during <code>init()</code>. The default configuration file name is
+   * <code>"node.conf.xml"</code>. This method can be used to
+   * read the configuration from an alternate file. <code>setConfigFile</code>
+   * must be called prior to <code>init()</code>.
+   * @param filename  The file name of the configuration file to use.
+   */
+  public static void setConfigFile(String filename)
+  {
+    configFileName=filename;
+  }
+#ifndef CFG_CLDC
+#ifdef CFG_XML
+  /**
+   * Sets the configuration. As an alternative to using configuration files,
+   * the content of the configuration file can be passed to this method.
+   * <code>setConfigXML</code> must be called before <code>init()</code>.
+   * If this method is used, <code>init()</code> will not try to read the
+   * configuration from a file.
+   */
+  public static void setConfigXML(String xmlText)
+  {
+    try
+    {
+      XMLDeserializer deser = new XMLDeserializer();
+      setConfig((TypedMap)deser.deserializeObject(xmlText));
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+    }
+    configFileName=null;
+  }
+  /**
+   * Sets the configuration. The XML configuration file will be read from
+   * the specified reader.
+   * <code>setConfig</code> must be called before <code>init()</code>.
+   * If this method is used, <code>init()</code> will not try to read the
+   * configuration from a file.
+   */
+  public static void setConfigXML(Reader rd)
+  {
+    try
+    {
+      XMLDeserializer deser = new XMLDeserializer();
+      setConfig((TypedMap)deser.deserializeObject(rd));
+    }
+    catch(Exception x)
+    {
+      Logger.getLogger("global").exception(x);
+    }
+    configFileName=null;
+  }
+#endif
+  private static void readConfig(String filename)
+  {
+    ISerialize ser;
+    try
+    {
+      setConfig((TypedMap)new BinDeserializer().deserializeObject(new FileInputStream(filename)));
+    }
+    catch(Exception x) {}
+#ifdef CFG_XML
+    if (config==null)
+    {
+      try
+      {
+        setConfig((TypedMap)new XMLDeserializer().deserializeObject(new FileInputStream(filename+".xml")));
+      }
+      catch(Exception x) {}
+    }
+#endif
+    if (config==null)
+    {
+      ClassLoader cl=Mundo.class.getClassLoader();
+      if (cl!=null)
+      {
+        try
+        {
+          InputStream is=cl.getResourceAsStream("META-INF/"+filename);
+          if (is!=null)
+            setConfig((TypedMap)new BinDeserializer().deserializeObject(is));
+        }
+        catch(Exception x)
+        {
+          Logger.global.exception(x);
+        }
+#ifdef CFG_XML
+        if (config==null)
+        {
+          try
+          {
+            InputStream is=cl.getResourceAsStream("META-INF/"+filename+".xml");
+            if (is!=null)
+              setConfig((TypedMap)new XMLDeserializer().deserializeObject(is));
+          }
+          catch(Exception x)
+          {
+            Logger.global.exception(x);
+          }
+        }
+#endif
+      }
+    }
+  }
+#endif
+#ifndef CFG_CLDC
+  /**
+   * Returns the number of active threads in a thread group.
+   */
+  private static int getActiveThreadCount(ThreadGroup tg)
+  {
+    int n = tg.activeCount();
+    // The value given by activeCount() is an approximation and might
+    // be too high.
+    Thread threads[] = new Thread[n];
+    tg.enumerate(threads, false);
+    n=0;
+    for (int i=0; i<threads.length; i++)
+    {
+      // ignore thread created by MessageDigest
+      if (!threads[i].getName().contains("SunPKCS11"))
+        n++;
+    }
+    return n;
+  }
+  /**
+   * Waits for all threads to terminate.
+   */
+  private static void waitForThreads()
+  {
+    // Wait up to 10 seconds for threads to shut down
+    ThreadGroup tg=getThreadGroup();
+    try
+    {
+      int n=100;
+      while (n-->0 && getActiveThreadCount(tg)>0)
+        Thread.sleep(100);
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+    }
+    if (getActiveThreadCount(tg)>0)
+    {
+      // activeCount gives only an estimate of the number of running threads
+      // in ThreadGroup main. The value may be too high, so we have to check
+      // the actual number.
+      Thread threads[]=new Thread[tg.activeCount()];
+      if (tg.enumerate(threads, false)>0)
+      {
+        System.out.println("Mundo.shutdown: At least one service did not terminate "+
+                "all its threads after a shutdown request.");
+        while (tg.getParent()!=null)
+          tg=tg.getParent();
+        listThreads(tg, 0);
+        System.out.println("Mundo.shutdown: Interrupting all threads...");
+        threadGroup.interrupt();
+      }
+    }
+  }
+  private static void listThreads(ThreadGroup tg, int indent)
+  {
+    int j, i, n;
+    for (j=0; j<indent; j++)
+      System.out.print("  ");
+    System.out.println("group "+tg.getName()+":");
+    indent++;
+    if (indent<2)
+    {
+      ThreadGroup subGroups[] = new ThreadGroup[tg.activeGroupCount()];
+      n = tg.enumerate(subGroups);
+      for (i=0; i<n; i++)
+        listThreads(subGroups[i], indent);
+    }
+    Thread threads[]=new Thread[tg.activeCount()];
+    n=tg.enumerate(threads, false);
+    for (i=0; i<n; i++)
+    {
+      for (j=0; j<indent; j++)
+        System.out.print("  ");
+      System.out.println(threads[i]+" "+threads[i].getClass().getName());
+      if ((Class)threads[i].getClass()==Session.DispatchThread.class)
+      {
+        for (j=0; j<indent+1; j++)
+          System.out.print("  ");
+        System.out.println("service: "+((Session.DispatchThread)threads[i]).getSession().getService());
+      }
+    }
+  }
+#endif
+  public static String getVersion()
+  {
+    return "MundoCore Java 1.0 dev "+
+#ifdef CFG_J2ME
+#ifdef CFG_CLDC
+           "J2ME/CLDC";
+#else
+           "J2ME/PP";
+#endif
+#else
+#ifdef CFG_JAVA15
+           "J2SE/1.5";
+#else
+           "J2SE/1.4";
+#endif
+#endif
+  }
+  
+#ifndef CFG_CLDC
+  public static void main(String args[])
+  {
+    final String text="This is "+getVersion()+"\n"+
+                      "(c)2001-2010 Telecooperation Lab, Darmstadt University of Technology.\n"+
+                      "MundoCore may be distributed under the terms of the MPL.\n"+
+                      "Directly running this JAR file only prints the library version number.";
+    System.out.println(text);
+  }
+#endif
+
+//#ifndef CFG_CLDC
+//  static
+//  {
+    // Work around IPv6 problems on Windows XP
+//    System.setProperty("java.net.preferIPv4Stack", "true");
+//  }
+//#endif
+  /**
+   * The default configuration set for host-local communication.
+   * @see Mundo#setConfig(int)
+   */
+  //public static final int DEFAULT_LOCALHOST = 0;
+  /**
+   * The default configuration set for LANs. Enables sending of and responding
+   * to broadcast discovery packets.
+   * @see Mundo#setConfig(int)
+   */
+  //public static final int DEFAULT_LAN = 1;
+
+  /**
+   * The basic communication layer provider.
+   */
+  public static BCLProvider bcl = null;
+  /**
+   * Initial state. <code>init()</code> has not been called.
+   */
+  public static final int STATE_UNINITIALIZED = 0;
+  /**
+   * <code>init()</code> is currently initializing basic services.
+   */
+  public static final int STATE_INITIALIZING  = 1;
+  /**
+   * <code>init</code> has initialized the node successfully and all of
+   * the API can be used now.
+   */
+  public static final int STATE_INITIALIZED   = 2;
+  /**
+   * <code>shutdown</code> is currently terminating services.
+   */
+  public static final int STATE_SHUTDOWN      = 3;
+  /**
+   * <code>shutdown</code> has finished terminating all services.
+   */
+  public static final int STATE_DOWN          = 4;
+
+  private static int state = STATE_UNINITIALIZED;
+#ifdef CFG_JAVA15
+  private static Vector<Service> services = new Vector<Service>();
+#else
+  private static Vector services = new Vector();
+#endif
+  
+  private static String nodeName = null;
+  private static int nBaseServices;
+  static GUID nodeId;
+  private static TypedMap config;
+  private static String configFileName = "node.conf";
+
+#ifndef CFG_CLDC
+  private static ThreadGroup threadGroup = new ThreadGroup("mundocore");
+#endif
+  private static RootService rootService = null;
+}

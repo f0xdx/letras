@@ -1,0 +1,96 @@
+<project name="samples-agent-agent1" default="deploy" basedir=".">
+  <property file="../../../config/build.properties"/>
+
+  <property name="src" value="src" />
+  <property name="prep" value="prep" />
+  <property name="build" value="bin" />
+
+  <path id="project.classpath">
+    <pathelement path="${mclib}/mundocore.jar" />
+  </path>
+
+  <condition property="windows" value="true">
+    <os family="windows"/>
+  </condition>
+
+  <target name="init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${prep}" />
+  </target>
+
+  <target name="preprocess" depends="init">
+    <apply executable="${mcc}" parallel="true">
+      <arg value="-I${mcinterfaces}" />
+      <arg value="-O${prep}" />
+      <arg value="-x" />
+      <fileset dir="${src}">
+        <include name="**/*.java" />
+      </fileset>
+    </apply>
+    <copy file="prep/metaclasses.xml" todir="${build}"/>
+  </target>
+
+  <target name="clean"
+          description="Remove all compiled and preprocessed files">
+    <delete dir="${build}" />
+    <delete dir="${prep}" />
+  </target>
+
+  <target name="compile" depends="preprocess"
+          description="Compile the Java sources">
+    <javac destdir="${build}"
+           debug="on" debuglevel="lines,vars,source" deprecation="on"
+           encoding="utf-8" includeantruntime="false">
+      <classpath refid="project.classpath" />
+      <src path="${src}" />
+      <src path="${prep}" />
+      <include name="**/*.java" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <mkdir dir="var/master/com" />
+    <jar jarfile="var/master/com/agent1.jar">
+      <fileset dir=".">
+        <include name="META-INF/*"/>
+      </fileset>
+      <fileset dir="${build}">
+        <include name="api/**"/>
+        <include name="agent/**"/>
+        <include name="metaclasses.xml"/>
+      </fileset>
+    </jar>
+    <jar jarfile="var/master/master.jar">
+      <fileset dir="${build}">
+        <include name="api/**"/>
+        <include name="app/**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="deploy-windows" if="windows">
+    <echo file="run-master.bat" append="false">cd var/master
+java -cp ${mclib}/mundocore.jar;master.jar app.MyApp
+cd ../..</echo>
+    <echo file="run-server1.bat" append="false">cd var/server1
+java -cp ${mclib}/mundocore.jar org.mundo.util.DefaultApplication
+cd ../..</echo>
+    <echo file="run-server2.bat" append="false">cd var/server2
+java -cp ${mclib}/mundocore.jar org.mundo.util.DefaultApplication
+cd ../..</echo>
+  </target>
+
+  <target name="deploy-unix" unless="windows">
+    <echo file="run-master.sh" append="false">cd var/master; java -cp ${mclib}/mundocore.jar:master.jar app.MyApp</echo>
+    <chmod file="run-master.sh" perm="+x"/>
+    <echo file="run-server1.sh" append="false">cd var/server1; java -cp ${mclib}/mundocore.jar org.mundo.util.DefaultApplication</echo>
+    <chmod file="run-server1.sh" perm="+x"/>
+    <echo file="run-server2.sh" append="false">cd var/server2; java -cp ${mclib}/mundocore.jar org.mundo.util.DefaultApplication</echo>
+    <chmod file="run-server2.sh" perm="+x"/>
+  </target>
+
+  <target name="deploy" depends="jar,deploy-windows,deploy-unix">
+    <mkdir dir="var/server1/com" />
+    <mkdir dir="var/server2/com" />
+  </target>
+</project>

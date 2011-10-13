@@ -1,0 +1,47 @@
+	<project name="Pen Event Receiver" default="compile">
+    <description>
+            This is an example of how to receive events that are published
+		by any RawDataProcessor in the mundo zone "lan".
+	</description>
+
+	<property name="src" value="src"/>
+	<property name="bin" value="bin"/>
+	<property name="lib" value="../../../lib"/>
+
+	<property name="main-class" value="Receiver"/>
+	
+	<path id="classpath">
+			<pathelement location="${src}" />
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+			</fileset>
+	</path>
+	
+	<path id="run.classpath">
+			<pathelement location="${bin}" />
+			<fileset dir="${lib}">
+				<include name="**/*.jar" />
+			</fileset>
+	</path>
+	
+	<!-- ================================= 
+          target: compile              
+         ================================= -->
+    <target name="compile" depends="" description="Compile the source code">
+		<mkdir dir="${bin}"/>
+    	<javac srcdir="${src}" destdir="${bin}" failonerror="true" listfiles="false">
+    		<classpath refid="classpath" />
+    		<src path="${src}"/>
+    	</javac>
+    </target>
+
+    <!-- - - - - - - - - - - - - - - - - - 
+          target: depends                      
+         - - - - - - - - - - - - - - - - - -->
+    <target name="run" depends="compile" description="Run a plain simple pen event receiver">
+    	<java fork="true" failonerror="true" maxmemory="64m" classname="${main-class}">
+    	    <classpath refid="run.classpath" />
+    	</java>
+    </target>
+
+</project>

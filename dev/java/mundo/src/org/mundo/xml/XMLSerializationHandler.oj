@@ -1,0 +1,151 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.xml;
+
+#ifdef CFG_CHECKED_BUILD
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import org.mundo.rt.Message;
+import org.mundo.rt.Service;
+import org.mundo.rt.Logger;
+import org.mundo.rt.IMessageHandler;
+import org.mundo.net.ISerialize;
+import org.mundo.net.ProtocolCoordinator;
+
+/**
+ * A protocol handler to serialize to and deserialize from XML/SOAP.
+ */
+public class XMLSerializationHandler extends Service
+       implements IMessageHandler, ISerialize
+       emits IMessageHandler
+{
+  public XMLSerializationHandler()
+  {
+  }
+
+  /**
+   * Initializes this protocol handler and registers the MIME type.
+   */
+  @Override
+  public void init()
+  {
+    super.init();
+    ProtocolCoordinator.register(mimeType, this);
+  }
+
+  public boolean down(Message msg) // IMessageHandler
+  {
+#ifdef CFG_CHECKED_BUILD
+    if (mimeType.equals(msg.getType()))
+    {
+      log.severe("down: type is already "+mimeType);
+      LOG.finest(msg.toString());
+      return false;
+    }
+#endif
+//    msg = msg.copyFrame();
+    try
+    {
+      XMLSerializer ser = new XMLSerializer();
+      ser.serialize(msg);
+    }
+    catch(Exception x)
+    {
+      log.exception(x);
+    }
+    msg.setType(mimeType);
+    return emit.down(msg);
+  }
+
+  public boolean up(Message msg) // IMessageHandler
+  {
+    msg.setType(null);
+    try
+    {
+      XMLDeserializer deser = new XMLDeserializer();
+      deser.deserialize(msg);
+    }
+    catch(Exception x)
+    {
+      log.exception(x);
+      LOG.fine(msg.toString());
+      return false;
+    }
+#ifdef CFG_CHECKED_BUILD
+    if (mimeType.equals(msg.getType()))
+    {
+      log.severe("up: type is still "+mimeType+" - this creates an infinite loop!");
+      LOG.finest(msg.toString());
+      return false;
+    }
+#endif
+    return emit.up(msg);
+  }
+
+  /**
+   * Serializes a message.
+   * @param msg  a message containing a number of chunks. A chunk can either
+   *             be a map containing a passive object tree or a blob containing
+   *             binary data.
+   */
+  public void serialize(Message msg) throws IOException
+  {
+    new XMLSerializer().serialize(msg);
+  }
+
+  /**
+   * Deserializes a message.
+   * @param msg  a message containing blobs with the serialized data.
+   */
+  public void deserialize(Message msg) throws IOException
+  {
+    try
+    {
+      new XMLDeserializer().deserialize(msg);
+    }
+    catch(org.xml.sax.SAXException x)
+    {
+      throw new IOException("SAX exception: "+x);
+    }
+  }
+
+  /**
+   * Deserializes an object.
+   * @param is  an input stream providing the serialized data.
+   * @return  the deserialized object.
+   */
+  public Object deserializeObject(InputStream is) throws IOException
+  {
+    XMLDeserializer deser=new XMLDeserializer();
+    return deser.deserializeObject(new InputStreamReader(is));
+  }
+
+  private static final String mimeType = "message/mc-xmlser";
+  private Logger log = Logger.getLogger("xmlser");
+}

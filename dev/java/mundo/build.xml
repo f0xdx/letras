@@ -1,0 +1,82 @@
+<project name="MundoCore" default="auto">
+  <!-- 
+  This build file is for boot-strapping your MundoCore build environment. 
+	
+  Invoking the config target in this file will bring up a configuration window, 
+  where you can configure the different aspects of the Mundo distribution.
+  Closing the configuration window will actually create the buildfile for the
+  library. To reconfigure the different aspects of your mundo distribution at
+  a later time, invoke this buildfile with the 'config' target.
+  -->
+
+  <condition property="mkconfig" value="mkconfig.sh">
+    <os family="unix"/>
+  </condition>
+  <condition property="mkconfig" value="mkconfig.bat">
+    <os family="windows"/>
+  </condition>
+
+  <target name="check-properties">
+    <available file="config/build.properties" property="properties.present"/>
+  </target>
+
+  <target name="create-properties" depends="check-properties" unless="properties.present">
+    <exec executable="config/${mkconfig}"/>
+  </target>
+
+  <target name="config" depends="create-properties">
+    <ant dir="tools/config" antfile="build.xml" inheritall="false" target="jar" />
+    <java jar="tools/configure.jar" fork="true">
+      <arg value="-lib"/>
+    </java>
+  </target>
+  
+  <target name="compile" depends="create-properties">
+    <ant dir="." antfile="build-library.xml" inheritall="false" />
+  </target>
+  
+  <target name="with-standard-config" depends="create-properties">
+    <ant dir="tools/config" antfile="build.xml" inheritall="false" target="jar" />
+    <java jar="tools/configure.jar" fork="true">
+      <arg value="-lib-nogui"/>
+    </java>
+    <antcall target="compile" />
+  </target>
+
+  <!-- readable form:
+  if (!-f 'build-library.xml')
+    config()
+  compile()
+  -->
+  <target name="auto">
+    <available file="build-library.xml" property="build-library.present" />
+    <antcall target="auto-else" />
+    <antcall target="compile" />
+  </target>
+  
+  <target name="auto-else" unless="build-library.present">
+    <antcall target="config" />
+  </target>
+
+  <target name="clean">
+    <delete dir="prep" />
+    <delete dir="classes" />
+  </target>
+
+  <target name="all">
+    <!-- target: android -->
+    <java jar="tools/configure.jar" fork="true">
+      <arg value="--generate-buildfile" />
+      <arg value="config/profiles/android.xml" />
+    </java>
+    <ant dir="." antfile="build-library.xml" inheritall="false" target="clean" />
+    <ant dir="." antfile="build-library.xml" inheritall="false" target="sources" />
+    <!-- target: standard edition -->
+    <java jar="tools/configure.jar" fork="true">
+      <arg value="--generate-buildfile" />
+      <arg value="config/profiles/standard.xml" />
+    </java>
+    <ant dir="." antfile="build-library.xml" inheritall="false" target="clean" />
+    <ant dir="." antfile="build-library.xml" inheritall="false" target="javadoc" />
+  </target>
+</project>

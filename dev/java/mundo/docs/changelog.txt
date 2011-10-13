@@ -1,0 +1,771 @@
+TODO
+
+- Include Buildfile-Templates in distribution
+- Check if Android version still runs
+- Agent buildfiles do not have a config target
+- Missing buildfiles in some examples?
+- Test agent samples on Windows
+- Agent examples: can't load metaclass warning
+- Links im Offline-Dokument funktionieren nicht
+- Generierung von runscripts unterscheidet an vielen Stellen nicht zwischen Plattformen
+- Reflect-Beispiel funktioniert evtl. nicht ganz korrekt
+- org.mundo.service.Node is not documented
+- Test RC1 on Android!
+
+postponed
+
+- mac-mcc 32 bit issues
+- Generate Wiki tutorial directly from sample code
+  - How to store Wiki content in SVN?
+- Move multicast-chat example away from basic examples
+- Only remote interfaces should appear in Service Discovery
+- Make Tiger build model the default in mcc
+- mcc: output path for metaclasses.xml cannot be specified
+- Automatically read netmask using new Java API
+- Race condition at protocol handler creation
+
+done, but currently not checked in
+
+- Doc: Getting started for Eclipse
+- Doc: Fix node.conf discovery examples
+
+HEAD
+
+- Fixed multicast semantics no longer accessible for oneway calls
+- Changed AsyncCall API, support for ONEWAY_UNICAST and ONEWAY_MULTICAST options
+- Fixed ServiceInfo.superClasses should not contain the subclass itself
+- Service discovery support for local services in zone 'rt'
+- Added unit test servicediscovery2 to test service discovery in zone 'rt'
+
+SVN 210 - MundoCore 1.0.0 RC1
+
+- Fixed ServiceManager does not correctly separate plugin path/filename on Windows
+- Fixed agent/mobilecode/META-INF missing in distribution
+- Fixed IPTransportService ignores broadcast.send and multicast.send options
+- Fixed agent/agent2 samples do not change path back after running application
+- Fixed agent/agent2 buildfile does not generate /var/server/com directory
+- Fixed reflect sample has missing files in distribution
+- Fixed service/query example does not compile
+
+SVN 206
+
+- Added agent examples: mobilecode, agent1, agent2
+- Added documentation to agent package and classes
+
+SVN 195
+
+- Ported agent support from development branch
+
+SVN 194
+
+- Support for custom session objects
+
+SVN 192 - MundoCore 1.0.0 RC0
+
+- Include inspect as tool in distribution
+- license and readme
+- Generation of offline documentation
+- Printed version of Tutorial
+
+SVN 186
+
+- Ported broker sample
+
+SVN 181
+
+- Added chat/serialization example
+- Added configure.bat and configure.sh scripts for distribution
+- Compiled version of inspect shipped in tools directory of distribution
+- IPTransportService: new configuration scheme
+- inspect: Fixed open and shutdown functions on ServiceInstancesPage
+- Added service discovery samples
+- Added protocol handler samples
+- Ported protocol handler samples
+
+SVN 168
+
+- mcc 1.0.1 fixes serialization with inheritance
+
+SVN 142
+
+- Fixes for Android
+- Added separate Buildfile for Android
+- Android: keep-open is default and default timeouts are higher
+- NodeAdd messages from self are discarded earlier
+- Android: BinSerializer does not call String.getBytes(). Instead it makes a fast, but incorrect conversion
+
+SVN 123
+
+- TypedContainer: activation with internal _activate method has priority over Metaclass
+
+SVN 116
+
+- Added mcMetaclass annotation
+
+SVN 115
+
+- Added samples/speech
+- Fixed NullPointerException in IPTS.sendNeighbors when communicating with a C++ node
+- Fixed explicit connect in inspect
+
+SVN 106
+
+- Fixed NullPointerException in processing of UDP NodeAdd message
+
+SVN 105
+
+- Added address fields for NAT support: localExtAddr, peerExtAddr, peerIntAddr
+- Explicitly defined connections use keepOpen=true
+- Fixed endless connect retries on Android
+
+SVN 104
+
+- BinSerializationHandler uses serializeAll instead of serialize for better C++ compat
+- mkconfig.bat for automatic generation of build.properties on Windows
+- Reflection supports querying remote interfaces supported by remote object
+
+SVN 14
+
+- RS: caching of source routes from broadcast messages
+- RS: sendTo supports source routing
+
+SVN 9
+
+- Refactoring of package org.mundo.net
+- Renamed Route to TransportLink, because it just describes a connection to a neighbor
+
+SVN 7
+
+- RoutingService: support for source routing
+- Added SourceRouting example in tests/routing
+
+SVN 5
+
+- Sending of neighbors messages can be disabled in configuration
+- Renamed ContentRoutingService to ContentBroker
+- Created RSSubscription
+- Created samples/chat/broadcast
+- Added documentation for Log Levels
+- Channel.covers: Changed behavior of wildcard subscribe
+- Created ProtocolStackBuilder
+- Added TypedMap.putArray
+- Added TypedMap.putMap
+- Added TypedArray.addGUID
+- RoutingService: support for route recording
+
+===
+
+- Message.Chunk.hashCode: fixed NullpointerException
+- XMLDeserializer.ScalarDeserializer: fixed NullpointerException
+
+0.9.8
+
+- Added GenericClientStub.invoke with TypedMap for parameters
+- Created MClass and MField
+- Reflection support for fields
+- Created samples/reflect
+- Built-in default configuration
+
+0.9.7-1
+
+- Started with Google G1 port
+- G1: Removed AWT-Code from class Mundo, because AWT is not supported
+- G1: XMLDeserializer.ScalarDeserializer uses normalize() instead of unsupported getNodeValue() method
+- Added Mundo.setConfig(InputStream)
+- Fixed configuration not activated at the correct time when using setConfigXML
+- Fixed IPTransportService causes subsequent exceptions when interfaces==null
+
+0.9.7
+
+- interface ResultSet.ISignal rewritten completely
+- created ResultSet.SignalAdapter
+- correct handling of property change events that cause services to become visible/invisible
+- property change events are dispatched directly instead of remove+insert
+- TestME and TestUS examples updated
+- propagation of service unregister events
+
+0.9.6
+
+- TypedArray: added getMap and getArray methods
+- IPTS: perInterfaceServer is now always the default to fix IPv6-related problems on Mac
+- IPTS: Fixed claimPrimaryPort only allocates port on the loopback interface
+
+0.9.5-2
+
+- IPTS: Fixed connection problems when new peer appears with same host:port as in known routes
+- RS: reception of NodeShutdown times out all routes to a peer
+- IPTS.shutdown waits until all CloseThreads are terminated
+
+0.9.5-1
+
+- Added samples/chat/serialization
+- worldview: Limited log size in IRISSimulatorWindow
+- worldview: Received events are logged as well
+- worldview: Default tool is TouchUITool
+- worldview: Limited log size in TAClient
+- worldview: Limited log size in UbisenseWindow
+- ProtocolCoordinator: Fixed race condition when accessing stackMap and upMap
+- IPTS.checkTimeout: Improved locking - shorter locking of routesSem
+
+0.9.5 
+
+- ServiceManager.query also takes session parameter
+- Created IServiceManager
+- Fixed metaclasses.xml is not loaded from a plugin if the parent classloader also provides a metaclasses.xml file
+- TCPTransportConnection uses separate threads to close sockets
+- Added ActiveArray
+- Added multitouch sample program
+
+0.9.4
+
+- Parts of IPTransportService rewritten to solve IPv6 problems - with little success on Windows
+- Windows XP: passed mesh8j test with 100 iterations (IPv4)
+- Windows XP: tests do not succeed (IPv6)
+- Windows Vista: passed mesh4j test with 10 iterations (IPv6)
+- MacOS 10.5.1: passed mesh4j test with 10 iterations (IPv4)
+- MacOS 10.5.1: passed mesh4j test with 10 iterations (IPv6)
+- Fixed CLDC build
+- Added samples/chat/midlet
+- Solved Windows IPv6 problems by creating separate server threads for each IPv4 address
+- Added IPTS configuration option 'per-interface-server'
+- Did some cleanup in IPTS javadoc
+- Service resultset removes services when a peer shuts down
+- ServiceManager sends advertisement when new service is registered
+- RoutingService supports NodeShutdown messages again
+- Documented org.mundo.rt.IMessageHandler
+- ActiveMapFilter allows nesting
+- ActiveMapFilter now overrides all methods inherited from ActiveMap
+
+0.9.3 (tag V_0_9_3)
+
+- Added service discovery
+- Added the Mundo Association concept
+- Logger: improved handling of effective log levels
+- Revised javadoc documentation
+- Added proper license header
+- Fixed PP build
+- Removed deprecated String constructor of Blob
+- Fixed TestScript interpreter
+
+0.9.2
+
+- Updated mkdist script
+- Added protocol handler tutorial examples ex1..ex5, praktikum
+- Added NetMon
+
+0.9.1
+
+- Bugfixes in Logger, P2PTopicBroker, XMLDeserializer
+- Bugfixes in BinSerializationHandler: resolved issues when mimeType==null
+- TCPTransportConnection: Added checks for mimeType==null
+- Fixed IPTS does not set mimeType for neighbors messages
+- Fixed ERS does not add channel header when messages are sent through queue
+- Created tests/cser
+- Changed DefaultApplication
+- Session and Service support toString
+- Ported DVEventRouter and EventRouterClient to use protocol heap
+- TypedMap supports null values on CLDC
+- Fixed metaclasses loading
+- WorldView: changed coordinate type to double
+- WorldView: created Cellphone
+- Logger: separate default log levels for console and file
+- ported test script interpreter from 0.8
+- Fixed ProtocolCoordinator must not process messages before default stack setup is completed
+- Added synchronized to Logger.publish
+- Disabled automatic instantiation of protocol handlers, because this leads to race conditions
+- Fixed race conditions with shared variables in BinCollectHandler
+- ProtocolStack.findHandler supports branches
+- Fixed UDPTransportConnection does not send mc-ipts as control messages
+- Passed mesh4j test with TCP and UDP
+- Ported new filter classes from 0.8 to 0.9
+- Created ICopy
+- TypedMap supports deep copy
+- Java 1.4 support
+- Performance optimization: TypedMap.getInt() and TypedMap.getString() no longer use getWrapper()
+- Performance optimization: Blob neu implementiert, ohne Verwendung von Streams
+- Performance optimization: Bessere pre-allocation beim Kopieren von Blobs
+- Performance optimization: TypedMap.getString(key, default) basiert nicht mehr auf Exceptions
+- Performance optimization: getInt() und getString() verwenden nicht mehr getWrapper
+- Performance optimization: TCPTransportConnection fine logging nur bei CFG_CHECKED_BUILD
+- Performance optimization: TypedMap.getInt(key, default) basiert nicht mehr auf Exceptions
+- Performance optimization: Löschen von expired messages in P2PTopicBroker.MessageQueue optimiert
+- Performance optimization: TCPTransportConnection: writeString optimiert, da String.getBytes laut Profiler teuer
+- Performance optimization: GUID.toString optimiert
+- Performance optimization: Session.DispatchThread uses the fact that notifications from RMCService have ctx==null
+- Performance optimization: Semaphore debugging nur mehr in CFG_CHECKED_BUILD aktiv
+- Performance optimization: ProtocolCoordinator: Erster ERS wird nicht mehr linear gesucht
+- Performance optimization overall result: before: 2560,16 msgs/sec, after: 7110,69 msgs/sec => Factor 2,8
+- Bugfixes in Blob
+- Fixed wrong handling of null argument in TypedMap.equals
+- TypedMapFilter implements IFilter
+- Created ActiveMap
+- Created ActiveMapFilter
+- Fixed TypedMap does not copy activeClassName
+- Fixed TypedMap does not clone activeClassName
+
+0.9.0
+
+- CLDC port of new classes
+- Logger: bugfixes and API extensions
+- Bugfix: Distributed object's equals method now also take the subscriber into account.
+- Logger: loglevel configuration via node.conf
+- IPTS: localhost-udp option allows to disable local UDP connections
+- IPTS: removed deprecated broadcastOnAllInterfaces option
+- tcp: 0.9 nodes can automatically switch from compat to 0.9 protocol mode
+- tcp: Fixed 0.8 protocol compatibility
+- ProtocolStack: Automatic creation of lightweight handlers to simplify config files
+- ConnEntryTableModel: changed display of connection state
+- Created IProtocolCondition for if/then/else in protocol stacks
+- Support for conditions in ProtocolStack and ProtocolCoordinator
+- Created NetExt to access SO_REUSEPORT
+- IP multicast discovery support in IPTS
+- Fixed TCP support in IPTS
+- Created BinCollectHandler
+- Created BinFragHandler
+- IPTS UDP protocol: added msgType and mimeType
+- inspect: Log filtering on LogPage
+- Refactoring of Logger
+- inspect: added buttons on ERS imports page
+- inspect: added buttons on ERS exports page
+- inspect: added buttons on connections page
+- Default protocol stack now defined in configuration file
+- The default dispatch mode in Sessions is now always DISPATCH_ASYNC
+- Fixed parameter checking in setDispatchMode and setRMCDispatchMode
+- vncclient no longer requires RMC call to vncstub at startup
+- Added ScreenMirror protocol support to vncclient
+- NAckHandler supports multiple connections
+- Created NAckHandler
+- Created HLFragHandler
+- IPTS: added option to enable/disable UDP server
+- TypedArray supports nested passivate/activate
+- Protocol compatibility with 0.8 version when CFG_COMPAT is defined
+- inspect: removed "Service Classes" headline
+- inspect: added configure button on Service Instance page
+- inspect: created ServicePage
+- inspect: added shutdown button on service page
+- inspect: corrected background color in URI bar
+- inspect: Long names for core services
+- inspect: give service registered by inspect a name
+- inspect: removed menu from secondary windows
+- inspect: buttons are greyed out when no list item selected
+- inspect: left align buttons on Service Classes page
+- inspect: Back and Forward buttons
+- inspect: Service configuration page for new instance
+- inspect: added shutdown button on service instances page
+- inspect: opening secondary windows at different position
+- Added DHT support based on OpenPastry
+- Created reflect.MCIFParser
+- Fixed binary serialization of JavaXDR (stream format now incompatible with 0.8.x)
+- Created tests/rmc
+- Moved 'java.net.preferIPv4Stack=true' into class constructor of Mundo to work around IPv6 issues
+- mundo.properties moved to config/build.properties
+- Tuning: disabled Nagle's algorithm for sockets in IPTransportConnection
+- Renamed ClientStub into DoObject
+- Removed old Log class
+- Removed IPTransportConnection
+- Added TCPTransportConnection
+- Added UDPTransportConnection
+- Added GUID.shortString
+- Made GUIDs in log outputs of IPTS, RS and ERS more readable
+- Exceptions can be associated to messages
+- Improved exception handling in RMC client stubs when reply cannot be interpreted
+- metaclasses.xml file is converted to Java class to initialize serializable classes
+- IPTransportService uses new service configuration interface
+- Fixed service configuration in inspect
+- Added ServiceManager.uploadFile
+- inspect supports plug-in uploading via drag&drop
+- Fixed Mundo.shutdown did not shutdown ServiceManager properly
+
+0.8.8
+
+- TypedMap.getLong supports unsigned types
+
+0.8.7
+
+- Created IPNetInterface
+- IPTS prints info log messages to give users an idea what discovery is going to do
+- inspect: Changed most RMCs to asynchronous calls (experimental)
+- Fixed exception in ServiceManager.assignInstanceName
+- inspect: Fixed cancel button in tap channel name input dialog
+- inspect: TapWindow supports publishing messages
+- inspect: Starting ServiceManager, support for Plug-Ins
+- ers: Fixed loss of outgoing messages because header was not written when message was sent from queue
+- Passed mesh8j test, 100 iterations
+- Passed mesh8m test, 100 iterations
+- Passed routerefresh4j test (all network interfaces disabled)
+
+0.8.6-2
+
+- IPTS: broadcast addresses and netmasks can be specified in config file
+
+0.8.6-1
+
+- Blobs supported in activation, passivation, BinSerializer and BinDeserializer
+- inspect uses separate threads for name reverse lookups
+- IPTS: Workaround to speed up 'new Socket' when reverse lookup is not possible
+- IPTS: retry in OptHost
+- Mundo.getVersion returns library version string
+- Added main method that prints version number on console or via AWT
+
+0.8.6
+
+- DVEventRouter: changed catch Exception into catch Throwable in received
+- EventRouterClient queues messages until a server is found
+- Reduced locking in IPTransportService.rsControlPacket
+- Reduced locking in RoutingSerivce.handleRouteRemoved
+- Replaced print to console stuff with logging in IPTS
+- WavePublisher supports sending Stop request
+- Serialization of fields in abstract classes
+
+0.8.5
+
+- Removed final from TypedMap for yet another time and added warning in API doc
+- Added samples/soundscape
+- Fixed javadoc generation
+- Metaclasses uses direct access to metaclasses.xml if enumeration fails also with default ClassLoader
+- ipts: Attribute-based discovery
+- ipts: TCP server can be disabled with configuration option
+- ipts: Support for keep-open request
+- Centralized routing support
+- ers makes local subscriptions
+- ers uses rs notifications to determine arriving/departing nodes
+- bcl emits unsubscribe and unadvertise notifications
+- Support for delayed unsubscribe in Session
+- Added PalmEvent
+
+0.8.4
+
+- iptc: Separated creation and start of sendThread to permit sends earlier
+- iptc: Removed superfluous test for output stream in send
+- Fixed spurious wakeups cause wrong deadlock warnings in Mutex
+- Mutex now stores stack trace of first locker only
+- iptc: Fixed connection must not be locked when connectionOpened is emitted
+- Passed mesh8j test, 100 iterations
+- TypedArray, TypedMap, and TypedMapFilter are final
+- mcc: Support for non-static initializers
+- mcc: Fixed generation of wrong separators when a Do* implements a nested interface
+- mcc: Added static modifier in generation of nested Do* classes
+
+0.8.3-6
+
+- IPTS discards connections after a timeout if Socket.close blocks
+- Failed mesh8j test immediately
+
+0.8.3-5
+
+- Connects triggered by UDP NodeAdd messages are handled in a separate Thread
+
+0.8.3-4
+
+- Fixed NullPointerException may occur in ipts.sendDiscoverMsg during shutdown
+- Changed order of shutdown in ipts.shutdown
+- Route leasing allows RS to tolerate misbehaving transport services
+- Failed mesh8j test after 10 iterations
+
+0.8.3-3
+
+- Changed locking for rsNotified in IPTS.connectionOpened
+- Support for binary node.conf file
+- MundoCore can be built without XML support by omitting the CFG_XML preprocessor option
+- J2ME/PP configuration has now XML disabled by default (for performance reasons)
+- SecureRandom is no longer used on J2ME/PP (for performance reasons)
+- Jython binding supports activation/passivation of native Python classes
+- Jython binding support RMC calls of native Python classes
+- Metaclass supports reading metaclass list files from custom ClassLoaders
+- ServiceManager: Fixed activation problems when classes must be loaded from plugins
+- Added Semaphore.assertAcquired
+- Changed synchronized statements to semaphore for routes list in IPTS
+- Hiding unimportant stack trace elements in Mutex and Semaphore
+- Fixed deadlock between constructor of IPTSRoute/IPTS.isLocalPort and iptsControlPacket
+- Removed locking in IPTS.isLocalPort and IPTS.getLocalPort in favor of optimistic reads
+- Fixed spurious wakeups cause wrong deadlock warnings in Semaphore
+- Passed mesh8j test, 100 iterations
+
+0.8.3
+
+- personalization example can be controlled with command line arguments
+- worldview: Added TA client
+- worldview: Receiving and displaying of personalization events
+- worldview: TA client supports editing smart card ID to name mapping table
+- Added another XMLSerializer.serializeMap method that supports writing xmlns declarations
+- worldview: Writing xmlns tag in configuration file
+- Fixed inspect can kill IPTS.WorkerThread by throwing exceptions
+- Fixed NullPointerException in IPTS.shutdown when no bcast-socket is bound
+- Fixed NullPointerException in IPTS.sendNeighbors (rare concurrency problem)
+- Created ProcessMonitor.uploadFile
+- ProcessMonitor supports variable substitution
+- Started with Jython binding
+- Implemented DebugService.shutdownNode
+- shutdownNode can be called from inspect
+- Added svchost to new source tree
+- Fixed parsing of host-specific configuration sections in ServiceManager
+- Friendly names for nodes
+- Increased default RMC timeout to 10 seconds
+
+0.8.2
+
+- Protocol version number checking for all IPTS control packets
+- Added field 'source' to DebugService.LogEntry
+- Removed locking in IPTransportConnection.getTimeout
+- Removed locking in DebugService.getConnections
+- Started with cripple API in DebugService
+- crippleBlockSend blocks send operation in IPTC
+- Added separate SendThread to IPTransportConnection
+- Separate sendTimeout counter to check connections to primary port as well
+- worldview: MapIcon supports heading arrow
+- worldview: Added compassChannel property to IRISTag
+- worldview: Support for receiving and displaying compass events in 2D map view
+- worldview: Configuration of compass offset angle in IRIS client
+- worldview: Created wall display object
+- worldview: Created ContextServer client
+- Fixed buildfile and sources for personal profile version
+- Created chat/awt example that can be also run on PP
+- Created context/TAPersonalization
+- Created samples/context/personalization
+
+0.8.1
+
+- Made the UDP proxy part of MundoCore. For documentation how to use the proxy, please refer to apps/locationproxy/package.html
+- Added a location proxy as sample application.
+- Modified the parsing of Text nodes in XMLDeserializer - use getTextContent() instead of getNodeValue()
+- Added IShutdown interface for controlled shutdown of Mundo services
+- The DaemonService now can shutdown itself
+- Added TypeName enumeration for known basic types in org.mundo.xml
+- Created org.mundo.xml.xquery
+- XQuery parser generates TypedMapFilters
+- mcc: WSDL generation
+- mcc: Generation of _getMethods in server stubs
+- Dynamic interface query support in ClientStub and inspect
+- Own Semaphore and Mutex classes with debugging functions
+- IPTransportService.WorkerThread uses opportunistic instead of strict locking
+- Improved resilience with respect to obsolete routes
+- Added Mundo.setConfig with DEFAULT_LOCALHOST and DEFAULT_LAN sets
+- Mundo::setConfig allows to set primary port number
+- Protocol version number checking for discovery packets
+- Added support for unsigned types in BinSerializer and BinDeserializer
+- Created media.WavePublisher
+- Created media.WAVInputStream
+- Created samples/play
+
+0.8.0
+
+- Removed idlc -a option from buildfile
+- org.mundo.annotation.* is imported everywhere
+- Consistently changed xsdType property to className (idlc already supports both)
+- Created tests/src/rmc/RMCAbServer, RMCConcServer and RMCAbClient
+- Session logs error in case of an unexpected RMC reply instead of throwing NullPointerException
+- ClassLoader can be specified in activation context
+- Fixed generics warnings in XMLSerializer and XMLDeserializer
+- Added documentation for annotation classes
+- BinDeserializer now supports string null token from C++ version
+- Added TypedMap.getMap method with default value
+- ServiceManager supports host specific configurations in new-instance
+- Added constructor to create TypedMapFilter out of a TypedMap
+- Added GenericAttributeFilter class
+- Added ordinals for passive types in TypedContainer
+- TypedMapFilter now creates matching attribute filter types
+- Signal.connectStrict provides better error checking for Client/Server communication patterns
+- Changed search of node.conf.xml configuration file
+  - First, node.conf.xml is read from the current directory using a FileReader
+  - If this fails, META-INF/node.conf.xml is read using the ClassLoader
+- Added DebugService.getNodeConfig
+- inspect: displaying active configurations of nodes
+- Added DebugService.getServiceInfo
+- inspect: displaying service information, publishers and subscribers
+
+0.7.9
+
+- Generified most data structures
+- TypedMapFilter now derived from AttributeFilter
+- Support for nested TypedMapFilters
+- ContentRoutingService now filters on passive objects
+- Added publisher to MessageContext
+- ContentRoutingService observes the publisher's localLoopback setting
+- Fixed ContentRoutingService has a race condition in the local case
+- J078-1: Subclasses of TypedMap may be used as chunks of messages
+- Created media/ImageFormat
+- node.conf.xml is now loaded via ClassLoader
+- Changed 'meta-inf' to 'META-INF' in PluginManager
+- Fixed .class file extension was not appended in JarClassLoader
+- Created service.ServiceManager
+- Added TypedMap.getObject with default value
+- Renamed some methods in Service
+- IPTransportService supports getServiceConfig to read the current configuration
+- ServiceManager supports plug-ins and dynamic service loading and unloading
+- TypedMap supports nested activate/passivate operations
+- Created ProcessMonitor
+- Created IConfigure
+
+0.7.8
+
+- BinDeserializer: Support for unsigned types with limited ranges
+- Created org.mundo.context.sensor.BadgeEvent
+- Publisher supports enabling and disabling local loopback
+- XMLFormatter does not indent <? tags
+- XMLDeserializer supports a default type for the root element
+
+0.7.7 #1
+
+- Fixed IPTransportConnection.init may cause deadlock
+- Fixed IPTransportConnection.connect may cause deadlock
+- Fixed possible NullPointerException in IPTSRoute.isLoopback
+- Fixed possible NullPointerException in IPTransportService.rsControlPacket
+
+0.7.7
+
+- Fixed IPTransportService does not reject loopback routes via non-loopback interfaces
+- Fixed IPTransportService.connectionOpened always deletes the old route
+- Fixed two routes can discard each other during connection setup
+- Removed the strategy to immediately disconnect duplicate routes
+  Consider a node 'A' that creates a connection 'a' to node 'B'. Node 'B' concurrently
+  creates a connection 'b' to node 'A'. On connectionOpened, it may happen that
+  'A' discards 'b' and 'B' discards 'a'. Now both connections 'a' and 'b' have
+  been disconnected.
+- Passed test: fmesh nodes=8, iterations=75, broadcast=no
+
+0.7.6
+
+- Fixed DebugService.getNodeInfo did not provide version number, because of idlc bug
+- Complete rewrite of the routing table data structures, as in the C++ version
+- Timeout of connections
+- Reconnection
+- inspect: Improved resizing of table columns in log view
+- inspect: Improved initial layout of split pane
+- Known routes are ignored when receiving neighbor messages
+- Metric values for connections
+- IPTransportService supports the answerBroadcasts option
+- IPTransportService supports the broadcastInterval option
+- IPTransportService supports the routeTimeout option
+- Timeout of routes
+- inspect: Auto refresh feature for connection table
+- Fixed termination problems of connection threads of duplicate connections
+- Fixed unsafe termination of IPTransportConnection.WorkerThread at shutdown
+- Periodical sending of broadcast messages
+- Periodical sending of neighbor messages to nodes on the same host
+- Local primary connections do not time out
+- IPTransportService supports the connectionTimeout option
+- Route table cleanup on reception of NodeShutdown messages
+- Created Service.setConfig and Service.getConfig
+- Fixed IPTransportService.findRoute does not properly handle partially initialized routes
+- Changed encoding of strings to UTF8 in BinSerializer
+  Known issue: Java is unable to decode an OEM '' (&uuml) because this character
+  is AMBIGUOUS in the UTF8 charset!
+- The activation parameter ignoreErrors can be used to ignore ClassNotFoundExceptions
+- Sections with undefined classes in the configuration file are ignored
+- idlc 0.7 #27; changes:
+  - Support for local synchronous calls via stubs
+  - Fixed issues with processing nested #ifdefs
+  - Exceptions during deserialization are printed out
+
+0.7.5
+
+- Fixed activation problems in ObjectAdapter with local calls
+- Connection timeout set back to 10 seconds
+- Message timeout set back to 3 seconds
+- Message.getRequest() now available again as deprecated method
+
+0.7.4 #1
+
+- Fixed BinSerializer writes wrong length for Blobs
+- Increased connection timeout to 1e6 seconds
+- Increased message timeout to 5 minutes
+
+0.7.4
+
+- Created tests/rmc/NestedTest
+- Created tests/cldc/rmc-nested
+- Created test runner script run.pl
+- Created org.mundo.context.sensor.TAOrientation
+- Created test/player: AWT UI for Audio Player Service
+- idlc 0.7 #22; changes:
+  - Added enum keyword
+  - All methods are automatically exported when a stub implements an interface marked with @mcRemote.
+  - Different handling of RMC exceptions
+    - throws clause is copied from super-method
+    - RMCException is now a RuntimeException.
+  - Include file not found warnings are printed to log instead of console
+  - Support for final modifier in parameter lists
+  - idlc checks if classes for which serializers are created have nullary constructors
+  - Support for substitutions without parameters
+  - Added option for logging to file
+  - Fixed Issue J072-5
+  - Most changes were specific to C++
+
+0.7.3
+
+- Created BinSerializerBundle
+- Created SOAPSerializerBundle
+- Implemented binary protocol in IPTransportService and IPTransportConnection
+- Removed SOAPMap
+- CLDC port
+- Service threads are created in a separate ThreadGroup
+- Fixed Issue J072-1: Correct termination of threads in Mundo.shutdown
+- ASYNC dispatch mode for RMC calls
+- Changed type for cause of RMC exception from Exception to Throwable
+- Replaced Message class
+- Replaced SOAPSerializer with XMLSerializer
+- XMLSerializer uses BASE64 encoding for Blobs
+idlc 0.7 #2
+- Fixed Issue J071-1: 'transient' modifier can be used to mark fields that
+  should not be serialized.
+- Fixed Issue J071-2: Support for field declarations with multiple variables.
+idlc 0.7 #3
+- Java target version can be configured. This allows to generate emit stubs with
+  Enumerations instead of Iterators for CLDC.
+idlc 0.7 #4
+- CLDC: Signal.getIfSubscribers is called with a different signature that contains
+  the interface name instead of the interface class.
+- CLDC: The isEmitting() method is omitted.
+idlc 0.7 #5
+- Fixed CLDC: Signal.getIfSubscribers(String) did not use fully qualified classname
+idlc 0.7 #6
+- Generates different code for new Message class (java)
+
+0.7.2 (tag)
+
+- Moved exception handling from generated server stubs into ServerStub.exceptionOccured
+- Fixed idlc-related problems with oneway-calls
+idlc 0.7 #1
+- Fixed NullPointerException in server stubs when exceptions occur during oneway calls.
+  (Issue J071-3)
+- Fixed NullPointerException in server stubs when a non-void method is called with a oneway call.
+  (Issue J071-3)
+- Exception handling code moved into the framework (ServerStub.exceptionOccured).
+
+0.7.1 = PCE 1.0
+
+- idlc 0.6 #30: Stubs use type codes to enable overloading
+
+0.6.7
+
+- Included AHas Plug-In utility classes
+- Included chatawt, an AWT-based chat demo
+- Documentation: AsyncCall, BCLProvider, Blob
+- Refactoring: Renamed Comm to Session
+- idlc 0.6 #23: Fixed invalid free()
+- idlc 0.6 #24: Stubs use Session instead of Comm
+
+0.6.6
+
+- JavaXDR: Escape character '\' was not escaped.
+- Java serialization in parameter list and return value.
+- ClientStubs can provide corresponding ServerStubs.
+- Fixed imports list in ERS not properly synchronized between subscriberAdded/connectionAdded.
+- Support for J2ME PP. Requires idlc 0.6 #22 for preprocessor directives.
+
+0.6.5
+
+- TestScript: Fixed NullPointerException when response from workers come too soon.
+- RoutingService: Messages are queued if no connection to a target is active.
+- Log: Fixed concurrency problem.
+- Limited support for operator overloading.
+
+TODO
+
+- Operator overloading
+- Registrierung von eigenen Serializern
+- Rename _Stub to Do
+- Allow passing of distributed objects in all structures
+- RMC-Methoden mÃ¼ssen 'throws Exception' angeben. -> throws RMCException?
+- RMC timeout configurable in config file
+

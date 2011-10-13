@@ -1,0 +1,1 @@
+java -cp ../../lib/mundocore.jar;PenMonitor.jar;../../lib/letras.jar org.letras.tools.penmonitor.PenMonitor 

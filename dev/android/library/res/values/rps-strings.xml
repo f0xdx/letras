@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item type="id" name="rps_service_id"/>
+    <string name="rps_service_name">RegionProcessor</string>
+</resources>

@@ -1,0 +1,220 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.net;
+
+import java.util.HashMap;
+import java.util.Iterator;
+
+import org.mundo.rt.GUID;
+import org.mundo.rt.IMessageHandler;
+import org.mundo.rt.Message;
+import org.mundo.rt.Service;
+import org.mundo.rt.Blob;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.Logger;
+import org.mundo.net.transport.TransportLink;
+
+/**
+ * An experimental fragmentation handler.
+ */
+public class HLFragHandler extends Service implements IMessageHandler emits IMessageHandler
+{
+  public HLFragHandler()
+  {
+    maxSize = 512;
+  }
+  public void init()
+  {
+    super.init();
+    ProtocolCoordinator.register(mimeType, this);
+  }
+  /**
+   *
+   */
+  public boolean down(Message msg)
+  {
+    Message.Chunk chunk = firstBlob(msg);
+    if (chunk==null)
+      return emit.down(msg);
+    Blob blob = (Blob)chunk.content;
+    int n = (blob.size()+maxSize-1)/maxSize;
+    if (n<2)
+      return emit.down(msg);
+
+    byte[] buffer = blob.getBuffer();
+    int fragSize = buffer.length/n;
+    log.fine("splitting "+chunk.name+":"+chunk.type+" into "+n+" fragments with "+fragSize+" bytes");
+    int pos = 0;
+    int left = blob.size();
+    int i = 0;
+
+    TypedMap hdr = new TypedMap();
+    hdr.putString("c", chunk.name);
+    hdr.putString("t", chunk.type);
+    hdr.putInt("i", i);
+    hdr.putInt("n", n);
+    hdr.putString("mt", msg.getType());
+
+    Blob frag = new Blob();
+    frag.write(buffer, pos, fragSize);
+
+    Message fragMsg = (Message)msg.clone();
+    fragMsg.setType(mimeType);
+    fragMsg.put("hlfrag", "passive", hdr);
+    fragMsg.put(chunk.name, chunk.type, frag);
+    if (!emit.down(fragMsg))
+      return false;
+    
+    pos += fragSize;
+    left -= fragSize;
+    
+    for (i=1; i<n; i++)
+    {
+      if (i==n-1)
+        fragSize = left;
+      
+      hdr = new TypedMap();
+      hdr.putString("c", chunk.name);
+      hdr.putString("t", chunk.type);
+      hdr.putInt("i", i);
+      hdr.putInt("n", n);
+      hdr.putString("mt", msg.getType());
+
+      fragMsg = (Message)msg.clone();
+      fragMsg.setType(mimeType);
+      fragMsg.copyStackFrom(msg);
+      fragMsg.put("hlfrag", "passive", hdr);
+      fragMsg.put(chunk.name, chunk.type, frag);
+      
+      frag = new Blob();
+      frag.write(buffer, pos, fragSize);
+      fragMsg.put(chunk.name, chunk.type, frag);
+      if (!emit.down(fragMsg))
+        return false;
+      
+      pos += fragSize;
+      left -= fragSize;
+    }
+    return true;
+  }
+  /**
+   *
+   */
+  public boolean up(Message msg)
+  {
+    // Ignore message if it has no hlfrag header
+    TypedMap hdr = msg.getMap("hlfrag", "passive");
+    if (hdr==null)
+      return emit.up(msg);
+    
+    // Get or create peer info structure
+    TypedMap tshdr = msg.getMap("ts", "param");
+    TransportLink link = (TransportLink)tshdr.getObject("link");
+    PeerInfo pi = getOrCreate(link);
+    Blob frag = msg.getBlob(hdr.getString("c"), hdr.getString("t"));
+
+    int i = hdr.getInt("i");
+    if (i==0)
+    {
+      // First fragment
+      if (pi.msg!=null)
+        log.info("last fragment missing - previous packet dropped");
+      pi.msg = msg;
+      pi.blob = frag;
+      pi.i = 1;
+      return true;
+    }
+
+    if (pi.blob==null)
+    {
+      log.info("no packet open - fragment dropped");
+      return true;
+    }
+    if (i!=pi.i)
+    {
+      log.info("wrong fragment: got="+i+", expected="+pi.i);
+      pi.blob = null;
+      return true;
+    }
+    pi.blob.write(frag);
+    pi.i = i+1;
+    if (i < hdr.getInt("n")-1)
+      return true;
+    
+    // Last fragment
+    msg = pi.msg;
+    pi.msg = null;
+    msg.setType(hdr.getString("mt"));
+    return emit.up(msg);
+  }  
+
+  private Message.Chunk firstBlob(Message msg)
+  {
+#ifdef CFG_JAVA15
+    for (Message.Chunk chunk : msg)
+    {
+#else
+    for (Iterator iter = msg.iterator(); iter.hasNext();)
+    {
+      Message.Chunk chunk = (Message.Chunk)iter.next();
+#endif
+      if (chunk.content instanceof Blob)
+        return chunk;
+    }
+    return null;
+  }
+  
+  private PeerInfo getOrCreate(TransportLink link)
+  {
+    PeerInfo pi = (PeerInfo)peers.get(link.remoteId);
+    if (pi!=null)
+      return pi;
+    pi = new PeerInfo(link.remoteId);
+    pi.link = link;
+    peers.put(link.remoteId, pi);
+    return pi;
+  }
+
+  private class PeerInfo
+  {
+    PeerInfo(GUID id)
+    {
+      remoteId = id;
+      blob = null;
+    }
+    GUID           remoteId;
+    Message        msg;
+    TransportLink  link;
+    Blob           blob;
+    int            i;
+  }
+
+  private int maxSize;
+#ifdef CFG_JAVA15
+  private HashMap<GUID,PeerInfo> peers = new HashMap<GUID,PeerInfo>();
+#else
+  private HashMap peers = new HashMap();
+#endif
+  private Logger log = Logger.getLogger("hlfrag");
+  private static final String mimeType = "message/mc-hlfrag";
+}

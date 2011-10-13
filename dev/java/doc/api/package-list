@@ -1,0 +1,16 @@
+org.letras.ps.rawdata
+org.letras.ps.rawdata.penmanager
+org.letras.ps.region
+org.letras.ps.region.broker
+org.letras.ps.region.broker.simple
+org.letras.ps.region.document.xml
+org.letras.ps.region.penconnector
+org.letras.ps.region.sampleprocessor
+org.letras.ps.semantic
+org.letras.psi.ipen
+org.letras.psi.iregion
+org.letras.psi.iregion.shape
+org.letras.psi.semantic
+org.letras.util
+org.letras.util.region.document
+org.letras.util.region.document.xml.persist

@@ -1,0 +1,188 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.service;
+
+import org.mundo.annotation.*;
+import org.mundo.rt.GUID;
+import org.mundo.rt.IActivate;
+import org.mundo.rt.ActiveMap;
+import org.mundo.rt.DoObject;
+import org.mundo.rt.Session;
+import org.mundo.filter.IFilter;
+import org.mundo.filter.ActiveMapFilter;
+
+/**
+ * Objects of this class contain descriptions of services. They are typically
+ * returned by the query functions provided by <code>ServiceManager</code>.
+ *
+ * @see ServiceManager
+ * @author Erwin Aitenbichler
+ */
+@mcFilter
+@mcSerialize
+public class ServiceInfo implements IActivate
+{
+  /**
+   * the nodeName from the node.conf.file
+   */
+  @mcField(optional = true)
+  public String nodeName;
+
+  /**
+   * the unique ID of the service.
+   */
+  @mcField(optional = true)
+  public GUID guid;
+  /**
+   * a remote object reference to the service.
+   */
+  @mcField(optional = true)
+  public DoObject doService;
+  /**
+   * the friendly name of the service.
+   */
+  @mcField(optional = true)
+  public String instanceName;
+  /**
+   * the name of the service class.
+   */
+  @mcField(optional = true)
+  public String className;
+  @mcField(optional = true)
+  public ActiveMap superClasses;
+  /**
+   * the name of the zone in which the service is visible.
+   */
+  @mcField(optional = true)
+  public String zone;
+  /**
+   * the set of interfaces the service implements.
+   */
+  @mcField(optional = true)
+  public ActiveMap interfaces;
+  /**
+   * ID of the node hosting the service.
+   */
+  @mcField(optional = true)
+  public GUID nodeId;
+  /**
+   * the update request if used as a message.
+   */
+  @mcField(optional = true)
+  public int update;
+  /**
+   * custom user supplied data from the service.
+   */
+  @mcField(optional = true)
+  public Object userData;
+
+  /**
+   * the name of the plugin that provides the service.
+   */
+  @mcField(optional = true)
+  public String pluginName;
+
+  /**
+   * the update was caused by the advertisement of a new service.
+   */
+  public static final int UPDATE_ADVERTISE = 1;
+  /**
+   * the update was caused because the service is no longer available.
+   */
+  public static final int UPDATE_UNADVERTISE = 2;
+  /**
+   * the update was caused because the service properties are about to change.
+   */
+  public static final int UPDATE_PROPCHANGING = 3;
+  /**
+   * the update was caused because the service properties have changed.
+   */
+  public static final int UPDATE_PROPCHANGED = 4;
+
+  /**
+   * Initializes an empty service info object.
+   */
+  public ServiceInfo() {
+  }
+
+  /**
+   * Copy constructor.
+   */
+  public ServiceInfo(ServiceInfo s)
+  {
+    guid = s.guid;
+    doService = s.doService;
+    instanceName = s.instanceName;
+    className = s.className;
+    superClasses = s.superClasses;
+    zone = s.zone;
+    interfaces = s.interfaces;
+    nodeId = s.nodeId;
+    update = s.update;
+    pluginName = s.pluginName;
+    userData = s.userData;
+    nodeName = s.nodeName;
+  }
+
+  /**
+   * Returns a string representation of this object.
+   */
+  public String toString()
+  {
+    return "{instanceName=" + instanceName +
+           ", className=" + className +
+           ", superClasses=" + superClasses +
+           ", zone=" + zone +
+           ", interfaces=" + interfaces +
+           ", nodeId=" + nodeId +
+           ", doService=" + doService +
+           ", nodeName=" + nodeName + "}";
+  }
+
+  /**
+   * Adds the specified interface to the list of required interfaces. The
+   * callee must be a <code>ServiceInfoFilter</code>.
+   */
+  public void filterInterface(String name)
+  {
+    ServiceInfoFilter sif = (ServiceInfoFilter)this;
+    ActiveMapFilter amf = (ActiveMapFilter)sif.interfaces;
+    if (amf == null)
+    {
+      amf = new ActiveMapFilter();
+      sif.interfaces = amf;
+      sif._op_interfaces = IFilter.OP_FILTER;
+    }
+    amf.putBoolean(name, IFilter.OP_EQUAL, true);
+  }
+
+  /**
+   * Adds a filter for the zone property.
+   */
+  public void filterZone(String zone)
+  {
+    ServiceInfoFilter sif = (ServiceInfoFilter)this;
+    sif.zone = zone;
+    sif._op_zone = IFilter.OP_EQUAL;
+  }
+}

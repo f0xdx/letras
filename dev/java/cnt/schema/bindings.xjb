@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jxb:bindings version="2.0" xmlns:jxb="http://java.sun.com/xml/ns/jaxb"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xjc="http://java.sun.com/xml/ns/jaxb/xjc"
+	jxb:extensionBindingPrefixes="xjc">
+ 	<jxb:bindings schemaLocation="regions.xsd" node="/xsd:schema">
+		<jxb:bindings node="//xsd:complexType[@name='ShapeChoice']//xsd:choice">
+			<jxb:property name="shape" />
+		</jxb:bindings>
+	</jxb:bindings>
+</jxb:bindings>

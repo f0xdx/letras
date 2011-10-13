@@ -1,0 +1,24 @@
+<container key="" name="Android">
+<container key="general">
+<feature key="target" value="android"/>
+<feature key="xml" value="enabled"/>
+<feature key="xquery" value="disabled"/>
+<feature key="streams" value="disabled"/>
+<feature key="debug" value="enabled"/>
+<feature key="checked-build" value="enabled"/>
+<container key="transport">
+<module key="legacy-ipts" value="enabled">
+</module>
+</container>
+<container key="routing">
+<module key="RoutingService" value="enabled">
+</module>
+</container>
+<container key="broker">
+<module key="P2PTopicBroker" value="enabled">
+</module>
+<module key="ContentBroker" value="enabled">
+</module>
+</container>
+</container>
+</container>

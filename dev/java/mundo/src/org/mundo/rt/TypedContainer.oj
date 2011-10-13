@@ -1,0 +1,1201 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+//#define LOG_MODULE
+
+import java.io.IOException;
+
+#ifdef CFG_CLDC
+import java.util.Vector;
+import java.util.Enumeration;
+#else
+import java.io.Serializable;
+import java.util.List;
+import java.util.Iterator;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.HashMap;
+#endif
+import java.util.NoSuchElementException;
+#ifdef LOG_MODULE
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+/**
+ * Abstract base class for container classes.
+ * @author Erwin Aitenbichler
+ */
+public abstract class TypedContainer
+{
+  /**
+   * Sets the name of the active class whose state is stored in this map.
+   * In order to support nested passivate and activate operations, the
+   * <code>acName</code> parameter is a list of colon separated class
+   * names.
+   * @param acName  the name of the active class.
+   */
+  public void setActiveClassName(String acName)
+  {
+    activeClassName=acName;
+  }
+  /**
+   * Returns the name of the active class whose state is stored in this map.
+   * In order to support nested passivate and activate operations, the
+   * returned value is a list of colon separated class names.
+   * @return  the class name of the active class.
+   */
+  public String getActiveClassName()
+  {
+    return activeClassName;
+  }
+  /**
+   * Activates the specified object.
+   * @param obj  passive object to be activated.
+   * @return  active object.
+   * @throws Exception  the possible exceptions depend on the objects to be
+   *         activated. Exceptions include:
+   * @throws IllegalAccessException  if the class or its nullary constructor is
+   *         not accessible. 
+   * @throws InstantiationException  if this Class represents an abstract class,
+   *         an interface, an array class, a primitive type, or void; or if the
+   *         class has no nullary constructor; or if the instantiation fails for
+   *         some other reason.
+   * @throws ExceptionInInitializerError  if the initialization provoked by this
+   *         method fails. 
+   * @throws SecurityException  if there is no permission to create a new instance.
+   */
+  public static Object activate(Object obj) throws Exception
+  {
+    return activate(obj, null);
+  }
+  /**
+   * Activates the specified object.
+   * @param obj  passive object to be activated.
+   * @param ctx  the activation context.
+   * @return  active object.
+   * @throws Exception  the possible exceptions depend on the objects to be
+   *         activated. Exceptions include:
+   * @throws IllegalAccessException  if the class or its nullary constructor is
+   *         not accessible. 
+   * @throws InstantiationException  if this Class represents an abstract class,
+   *         an interface, an array class, a primitive type, or void; or if the
+   *         class has no nullary constructor; or if the instantiation fails for
+   *         some other reason.
+   * @throws ExceptionInInitializerError  if the initialization provoked by this
+   *         method fails. 
+   * @throws SecurityException  if there is no permission to create a new instance.
+   */
+  public static Object activate(Object obj, TypedMap ctx) throws Exception
+  {
+    if (obj==null)
+      return null;
+    if (obj instanceof TypedMap)
+    {
+      TypedMap passiveMap=(TypedMap)obj;
+      Object activeObj=null;
+      String acList=passiveMap.activeClassName;
+      
+      // FIXME: acName is directly used to instantiate the Java class. This is
+      // incorrect, because it is an external class name. For internal serializers,
+      // this name must also be translated from the external to the Java name
+      // via Metaclasses.
+      
+      String acName=null;
+      if (acList!=null)
+      {
+        // Split up the list of active class names
+        String acTail;
+        int i=acList.indexOf(':');
+        if (i>=0)
+        {
+          acName=acList.substring(0, i);
+          acTail=acList.substring(i+1);
+        }
+        else
+        {
+          acName=acList;
+          acTail=null;
+        }
+        // Try deserialization via Metaclass
+        Metaclass mc = Metaclass.forExtName(acName);
+        if (mc!=null)
+        {
+          LOG.fine("activating "+acName+" using metaclass");
+          activeObj = mc.newInstance();
+          // Try internal deserializer
+          if (activeObj instanceof IActivate)
+            ((IActivate)activeObj)._activate(passiveMap, ctx);
+          else
+            mc.activate(activeObj, passiveMap, ctx);
+          return activeObj;
+        }
+        // Create a new instance via reflection
+        if (activeObj==null)
+        {
+          try
+          {
+#ifndef CFG_CLDC
+	    if (ctx!=null)
+	    {
+	      ClassLoader ldr=(ClassLoader)ctx.getObject("classLoader", null);
+	      if (ldr!=null)
+                activeObj=Class.forName(acName, true, ldr).newInstance();
+	    }
+	    if (activeObj==null)
+#endif
+              activeObj=Class.forName(acName).newInstance();
+          }
+	  catch(InstantiationException e)
+	  {
+            // added by AHa for better error messages
+            throw new InstantiationException(passiveMap.activeClassName + " could not be activated. "+
+              "Does it have a public nullary constructor? "+
+              "If it is an inner class - is it static?");
+          }
+	  catch(ClassNotFoundException e)
+	  {
+	    if (ctx!=null && ctx.getBoolean("ignoreErrors", false))
+	      return null;
+	    else
+	      throw e;
+	  }
+	}
+	// If the new instance is a TypedContainer, set the tail of acList
+	try
+	{
+          if (acTail!=null)
+            ((TypedContainer)activeObj).setActiveClassName(acTail);
+        }
+        catch(ClassCastException e)
+        {
+          throw new ClassCastException("setting the active class name failed, because the "+
+              "created class is not instanceof TypedContainer");
+        }
+      }
+      else
+        activeObj=new TypedMap();
+
+      // Try internal deserializer
+      if (activeObj instanceof IActivate)
+      {
+        if (acName!=null)
+        {
+          LOG.fine("activating "+acName+" using IActivate");
+        }
+        ((IActivate)activeObj)._activate(passiveMap, ctx);
+        return activeObj;
+      }
+      LOG.warning("can't activate "+acName);
+      throw new IllegalArgumentException("Can't activate '"+acName+"'");
+    }
+    if (obj instanceof TypedArray)
+    {
+      TypedArray passiveArray=(TypedArray)obj;
+      String acList=passiveArray.getActiveClassName();
+      String className=null;
+      String acTail=null;
+      if (acList!=null)
+      {
+        // Split up the list of active class names
+        int i=acList.indexOf(':');
+        if (i>=0)
+        {
+          className=acList.substring(0, i);
+          acTail=acList.substring(i+1);
+        }
+        else
+        {
+          className=acList;
+          acTail=null;
+        }
+      }
+      
+      // Array
+      if (className!=null && className.charAt(0)=='[')
+      {
+        switch (className.charAt(1))
+        {
+          case 'B':
+          {
+            byte[] a=new byte[passiveArray.size()];
+            for (int i=0; i<a.length; i++)
+              a[i]=passiveArray.getByte(i);
+            return a;
+          }
+          case 'C':
+          {
+            char[] a=new char[passiveArray.size()];
+            for (int i=0; i<a.length; i++)
+              a[i]=passiveArray.getChar(i);
+            return a;
+          }
+#ifndef CFG_CLDC
+          case 'D':
+          {
+            double[] a=new double[passiveArray.size()];
+            for (int i=0; i<a.length; i++)
+              a[i]=passiveArray.getDouble(i);
+            return a;
+          }
+          case 'F':
+          {
+            float[] a=new float[passiveArray.size()];
+            for (int i=0; i<a.length; i++)
+              a[i]=passiveArray.getFloat(i);
+            return a;
+          }
+#endif
+          case 'I':
+          {
+            int[] a=new int[passiveArray.size()];
+            for (int i=0; i<a.length; i++)
+              a[i]=passiveArray.getInt(i);
+            return a;
+          }
+          case 'J':
+          {
+            long[] a=new long[passiveArray.size()];
+            for (int i=0; i<a.length; i++)
+              a[i]=passiveArray.getLong(i);
+            return a;
+          }
+          case 'S':
+          {
+            short[] a=new short[passiveArray.size()];
+            for (int i=0; i<a.length; i++)
+              a[i]=passiveArray.getShort(i);
+            return a;
+          }
+          case 'Z':
+          {
+            boolean[] a=new boolean[passiveArray.size()];
+            for (int i=0; i<a.length; i++)
+              a[i]=passiveArray.getBoolean(i);
+            return a;
+          }
+#ifndef CFG_CLDC
+          case 'L':
+          {
+            Object[] a=(Object[])java.lang.reflect.Array.newInstance(
+                Class.forName(className.substring(2, className.length()-1)),
+                passiveArray.size());
+            for (int i=0; i<a.length; i++)
+              a[i]=activate(passiveArray.get(i), ctx);
+            return a;
+          }
+          case '[':
+          {
+            Object[] a=(Object[])newArray(className, passiveArray.size());
+            for (int i=0; i<a.length; i++)
+              a[i]=activate(passiveArray.get(i), ctx);
+            return a;
+          }
+#endif
+          default:
+            throw new IllegalArgumentException("Can't activate '"+className+"'");
+        }
+      }
+
+      // List
+#ifdef CFG_CLDC
+      // On CLDC, only Vector, ArrayList, and TypedArray are supported
+      if (className!=null && className.equals("java.util.Vector"))
+      {
+        Vector v=new Vector();
+        for (Enumeration e=passiveArray.elements(); e.hasMoreElements();)
+          v.addElement(activate(e.nextElement(), ctx));
+        return v;
+      }
+      if (className!=null && className.equals("java.util.ArrayList"))
+      {
+        ArrayList v=new ArrayList();
+        for (Enumeration e=passiveArray.elements(); e.hasMoreElements();)
+          v.addElement(activate(e.nextElement(), ctx));
+        return v;
+      }
+      TypedArray a=new TypedArray();
+      for (Enumeration e=passiveArray.elements(); e.hasMoreElements();)
+        a.add(activate(e.nextElement(), ctx));
+      if (acTail!=null)
+        a.setActiveClassName(acTail);
+      return a;
+#else
+      if (className!=null)
+      {
+        List activeList=(List)Class.forName(className).newInstance();
+        for (Iterator iter=passiveArray.iterator(); iter.hasNext();)
+          activeList.add(activate(iter.next(), ctx));
+        if (acTail!=null)
+          ((TypedArray)activeList).setActiveClassName(acTail);
+        return activeList;
+      }
+      TypedArray activeList=new TypedArray();
+      for (Iterator iter=passiveArray.iterator(); iter.hasNext();)
+        activeList.add(activate(iter.next(), ctx));
+      if (acTail!=null)
+        activeList.setActiveClassName(acTail);
+      return activeList;
+#endif
+    }
+#ifdef CFG_CLDC
+    // CLDC does not have a Number class and Java serialization is not supported.
+    if (obj instanceof String ||
+        obj instanceof Boolean ||
+        obj instanceof Character ||
+        obj instanceof GUID ||
+        obj instanceof Blob ||
+        obj instanceof Byte ||
+        obj instanceof Short ||
+        obj instanceof Integer ||
+        obj instanceof Long ||
+        obj instanceof UnsignedByte ||
+        obj instanceof UnsignedShort ||
+        obj instanceof UnsignedInteger ||
+        obj instanceof UnsignedLong)
+    {
+      return obj;
+    }
+#else
+    if (obj instanceof String ||
+        obj instanceof Number ||
+        obj instanceof Boolean ||
+        obj instanceof Character ||
+        obj instanceof GUID ||
+        obj instanceof Blob)
+    {
+      return obj;
+    }
+
+    // Java deserialization
+    if (obj instanceof JavaXDR)
+    {
+      ByteArrayInputStream is=new ByteArrayInputStream(((JavaXDR)obj).getBuffer());
+      ObjectInputStream ois=new ObjectInputStream(is);
+      return ois.readObject();
+    }
+#endif
+
+    throw new IllegalArgumentException("Can't activate '"+obj.getClass().getName()+"'");
+  }
+
+  /**
+   * Passivates the specified object.
+   * @param obj  active object to be passivated.
+   * @return     passive object.
+   */
+  public static Object passivate(Object obj) throws Exception
+  {
+    // Null pointers remain unchanged
+    if (obj==null)
+      return null;
+
+    String className=obj.getClass().getName();
+
+    // Array
+    if (className.charAt(0)=='[')
+    {
+      // Nested array or array of objects
+      if (className.charAt(1)=='[' || className.charAt(1)=='L')
+      {
+        TypedArray array=new TypedArray(className);
+        Object[] a=(Object[])obj;
+        for (int i=0; i<a.length; i++)
+          array.add(passivate(a[i]));
+        return array;
+      }
+      // Array of a base type
+      TypedArray array=new TypedArray(className);
+      switch (className.charAt(1))
+      {
+        case 'B':
+        {
+          byte[] a=(byte[])obj;
+          for (int i=0; i<a.length; i++)
+            array.addByte(a[i]);
+          return array;
+        }
+        case 'C':
+        {
+          char[] a=(char[])obj;
+          for (int i=0; i<a.length; i++)
+            array.addChar(a[i]);
+          return array;
+        }
+#ifndef CFG_CLDC
+        case 'D':
+        {
+          double[] a=(double[])obj;
+          for (int i=0; i<a.length; i++)
+            array.addDouble(a[i]);
+          return array;
+        }
+        case 'F':
+        {
+          float[] a=(float[])obj;
+          for (int i=0; i<a.length; i++)
+            array.addFloat(a[i]);
+          return array;
+        }
+#endif
+        case 'I':
+        {
+          int[] a=(int[])obj;
+          for (int i=0; i<a.length; i++)
+            array.addInt(a[i]);
+          return array;
+        }
+        case 'J':
+        {
+          long[] a=(long[])obj;
+          for (int i=0; i<a.length; i++)
+            array.addLong(a[i]);
+          return array;
+        }
+        case 'S':
+        {
+          short[] a=(short[])obj;
+          for (int i=0; i<a.length; i++)
+            array.addShort(a[i]);
+          return array;
+        }
+        case 'Z':
+        {
+          boolean[] a=(boolean[])obj;
+          for (int i=0; i<a.length; i++)
+            array.addBoolean(a[i]);
+          return array;
+        }
+        default:
+          throw new IllegalArgumentException("Can't passivate '"+className+"'");
+      }
+    }
+
+    // If the object implements IActivate, then use the object's
+    // _passivate method
+    if (obj instanceof IActivate)
+    {
+      TypedMap passiveMap=new TypedMap();
+      passiveMap.setActiveClassName(((IActivate)obj)._getExternalTypeName());
+      ((IActivate)obj)._passivate(passiveMap);
+      return passiveMap;
+    }
+
+    if (obj instanceof TypedArray)
+    {
+      TypedArray passiveArray=new TypedArray();
+      String acName=((TypedArray)obj).getActiveClassName();
+      if (acName!=null)
+        passiveArray.setActiveClassName(className+":"+acName);
+      else
+        passiveArray.setActiveClassName(className);
+#ifdef CFG_CLDC
+      for (Enumeration e=((TypedArray)obj).elements(); e.hasMoreElements();)
+        passiveArray.add(passivate(e.nextElement()));
+#else
+      for (Iterator iter=((TypedArray)obj).iterator(); iter.hasNext();)
+        passiveArray.add(passivate(iter.next()));
+#endif
+      return passiveArray;
+    }    
+
+    // If the object implements the List interface, then passivate
+    // all contained objects and put them into a TypedArray
+    if (obj instanceof List)
+    {
+#ifdef CFG_CLDC
+      if ("org.mundo.rt.ArrayList".equals(className))
+        className = "java.util.ArrayList";
+#endif
+      TypedArray array = new TypedArray(className);
+      for (Iterator iter=((List)obj).iterator(); iter.hasNext();)
+        array.add(passivate(iter.next()));
+      return array;
+    }
+#ifdef CFG_CLDC
+    if (obj instanceof Vector)
+    {
+      TypedArray array=new TypedArray(className);
+      for (Enumeration e=((Vector)obj).elements(); e.hasMoreElements();)
+        array.add(passivate(e.nextElement()));
+      return array;
+    }
+#endif
+
+    // Base scalar types remain unchanged
+#ifdef CFG_CLDC
+    // CLDC does not have a Number class and Java serialization is not
+    // supported by CLDC
+    if (obj instanceof String ||
+        obj instanceof Boolean ||
+        obj instanceof Character ||
+        obj instanceof GUID ||
+        obj instanceof Blob ||
+        obj instanceof Byte ||
+        obj instanceof Short ||
+        obj instanceof Integer ||
+        obj instanceof Long ||
+        obj instanceof UnsignedByte ||
+        obj instanceof UnsignedShort ||
+        obj instanceof UnsignedInteger ||
+        obj instanceof UnsignedLong)
+      return obj;
+#else
+    if (obj instanceof String ||
+        obj instanceof Number ||
+        obj instanceof Boolean ||
+        obj instanceof Character ||
+        obj instanceof GUID ||
+        obj instanceof Blob ||
+        obj instanceof JavaXDR)
+      return obj;
+
+#ifdef CFG_JAVA15
+    // Try serialization via Metaclass
+    Metaclass mc=Metaclass.forClass(obj.getClass());
+    if (mc!=null)
+    {
+      TypedMap passiveMap=new TypedMap();
+      passiveMap.setActiveClassName(mc.getExternalTypeName());
+      mc.passivate(obj, passiveMap);
+      return passiveMap;
+    }
+#endif
+
+    // Try Java serialization
+    if (obj instanceof Serializable)
+    {
+      ByteArrayOutputStream os=new ByteArrayOutputStream();
+      ObjectOutputStream oos=new ObjectOutputStream(os);
+      oos.writeObject(obj);
+      oos.close();
+      return new JavaXDR(os.toByteArray());
+    }
+#endif
+
+    throw new IllegalArgumentException("Can't passivate '"+className+"'");
+  }
+
+#ifndef CFG_CLDC
+  /**
+   * Creates a new instance of the specified array class with length
+   * elements in the first dimension.
+   */
+  private static Object newArray(String className, int length) throws ClassNotFoundException
+  {
+    int d=0;
+    while (className.charAt(d)=='[')
+      d++;
+    int[] dims=new int[d];
+    dims[0]=length;
+    for (int i=1; i<d; i++)
+      dims[i]=0;
+    int l=className.length();
+    if (className.charAt(l-1)==';')
+      l--;
+    return java.lang.reflect.Array.newInstance(getClassByName(className.substring(d, l)), dims);
+  }
+
+  /**
+   * Returns the Class object for a given class name or basetype identifier.
+   */
+  private static Class getClassByName(String className) throws ClassNotFoundException
+  {
+    switch (className.charAt(0))
+    {
+      case 'B':
+        return Byte.TYPE;
+      case 'C':
+        return Character.TYPE;
+      case 'D':
+        return Double.TYPE;
+      case 'F':
+        return Float.TYPE;
+      case 'I':
+        return Integer.TYPE;
+      case 'J':
+        return Long.TYPE;
+      case 'S':
+        return Short.TYPE;
+      case 'Z':
+        return Boolean.TYPE;
+      case 'L':
+        return Class.forName(className.substring(1));
+      default:
+        throw new ClassNotFoundException(className);
+    }
+  }
+
+  /**
+   * Returns an integer identifier describing the specified passive type.
+   */
+  public static int getOrdinal(Class c)
+  {
+    Integer cw=(Integer)classOrdinals.get(c);
+    if (cw!=null)
+      return cw.intValue();
+    return 0;
+  }
+  
+  public static final int ORD_NULL     = 0;
+  public static final int ORD_BYTE     = 1;
+  public static final int ORD_UBYTE    = 2;
+  public static final int ORD_SHORT    = 3;
+  public static final int ORD_USHORT   = 4;
+  public static final int ORD_INTEGER  = 5;
+  public static final int ORD_UINTEGER = 6;
+  public static final int ORD_LONG     = 7;
+  public static final int ORD_ULONG    = 8;
+  public static final int ORD_FLOAT    = 9;
+  public static final int ORD_DOUBLE   = 10;
+  public static final int ORD_BOOLEAN  = 11;
+  public static final int ORD_CHAR     = 12;
+  public static final int ORD_STRING   = 13;
+  public static final int ORD_GUID     = 14;
+  public static final int ORD_ARRAY    = 15;
+  public static final int ORD_MAP      = 16;
+  public static final int ORD_JAVAXDR  = 17;
+  
+#ifdef CFG_JAVA15
+  private static HashMap<Class,Integer> classOrdinals=new HashMap<Class,Integer>();
+#else
+  private static HashMap classOrdinals=new HashMap();
+#endif
+  
+  static
+  {
+    classOrdinals.put(Byte.class, new Integer(ORD_BYTE));
+    classOrdinals.put(TypedContainer.UnsignedByte.class, new Integer(ORD_UBYTE));
+    classOrdinals.put(Short.class, new Integer(ORD_SHORT));
+    classOrdinals.put(TypedContainer.UnsignedShort.class, new Integer(ORD_USHORT));
+    classOrdinals.put(Integer.class, new Integer(ORD_INTEGER));
+    classOrdinals.put(TypedContainer.UnsignedInteger.class, new Integer(ORD_UINTEGER));
+    classOrdinals.put(Long.class, new Integer(ORD_LONG));
+    classOrdinals.put(TypedContainer.UnsignedLong.class, new Integer(ORD_ULONG));
+    classOrdinals.put(Float.class, new Integer(ORD_FLOAT));
+    classOrdinals.put(Double.class, new Integer(ORD_DOUBLE));
+    classOrdinals.put(Boolean.class, new Integer(ORD_BOOLEAN));
+    classOrdinals.put(Character.class, new Integer(ORD_CHAR));
+    classOrdinals.put(String.class, new Integer(ORD_STRING));
+    classOrdinals.put(GUID.class, new Integer(ORD_GUID));
+    classOrdinals.put(TypedArray.class, new Integer(ORD_ARRAY));
+    classOrdinals.put(TypedMap.class, new Integer(ORD_MAP));
+    classOrdinals.put(TypedContainer.JavaXDR.class, new Integer(ORD_JAVAXDR));
+  }
+#endif
+
+  /**
+   * The UnsignedByte class wraps a value of primitive type <code>unsigned byte</code> in an object.
+   * An object of type UnsignedByte contains a single field whose type is <code>short</code>.
+   *
+   * @author Erwin Aitenbichler
+   */
+#ifdef CFG_CLDC
+  public static class UnsignedByte extends Object
+#else
+  public static class UnsignedByte extends Number
+#endif  
+  {
+    /**
+     * Constructs a newly allocated UnsignedByte object that represents the specified value.
+     * @param v  the value to be represented.
+     */
+    public UnsignedByte(short v)
+    {
+      value=v;
+      if (value<0)
+        throw new NumberFormatException("value is negative");
+    }
+    /**
+     * Returns the value as a <code>byte</code>.
+     * @see java.lang.Number#byteValue()
+     */
+    public byte byteValue()
+    {
+      return (byte)value;
+    }
+    /**
+     * Returns the value as a <code>short</code>.
+     * @see java.lang.Number#shortValue()
+     */
+    public short shortValue()
+    {
+      return value;
+    }
+    /**
+     * Returns the value as an <code>int</code>.
+     * @see java.lang.Number#intValue()
+     */
+    public int intValue()
+    {
+      return value;
+    }
+    /**
+     * Returns the value as a <code>long</code>.
+     * @see java.lang.Number#longValue()
+     */
+    public long longValue()
+    {
+      return value;
+    }
+#ifndef CFG_CLDC
+    /**
+     * Returns the value as a <code>float</code>.
+     * @see java.lang.Number#floatValue()
+     */
+    public float floatValue()
+    {
+      return value;
+    }
+    /**
+     * Returns the value as a <code>double</code>.
+     * @see java.lang.Number#doubleValue()
+     */
+    public double doubleValue()
+    {
+      return value;
+    }
+#endif
+    /**
+     * Parses the string argument as a decimal unsigned byte. Returns an
+     * <code>UnsignedByte</code> object holding the value extracted from the
+     * specified <code>String</code>.
+     * 
+     * @param s  a <code>String</code> containing the unsigned byte representation
+     *   to be parsed.
+     * @return   an <code>UnsignedByte</code> object holding the value
+     *   represented by the string argument.
+     */
+    public static UnsignedByte valueOf(String s)
+    {
+      return new UnsignedByte(Short.parseShort(s));
+    }
+    public String toString()
+    {
+#ifdef CFG_CLDC
+      return Integer.toString(value);
+#else
+      return Short.toString(value);
+#endif
+    }
+    private short value;
+  }
+  
+  /**
+   * The UnsignedShort class wraps a value of primitive type <code>unsigned short</code> in an object.
+   * An object of type UnsignedShort contains a single field whose type is <code>int</code>.
+   *
+   * @author Erwin Aitenbichler
+   */
+#ifdef CFG_CLDC
+  public static class UnsignedShort extends Object
+#else
+  public static class UnsignedShort extends Number
+#endif  
+  {
+    /**
+     * Constructs a newly allocated UnsignedShort object that represents the specified value.
+     * @param v  the value to be represented.
+     */
+    public UnsignedShort(int v)
+    {
+      value=v;
+      if (value<0)
+        throw new NumberFormatException("value is negative");
+    }
+    /**
+     * Returns the value as a <code>byte</code>.
+     * @see java.lang.Number#byteValue()
+     */
+    public byte byteValue()
+    {
+      return (byte)value;
+    }
+    /**
+     * Returns the value as a <code>short</code>.
+     * @see java.lang.Number#shortValue()
+     */
+    public short shortValue()
+    {
+      return (short)value;
+    }
+    /**
+     * Returns the value as an <code>int</code>.
+     * @see java.lang.Number#intValue()
+     */
+    public int intValue()
+    {
+      return value;
+    }
+    /**
+     * Returns the value as a <code>long</code>.
+     * @see java.lang.Number#longValue()
+     */
+    public long longValue()
+    {
+      return value;
+    }
+#ifndef CFG_CLDC
+    /**
+     * Returns the value as a <code>float</code>.
+     * @see java.lang.Number#floatValue()
+     */
+    public float floatValue()
+    {
+      return value;
+    }
+    /**
+     * Returns the value as a <code>double</code>.
+     * @see java.lang.Number#doubleValue()
+     */
+    public double doubleValue()
+    {
+      return value;
+    }
+#endif
+    /**
+     * Parses the string argument as a decimal unsigned short. Returns an
+     * <code>UnsignedShort</code> object holding the value extracted from the
+     * specified <code>String</code>.
+     * 
+     * @param s  a <code>String</code> containing the unsigned short representation
+     *   to be parsed.
+     * @return   an <code>UnsignedShort</code> object holding the value
+     *   represented by the string argument.
+     */
+    public static UnsignedShort valueOf(String s)
+    {
+      return new UnsignedShort(Integer.parseInt(s));
+    }
+    public String toString()
+    {
+      return Integer.toString(value);
+    }
+    private int value;
+  }
+
+  /**
+   * The UnsignedInteger class wraps a value of primitive type <code>unsigned int</code> in an object.
+   * An object of type UnsignedInteger contains a single field whose type is <code>long</code>.
+   *
+   * @author Erwin Aitenbichler
+   */
+#ifdef CFG_CLDC
+  public static class UnsignedInteger extends Object
+#else
+  public static class UnsignedInteger extends Number
+#endif  
+  {
+    /**
+     * Constructs a newly allocated UnsignedInteger object that represents the specified value.
+     * @param v  the value to be represented.
+     */
+    public UnsignedInteger(long v)
+    {
+      value=v;
+      if (value<0)
+        throw new NumberFormatException("value is negative");
+    }
+    /**
+     * Returns the value as a <code>byte</code>.
+     * @see java.lang.Number#byteValue()
+     */
+    public byte byteValue()
+    {
+      return (byte)value;
+    }
+    /**
+     * Returns the value as a <code>short</code>.
+     * @see java.lang.Number#shortValue()
+     */
+    public short shortValue()
+    {
+      return (short)value;
+    }
+    /**
+     * Returns the value as an <code>int</code>.
+     * @see java.lang.Number#intValue()
+     */
+    public int intValue()
+    {
+      return (int)value;
+    }
+    /**
+     * Returns the value as a <code>long</code>.
+     * @see java.lang.Number#longValue()
+     */
+    public long longValue()
+    {
+      return value;
+    }
+#ifndef CFG_CLDC
+    /**
+     * Returns the value as a <code>float</code>.
+     * @see java.lang.Number#floatValue()
+     */
+    public float floatValue()
+    {
+      return value;
+    }
+    /**
+     * Returns the value as a <code>double</code>.
+     * @see java.lang.Number#doubleValue()
+     */
+    public double doubleValue()
+    {
+      return value;
+    }
+#endif
+    /**
+     * Parses the string argument as a decimal unsigned int. Returns an
+     * <code>UnsignedInteger</code> object holding the value extracted from the
+     * specified <code>String</code>.
+     * 
+     * @param s  a <code>String</code> containing the unsigned int representation
+     *   to be parsed.
+     * @return   an <code>UnsignedInteger</code> object holding the value
+     *   represented by the string argument.
+     */
+    public static UnsignedInteger valueOf(String s)
+    {
+      return new UnsignedInteger(Long.parseLong(s));
+    }
+    public String toString()
+    {
+      return Long.toString(value);
+    }
+    private long value;
+  }
+
+  /**
+   * The UnsignedLong class wraps a value of primitive type <code>unsigned long</code> in an object.
+   * An object of type UnsignedLong contains a single field whose type is <code>long</code>.
+   * This way, numbers >= 2^63 will not be handled correctly.
+   *
+   * @author Erwin Aitenbichler
+   */
+#ifdef CFG_CLDC
+  public static class UnsignedLong extends Object
+#else
+  public static class UnsignedLong extends Number
+#endif
+  {
+    /**
+     * Constructs a newly allocated UnsignedLong object that represents the specified value.
+     * @param v  the value to be represented.
+     */
+    public UnsignedLong(long v)
+    {
+      value=v;
+    }
+    /**
+     * Returns the value as a <code>byte</code>.
+     * @see java.lang.Number#byteValue()
+     */
+    public byte byteValue()
+    {
+      return (byte)value;
+    }
+    /**
+     * Returns the value as a <code>short</code>.
+     * @see java.lang.Number#shortValue()
+     */
+    public short shortValue()
+    {
+      return (short)value;
+    }
+    /**
+     * Returns the value as an <code>int</code>.
+     * @see java.lang.Number#intValue()
+     */
+    public int intValue()
+    {
+      return (int)value;
+    }
+    /**
+     * Returns the value as a <code>long</code>.
+     * @see java.lang.Number#longValue()
+     */
+    public long longValue()
+    {
+      return value;
+    }
+#ifndef CFG_CLDC
+    /**
+     * Returns the value as a <code>float</code>.
+     * @see java.lang.Number#floatValue()
+     */
+    public float floatValue()
+    {
+      return value;
+    }
+    /**
+     * Returns the value as a <code>double</code>.
+     * @see java.lang.Number#doubleValue()
+     */
+    public double doubleValue()
+    {
+      return value;
+    }
+#endif
+    /**
+     * Parses the string argument as a decimal unsigned long. Returns an
+     * <code>UnsignedLong</code> object holding the value extracted from the
+     * specified <code>String</code>.
+     * 
+     * @param s  a <code>String</code> containing the unsigned long representation
+     *   to be parsed.
+     * @return   an <code>UnsignedLong</code> object holding the value
+     *   represented by the string argument.
+     */
+    public static UnsignedLong valueOf(String s)
+    {
+      return new UnsignedLong(Long.parseLong(s));
+    }
+    public String toString()
+    {
+      return Long.toString(value);
+    }
+    private long value;
+  }
+
+#ifndef CFG_CLDC
+  /**
+   * The JavaXDR class wraps data in Java's external data representation that
+   * was generated by the standard serialization mechanism.
+   *
+   * @author Erwin Aitenbichler
+   */
+  public static class JavaXDR
+  {
+    /**
+     * Initializes a <code>JavaXDR</code> object from a byte array.
+     * @param b  a byte array.
+     */
+    public JavaXDR(byte[] b)
+    {
+      buffer=b;
+    }
+    /**
+     * Returns the byte array containing data in Java XDR.
+     * @return  a byte array containing data in Java XDR.
+     */
+    public byte[] getBuffer()
+    {
+      return buffer;
+    }
+    /**
+     * Returns a string representation of the <code>JavaXDR</code> object.
+     * The output is ASCII with all non-ASCII characters escaped. The
+     * string can be parsed back into a <code>JavaXDR</code> object with
+     * the <code>valueOf</code> method.
+     * @return  a string representation of this object.
+     */
+    public String toString()
+    {
+      StringBuffer sb=new StringBuffer();
+      int i, c;
+      for (i=0; i<buffer.length; i++)
+      {
+        c=buffer[i];
+        if (c=='<')
+          sb.append("&lt;");
+        else if (c=='&')
+          sb.append("&amp;");
+	else if (c=='\\')
+	  sb.append("\\\\");
+        else if (c>=32 && c<=127)
+          sb.append((char)c);
+        else
+        {
+          sb.append('\\');
+          sb.append(hexDigits[(c>>4)&0xf]);
+          sb.append(hexDigits[c&0xf]);
+        }
+      }
+      return sb.toString();
+    }
+    /**
+     * Parses the specified string into a <code>JavaXDR</code> object.
+     * @param s  a string generated by <code>JavaXDR.toString</code>.
+     * @return  the newly created <code>JavaXDR</code> object.
+     */
+    public static JavaXDR valueOf(String s) throws IOException
+    {
+      ByteArrayOutputStream os=new ByteArrayOutputStream();
+      char c;
+      int v;
+      for (int i=0; i<s.length(); i++)
+      {
+        c=s.charAt(i);
+        if (c=='\\')
+        {
+          c=s.charAt(++i);
+	  if (c=='\\')
+	    os.write('\\');
+	  else
+	  {
+            v=decodeHexDigit(c)<<4;
+            c=s.charAt(++i);
+            v|=decodeHexDigit(c);
+            os.write((byte)v);
+	  }
+        }
+        else
+          os.write((byte)c);
+      }
+      os.close();
+      return new JavaXDR(os.toByteArray());
+    }
+    private static int decodeHexDigit(char c) throws IOException
+    {
+      if (c>='0' && c<='9')
+        return c-'0';
+      if (c>='a' && c<='f')
+        return c-'a'+10;
+      if (c>='A' && c<='F')
+        return c-'A'+10;
+      throw new IOException("invalid character in hexadecimal number '"+c+"'");
+    }
+    private byte[] buffer;
+    private static final char[] hexDigits = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+  }
+#endif
+
+  public static void activateException(TypedMap map, TypedMap ctx, boolean optional, Exception x)
+  {
+    if (optional && x instanceof NoSuchElementException)
+      return;
+    log.exception(x);
+  }
+
+#ifdef CFG_CLDC
+  public static final Object NULL = new Object();
+#endif
+  protected String activeClassName = null;
+  private static Logger log = Logger.getLogger("act");
+}

@@ -1,0 +1,382 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+#ifdef CFG_JAVA15
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+#endif
+import org.mundo.agent.MobilityException;
+import org.mundo.rt.GUID;
+
+#ifdef CFG_CHECKED_BUILD
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+/**
+ * <p>A service is a not-too-small component of an application that performs some
+ * functionality by processing messages received from channels or by being
+ * invoked via remote method calls (RMC).</p>
+ *
+ * <p>Before an application is able to send or receive messages, it must perform
+ * the following steps:</p>
+ * <ul>
+ *   <li>Create a <code>Session</code> object. Usually an application-specific
+ *       class implementing a service is derived from <code>Service</code>.</li>
+ *   <li>Register the service by calling <code>Mundo.registerService</code>.
+ *       This method will assign a <code>Session</code> to the <code>Service</code>
+ *       and finally call the <code>init</code> method.</li>
+ *   <li>In the <code>init</code>-Method, the application-specific service
+ *       should perform all necessary initialization. It is now able to
+ *       use the <code>session</code> object to create <code>Publisher</code>
+ *       and <code>Subscriber</code> objects.
+ * </ul>
+ *
+ * @see Mundo
+ * @author Erwin Aitenbichler
+ */
+public class Service emits Service.IProp
+{
+  /**
+   * Creates a blank service object.
+   */
+  public Service()
+  {
+    session=null;
+  }
+  /**
+   * Sets the session for this service.
+   */
+  public void setSession(Session s)
+  {
+#ifdef CFG_CHECKED_BUILD
+    if (session != null)
+      throw new IllegalStateException("session can only be set once");
+#endif
+    session = s;
+  }
+  /**
+   * Returns the session object of this service.
+   * @return  the session object.
+   */
+  public Session getSession()
+  {
+    return session;
+  }
+  /**
+   * Returns the GUID of this service.
+   * @return  the GUID of this service.
+   */
+  public GUID getServiceId()
+  {
+    return guid;
+  }
+  /**
+   * Returns the friendly name of this service. If the service implementation
+   * does not set a friendly name and a <code>ServiceManager</code> is present,
+   * the <code>ServiceManager</code> will automatically assign names.
+   * @return  the friendly name of this service; or
+   *          <code>null</code> if no friendly name has been assigned.
+   */
+  public String getServiceInstanceName()
+  {
+    return instanceName;
+  }
+  /**
+   * Sets the friendly name of this service. If the service implementation
+   * does not set a friendly name and a <code>ServiceManager</code> is present,
+   * the <code>ServiceManager</code> will automatically assign names.
+   * @param name  the string to set as friendly name of the service.
+   */
+  public void setServiceInstanceName(String name)
+  {
+    instanceName=name;
+  }
+
+  /**
+   * Provide a hook for service developers to add their own serializable object
+   * structure into the ServiceInfo object. This enables refined queries with
+   * ServiceDiscovery and ServiceInfoFilters.
+   */
+  public Object getServiceInfoUserData() {
+    // FIXME: check if or why returning null here is a problem
+    // return null;
+    return new TypedMap();
+  }
+
+  /**
+   * Sets the GUID of this service.
+   * @param id  the GUID to set.
+   */
+  void setServiceId(GUID id)
+  {
+    guid=id;
+  }
+  /**
+   * Sets the zone where the service will be visible.
+   * @param z  the zone name to set.
+   */
+  public void setServiceZone(String z)
+  {
+    emit.propChanging(this);
+    zoneName=z;
+    emit.propChanged(this);
+  }
+  /**
+   * Returns the zone where this service will be visible.
+   * @return  the zone name.
+   */
+  public String getServiceZone()
+  {
+    if (zoneName == null)
+      return "rt";
+    return zoneName;
+  }
+  /**
+   * Initializes the service. Clients should override this method and create
+   * e.g. <code>Publisher</code> and <code>Subscriber</code> objects.
+   * <code>init</code> is called by <code>Mundo.registerService</code>
+   * after the service's session object has been initialized. This method
+   * must be called by means of <code>super.init</code> (at the beginning)
+   * of the overriding method.
+   */
+  public void init()
+  {
+//#ifdef CFG_JAVA15
+//    thread2service.put(Thread.currentThread(), this);
+//#endif
+  }
+  /**
+   * Shuts down the service. All subscriptions and advertisements are
+   * removed. If <code>shutdown</code> is overridden, this method must
+   * be called by means of <code>super.shutdown</code> (at the end) of the
+   * overriding method. In addition, a service's shutdown implementation
+   * must free all allocated system resources and terminate all custom
+   * threads.
+   */
+  public void shutdown()
+  {
+    session.shutdown();
+  }
+  /**
+   * Returns the state of this service.
+   * @return  one of <code>STATE_*</code>.
+   */
+  public int getState()
+  {
+    return state;
+  }
+  /**
+   * Sets the state of this service.
+   */
+  protected void setState(int s)
+  {
+    state=s;
+  }
+  /**
+   * Sets configuration options for this service. With regard to configuration,
+   * three different types of services can be distinguished:<ul>
+   * <li><b>No configuration:</b> Services that do not support custom
+   *     configuration options, throw an <code>UnsupportedOperationException</code>
+   *     on an attempt to call <code>setConfig</code>.</li>
+   * <li><b>Static configuration:</b> These services support one-time
+   *     configuration. <code>setConfig</code> must be called before
+   *     <code>init</code>/<code>registerService</code>. If <code>setConfig</code>
+   *     is called after initialization, an <code>IllegalStateException</code>
+   *     is thrown.</li>
+   * <li><b>Dynamic re-configuration:</b> These services permit changing
+   *     configuration options at any time.</li>
+   * </ul>
+   * @param cfg  a service specific object containing the configuration options.
+   * @throws UnsupportedOperationException  if the service does not support
+   *         setting configuration options. This is the default behaviour of
+   *         <code>Service.setConfig</code>.
+   * @throws IllegalStateException  if the service does not support re-configuration.
+   * @throws IllegalArgumentException  if the provided configuration object is not
+   *         of the expected class or the configuration data is invalid.
+   */
+  public void setServiceConfig(Object cfg)
+  {
+    throw new UnsupportedOperationException();
+  }
+  /**
+   * Returns the configuration options for this service.
+   * @return  the configuration options for this service; or <code>null</code>
+   *          if the operation is not supported.
+   */
+  public Object getServiceConfig()
+  {
+    return null;
+  }
+  /**
+   * Sets configuration options for this service.
+   * @param map  a map containing the configuration options.
+   * @throws UnsupportedOperationException  if the service does not support
+   *         setting configuration options. This is the default behaviour of
+   *         <code>Service.setConfig</code>.
+   * @throws IllegalStateException  if the service does not support re-configuration.
+   * @throws IllegalArgumentException  if the provided configuration object is not
+   *         of the expected class or the configuration data is invalid.
+   */
+  public final void setServiceConfigMap(TypedMap map)
+  {
+    Object obj;
+    try
+    {
+      obj=TypedContainer.activate(map);
+    }
+    catch(Exception x)
+    {
+#ifdef CFG_JAVA15
+      throw new IllegalArgumentException("can't activate configuration object", x);
+#else
+      throw new IllegalArgumentException("can't activate configuration object");
+#endif
+    }
+    setServiceConfig(obj);
+  }
+  /**
+   * Returns the configuration options for this service.
+   * @return  the configuration options for this service; or <code>null</code>
+   *          if the operation is not supported.
+   */
+  public final TypedMap getServiceConfigMap()
+  {
+    TypedMap map;
+    try
+    {
+      map=(TypedMap)TypedContainer.passivate(getServiceConfig());
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+      map=null;
+    }
+    return map;
+  }
+  /**
+   *
+   */
+  public void suspend(TypedMap map) throws Exception
+  {
+//    System.out.println("publishers: " + session.getPublishers());
+//    System.out.println("subscribers: " + session.getSubscribers());
+    session.shutdown();
+    session = null;
+    map.putString("className", getClass().getName());
+    map.putGUID("guid", guid);
+    map.putString("instanceName", instanceName);
+    map.putString("zoneName", zoneName);
+    map.put("object", TypedContainer.passivate(this));
+  }
+  /**
+   * 
+   */
+  public void resume(TypedMap map) throws Exception
+  {
+    if (this instanceof IActivate)
+    {
+      LOG.fine("resume: using IActivate on " + getClass().getName());
+      ((IActivate)this)._activate(map.getMap("object"), null);
+    }
+    else
+    {
+      Metaclass mc = Metaclass.forClass(getClass());
+      if (mc!=null)
+      {
+        LOG.fine("resume: using " + mc.getClass().getName());
+        mc.activate(this, map.getMap("object"), null);
+      }
+      else
+      {
+        LOG.fine("resume: no metaclass for " + getClass().getName());
+      }
+    }
+    
+    guid = map.getGUID("guid");
+    instanceName = map.getString("instanceName");
+    zoneName = map.getString("zoneName");
+
+    // export the object
+    DoObject._base_of(this);
+
+    TypedMap call = map.getMap("postResume", null);
+    if (call != null)
+    {
+      final Object target = this;
+      final String mtdName = call.getString("method");
+      new Thread() {
+        @Override
+        public void run() {
+          try {
+            target.getClass().getMethod(mtdName).invoke(target);
+          } catch(InvocationTargetException x) {
+            Throwable x2 = x.getCause();
+            if (x2 instanceof MobilityException) {
+              LOG.fine("ignoring MobilityException");
+            } else {
+              log.exception(x2);
+            }
+          } catch(Exception x) {
+            log.exception(x);
+          }
+        }
+      }.start();
+    }
+  }
+  /**
+   * Returns a string representation of this Session object.
+   */
+  public String toString()
+  {
+    return "name="+instanceName+",class="+getClass().getName();
+  }
+
+  /**
+   * Implement this interface to keep track of property changes.
+   */
+  public interface IProp
+  {
+    void propChanging(Service svc);
+    void propChanged(Service svc);
+  }
+
+  private GUID guid;
+  private String instanceName;
+  private String zoneName;
+  protected Session session;
+  protected int state;
+//#ifdef CFG_JAVA15
+//  private static HashMap<Thread,Service> thread2service = new HashMap<Thread,Service>();
+//#endif
+  private Logger log = Logger.getLogger("service");
+
+  public static final int STATE_UNINITIALIZED = 0;
+  public static final int STATE_INITIALIZING  = 1;
+  public static final int STATE_INITIALIZED   = 2;
+  public static final int STATE_SHUTDOWN      = 3;
+  public static final int STATE_DOWN          = 4;
+  public static final int STATE_ERROR         = -1;
+}

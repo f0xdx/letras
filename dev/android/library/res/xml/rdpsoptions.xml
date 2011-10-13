@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:key="rdp_service_preferences"
+  android:title="@string/rdp_pref_title"
+  android:summary="@string/rdp_pref_summary">
+  <ListPreference 
+  	android:key="@string/rdp_service_penmodel_preference"
+  	android:title="Pen Model"
+  	android:summary="Tap to choose from a list of models"
+  	android:dialogTitle="Choose a pen model"
+  	android:entries="@array/rdp_pen_models"
+  	android:entryValues="@array/rdp_pen_models"/>
+  	
+  <ListPreference
+  	android:key="@string/rdp_service_pap_zone_preference"
+  	android:title="Pen zone"
+  	android:summary="Tap to choose pen visibility"
+  	android:dialogTitle="Choose a zone"
+  	android:entries="@array/rdp_zones"
+  	android:entryValues="@array/rdp_zones"/>
+</PreferenceScreen>

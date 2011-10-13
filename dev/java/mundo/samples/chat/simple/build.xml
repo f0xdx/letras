@@ -1,0 +1,71 @@
+<project name="SimpleChat" default="runscript" basedir=".">
+  <property file="../../../config/build.properties"/>
+
+  <property name="main-class" value="SimpleChat"/>
+
+  <property name="src" location="src"/>
+  <property name="build" location="bin"/>
+  <property name="prep" location="prep"/>
+
+  <target name="init">
+    <mkdir dir="${prep}"/>
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="clean">
+    <delete dir="${prep}"/>
+    <delete dir="${build}"/>
+  </target>
+
+  <target name="config">
+    <java jar="${mcroot}/tools/configure.jar" fork="true"/>
+  </target>
+
+  <target name="preprocess" depends="init">
+    <apply executable="${mcc}" parallel="true">
+      <arg value="-O${prep}" />
+      <arg value="-x" />
+      <fileset dir="${src}">
+        <include name="*.java" />
+      </fileset>
+    </apply>
+    <copy file="${prep}/metaclasses.xml" todir="${build}" failonerror="false"/>
+  </target>
+
+  <target name="compile" depends="preprocess">
+    <javac srcdir="src" destdir="bin" source="1.5" target="1.5" includeantruntime="false">
+      <classpath>
+        <pathelement path="${mclib}/mundocore.jar"/>
+      </classpath>
+      <src path="src"/>
+      <src path="${prep}"/>
+    </javac>
+  </target>
+
+  <target name="runscript" depends="compile">
+    <echo file="run.sh" append="false">java -cp ${mclib}/mundocore.jar:bin ${main-class}</echo>
+    <chmod file="run.sh" perm="+x"/>
+    <echo file="run.bat" append="false">java -cp ${mclib}/mundocore.jar;bin ${main-class}</echo>
+  </target>
+
+  <target name="jar" depends="compile"
+          description="Pack all compiled files into a single jar">
+    <jar jarfile="mundo-chat.jar" compress="true">
+      <zipfileset dir="." prefix="META-INF">
+        <include name="node.conf.xml"/>
+      </zipfileset>
+      <fileset dir="bin">
+        <include name="**/*.class"/>
+      </fileset>
+      <zipfileset src="${mclib}/mundocore.jar"/>
+      <manifest>
+        <attribute name="Main-Class" value="${main-class}"/>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="common">
+          <attribute name="Implementation-Vendor" value="TU Darmstadt"/>
+          <attribute name="Implementation-Title" value="MundoCore ${main-class} Example"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+</project>

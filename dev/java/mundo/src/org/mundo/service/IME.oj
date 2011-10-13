@@ -1,0 +1,49 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.service;
+
+import org.mundo.annotation.*;
+
+/**
+ * Basic interface for the ME (Minimal Entity) of the Mundo architecture.
+ * Each ME creates its own zone for services, referred to as the
+ * MINE (My Individual Network Environment) zone. When an US gets associated,
+ * it registers its services with the MINE zone. This way, these services
+ * become accessible for the ME and all other services in the MINE.
+ *
+ * @see IUS
+ */
+@mcRemote
+public interface IME
+{
+  /**
+   * Returns the friendly name of the ME.
+   */
+  @mcMethod
+  public String getName();
+  /**
+   * Returns the name of the zone MINE.
+   */
+  @mcMethod
+  public String getZoneName();
+}

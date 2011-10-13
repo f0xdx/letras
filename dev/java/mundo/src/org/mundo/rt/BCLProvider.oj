@@ -1,0 +1,217 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+import java.util.Vector;
+#ifdef CFG_CLDC
+import java.util.Enumeration;
+#else
+import java.util.Iterator;
+#endif
+
+/**
+ * The Basic Communication Layer (BCL) is the most basic communication
+ * component. It is used by local services to communicate with each
+ * other within the local runtime environment. Typically, higher-level
+ * services and user programs do not interact with the BCL directly.
+ *
+ * @author Erwin Aitenbichler
+ */
+public class BCLProvider
+       implements IBCLProvider
+       emits IBCLProvider.ISignal
+{
+  BCLProvider()
+  {
+  }
+  Publisher publish(Channel c, String f)
+  {
+    Publisher p=new Publisher(c);
+    publishers.addElement(p);
+    emit.publisherAdded(p);
+    return p;
+  }
+  /**
+   */
+  void subscribe(Subscriber s)
+  {
+    Channel c = s.getChannel();
+#ifdef CFG_CHECKED_BUILD
+    if (c==null)
+      throw new IllegalArgumentException("subscribe: channel==null");
+#endif
+    if (c.getName().equals("*"))
+      globalSubscribers.addElement(s);
+    else
+      subscribers.addElement(s);
+    emit.subscriberAdded(s);
+  }  
+  void unsubscribe(Subscriber s)
+  {
+    // Subscriber cannot be removed from subscribers or globalSubscribers
+    // immediately, because parallel sends could be in progress.
+    s.disable();
+    emit.subscriberRemoved(s);
+  }
+  void unadvertise(Publisher p)
+  {
+    publishers.removeElement(p);
+    emit.publisherRemoved(p);
+  }
+
+  /**
+   * Sends a message to a channel. This is the main dispatch routine.
+   * @param c        the channel to send the message to.
+   * @param msg      the message to send.
+   * @param exclude  an optional <code>Session</code> to be excluded
+   *                 from the set of receivers.
+   */
+  public void send(Channel c, Message msg, Session exclude)
+  {
+    send(c, msg, exclude, null);
+  }
+  
+  void send(Channel c, Message msg, Session exclude, Publisher pub)
+  {
+    boolean dirty = false;
+    sendActiveCnt.add(1);
+    MessageContext ctx = new MessageContext();
+    ctx.publisher = pub;
+    int i;
+    for (i=0; i<subscribers.size(); i++)
+    {
+      Subscriber s = (Subscriber)subscribers.elementAt(i);
+      if (s.isEnabled())
+      {
+        Channel sc = s.getChannel();
+        if (sc.covers(c) && sc.getSession()!=exclude)
+        {
+          ctx.channel = c;
+          send(s, msg, ctx);
+          // Do not count subscriptions without a receiver (done by P2PTopicBroker)
+          if (s.getReceiver() != null)
+            ctx.dispatched++;
+        }
+      }
+      else
+        dirty = true;
+    }
+    for (i=0; i<globalSubscribers.size(); i++)
+    {
+      Subscriber s = (Subscriber)globalSubscribers.elementAt(i);
+      if (s.isEnabled() && s.getSession()!=exclude)
+      {
+        ctx.channel = c;
+        send(s, msg, ctx);
+      }
+    }
+    sendActiveCnt.add(-1);
+
+    if (dirty)
+    {
+      synchronized(sendActiveCnt)
+      {
+        // Only cleanup the subscriber table if no send is active.
+        // FIXME: We might have a starvation problem here if there are
+        //        permanent sends.
+        if (sendActiveCnt.get()==0)
+        {
+          int l = subscribers.size();
+          for (i=0; i<l; i++)
+          {
+            Subscriber s = (Subscriber)subscribers.elementAt(i);
+            if (!s.isEnabled())
+            {
+              subscribers.removeElementAt(i);
+              i--;
+              l--;
+            }
+          }
+          l = globalSubscribers.size();
+          for (i=0; i<l; i++)
+          {
+            Subscriber s = (Subscriber)globalSubscribers.elementAt(i);
+            if (!s.isEnabled())
+            {
+              globalSubscribers.removeElementAt(i);
+              i--;
+              l--;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * Dispatches a message to the specified subscriber.
+   * @param s    the subscriber to receive the message.
+   * @param msg  the message to dispatch.
+   * @param ctx  the message context which contains additional address
+   *             information.
+   */
+  public void send(Subscriber s, Message msg, MessageContext ctx)
+  {
+    s.getChannel().getSession().dispatch(s, msg, ctx);
+  }
+
+  /**
+   * Returns whether the specified publisher is relevant. A publisher is relevant
+   * iff there exists a subscriber that is covered by the advertisement described
+   * by the publisher. This method only tests local publishers and subscribers.
+   * @param pub  the publisher object.
+   * @return  <code>true</code> if the specified publisher is relevant; or
+   *          <code>false</code> otherwise.
+   */
+  public boolean isRelevant(Publisher pub)
+  {
+    boolean relevant=false;
+    Channel pubChannel=pub.getChannel();
+    sendActiveCnt.add(1);
+    MessageContext ctx=new MessageContext();
+    ctx.publisher=pub;
+    int i;
+    for (i=0; i<subscribers.size(); i++)
+    {
+      Subscriber s=(Subscriber)subscribers.elementAt(i);
+      if (s.isEnabled() && pubChannel.covers(s.getChannel()))
+      {
+        relevant=true;
+        break;
+      }
+    }
+    sendActiveCnt.add(-1);
+    return relevant;
+  }
+
+#ifdef CFG_JAVA15
+  private Vector<Subscriber> subscribers=new Vector<Subscriber>(); // must be synchronized
+  private Vector<Subscriber> globalSubscribers=new Vector<Subscriber>(); // must be synchronized
+  private Vector<Publisher> publishers=new Vector<Publisher>();
+#else
+  private Vector subscribers=new Vector(); // must be synchronized
+  private Vector globalSubscribers=new Vector(); // must be synchronized
+  private Vector publishers=new Vector();
+#endif
+  private IntegerMonitor sendActiveCnt = new IntegerMonitor(0);
+}

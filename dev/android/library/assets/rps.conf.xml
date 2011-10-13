@@ -1,0 +1,17 @@
+<config xsi:type="map">
+      <log-level>SEVERE</log-level>
+      <pap-zone>rt</pap-zone>
+      <rap-zone>rt</rap-zone>
+      <broker xsi:type="map">
+      	<classname>org.letras.ps.region.broker.simple.SimpleRegionBroker</classname>
+      	<config xsi:type="map">
+      		<rap-zone>rt</rap-zone>
+      			<notification-delay xsi:type="int">300</notification-delay>
+      		</config>
+      	</broker>
+      	<access xsi:type="map">
+      	<general>ALLOW:*</general>
+      		<zones xsi:type="map">
+      		</zones>
+      	</access>
+</config>

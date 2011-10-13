@@ -1,0 +1,130 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.filter;
+
+import org.mundo.annotation.*;
+
+/**
+ * <p><code>LongAttributeFilter</code> implements compare operations for
+ * <code>Long</code> attributes.</p>
+ * @author Erwin Aitenbichler
+ */
+@mcSerialize
+public class LongAttributeFilter extends AttributeFilter
+{
+  /**
+   * Creates an attribute filter suitable for <code>Long</code>.
+   * This constructor is solely for object deserialization.
+   */
+  public LongAttributeFilter()
+  {
+  }
+  /**
+   * Creates an attribute filter suitable for <code>Long</code>.
+   * @param op     the operator. Supported operators are <code>OP_EQUAL</code>,
+   *               <code>OP_NOT_EQUAL</code>, <code>OP_GREATER</code>,
+   *               <code>OP_LESS</code>, <code>OP_LESS_EQUAL</code>, and
+   *               <code>OP_GREATER_EQUAL</code>.
+   * @param value  the compare value.
+   * @throws IllegalArgumentException  if an invalid operator was specified.
+   */
+  public LongAttributeFilter(int op, long value)
+  {
+    int m=(op & MASK_OP);
+    if (m!=OP_IGNORE && m!=OP_EQUAL && m!=OP_GREATER && m!=OP_LESS)
+      throw new IllegalArgumentException("invalid operator");
+    this.op=op;
+    cv=value;
+  }
+  /**
+   * Tests if the specified attribute matches this attribute filter.
+   * @param o  the attribute to compare with.
+   * @return  <code>true</code> if the specified attribute matches this
+   *          attribute filter, <code>false</code> otherwise.
+   */
+  public boolean matches(Object o)
+  {
+    if (!(o instanceof Number))
+      return false;
+    long v=((Number)o).longValue();
+    boolean b;
+    switch (op & MASK_OP)
+    {
+      case OP_EQUAL:
+        b=(v==cv);
+        break;
+      case OP_GREATER:
+        b=(v>cv);
+        break;
+      case OP_LESS:
+        b=(v<cv);
+        break;
+      case OP_IGNORE:
+        b=true;
+        break;
+      default:
+        throw new IllegalArgumentException("invalid operator");
+    }
+    if ((op & OP_NOT)>0)
+      b=!b;
+    return b;
+  }
+
+  public boolean equals(Object o)
+  {
+    if (!(o instanceof LongAttributeFilter))
+      return false;
+    LongAttributeFilter f=(LongAttributeFilter)o;
+    return op==f.op && cv==f.cv;
+  }
+
+  public int hashCode()
+  {
+    return (op<<16)^(new Long(cv).hashCode());
+  }
+
+  /**
+   * Returns the comparison value.
+   */
+  public Object getValue()
+  {
+    return new Long(cv);
+  }
+  /**
+   * Returns the comparison value.
+   */
+  public long longValue()
+  {
+    return cv;
+  }
+  /**
+   * Returns a string representation of this filter.
+   */
+  public String toString()
+  {
+    return opToString()+cv;
+  }
+
+  @mcField(name="value")
+  private long cv;
+}

@@ -1,0 +1,355 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.net;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import org.mundo.net.routing.IRoutingService;
+import org.mundo.rt.GUID;
+import org.mundo.rt.IMessageHandler;
+import org.mundo.rt.Message;
+import org.mundo.rt.ProtocolStack;
+import org.mundo.rt.Service;
+import org.mundo.rt.TypedArray;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.Logger;
+import org.mundo.rt.Signal;
+import org.mundo.net.transport.TransportLink;
+import org.mundo.net.routing.IRoutingService;
+
+/**
+ * An experimental selective negative acknowledgment handler.
+ */
+public class NAckHandler extends Service
+       implements IMessageHandler, IRoutingService.IConn
+       emits IMessageHandler
+{
+  public NAckHandler()
+  {
+  }
+  @Override
+  public void init()
+  {
+    super.init();
+    ProtocolCoordinator.register(mimeType, this);
+    Signal.connect("rt", IRoutingService.IConn.class, this);
+    thread = new FlowThread();
+    thread.start();
+  }
+  @Override
+  public void shutdown()
+  {
+    thread.interrupt();
+    super.shutdown();
+  }
+  public void nodeAdded(GUID id) // IRoutingService.IConn
+  {
+  }
+  public void nodeRemoved(GUID id) // IRoutingService.IConn
+  {
+    // FIXME: possible synchronization problem with peers
+    log.fine("nodeRemoved: "+id.shortString());
+    peers.remove(id);
+  }
+  public synchronized boolean down(Message msg) // IMessageHandler
+  {
+//    msg = msg.copyFrame();
+    
+    // get or create peer info structure
+    TypedMap map = msg.getMap("ts", "param");
+    TransportLink link = (TransportLink)map.getObject("link");
+    PeerInfo pi = getOrCreate(link);
+
+    // add sequence number to message
+    map = new TypedMap();
+    map.putInt("seq", pi.sendSeq++);
+    map.putString("mimeType", msg.getType());
+    msg.put("nack", "passive", map);
+    log.finest("transmit: remoteId="+link.remoteId.shortString()+", seq="+(pi.sendSeq-1));
+
+    msg.setType(mimeType);
+    pi.sendQueue.add(msg);
+#ifdef CFG_CHECKED_BUILD
+    if (pi.sendQueue.size()+pi.sendHead != pi.sendSeq)
+      throw new IllegalStateException("internal error: send queue inconsistent");
+#endif
+    return emit.down(msg);
+  }
+  /**
+   *
+   */
+  public synchronized boolean up(Message msg) // IMessageHandler
+  {
+    TypedMap nackmap = msg.getMap("nack", "passive");
+    if (nackmap == null)
+    {
+      log.finest("no nack map in message");
+      return emit.up(msg);
+    }
+
+    // get or create peer info structure
+    TypedMap tsmap = msg.getMap("ts", "param");
+    if (tsmap == null)
+    {
+      log.warning("missing parameters ts:param from transport service");
+      return false;
+    }
+    TransportLink link = (TransportLink)tsmap.getObject("link");
+    PeerInfo pi = getOrCreate(link);
+        
+    String req = nackmap.getString("request", null);
+    if (req != null)
+    {
+      if ("NAck".equals(req))
+      {
+        int ack = nackmap.getInt("a");
+        TypedArray a = nackmap.getArray("n");
+        log.fine("received: ack="+ack+", nack="+a);
+        for (int i=0; i<a.size(); i++)
+        {
+          int seq = a.getInt(i);
+          Message qmsg = (Message)pi.sendQueue.get(seq-pi.sendHead);
+#ifdef CFG_CHECKED_BUILD
+          int seq2 = qmsg.getMap("nack", "passive").getInt("seq");
+          if (seq != seq2)
+            throw new IllegalStateException("internal error: send queue inconsistent: "+seq+"!="+seq2);
+#endif
+          log.finer("retransmit: seq="+seq); // +", sz="+qmsg.getBlob("rfb", "bin").size());
+          send(qmsg, pi);
+        }
+        while (pi.sendHead < ack+1)
+        {
+#ifdef CFG_CHECKED_BUILD
+          if (pi.sendQueue.isEmpty())
+            throw new IllegalStateException("internal error: send queue empty");
+#endif
+          pi.sendQueue.remove(0);
+          pi.sendHead++;
+        }
+      }
+      else
+        log.info("unknown request: "+req);
+      return true;
+    }
+
+    // check sequence number
+    int seq = nackmap.getInt("seq");
+    int tail = pi.rcvTail+1;
+    msg.setType(nackmap.getString("mimeType"));
+    
+    if (seq == tail)
+    {
+      pi.rcvTail = seq;
+/*
+      long t = System.currentTimeMillis();
+      if (lastNAckTime+1000 < t)
+        sendNAck(pi);
+*/      
+      if (pi.firstMissing < 1)
+      {
+        log.finest("sequence OK: seq="+seq);
+        return emit.up(msg);
+      }
+      log.finest("enqueue: seq="+seq);
+      pi.queue.add(msg);
+      return true;
+    }
+
+    if (seq > tail)
+    {
+      pi.rcvTail = seq;
+      log.fine("packet lost: got="+seq+", expected="+tail);
+      if (pi.firstMissing < 1)
+        pi.firstMissing = tail;
+      for (int i=pi.firstMissing+pi.queue.size(); i<seq; i++)
+        pi.queue.add(null);
+      pi.queue.add(msg);
+      sendNAck(pi);
+      return true;
+    }
+    
+    if (seq < pi.firstMissing || pi.firstMissing == 0)
+    {
+      log.fine("duplicate packet: seq="+seq+", firstMissing="+pi.firstMissing);
+      return true;
+    }
+    int i = seq-pi.firstMissing;
+    Message m = (Message)pi.queue.get(i);
+    if (m!=null)
+    {
+      log.fine("packet already in queue: seq="+seq);
+      return true;
+    }
+    pi.queue.set(i, msg);
+    while (pi.queue.size() > 0)
+    {
+      m = (Message)pi.queue.get(0);
+      if (m==null)
+        break;
+      emit.up(m);
+      pi.queue.remove(0);
+      pi.firstMissing++;
+    }
+    if (pi.queue.size() == 0)
+      pi.firstMissing = 0;
+    log.fine("rcvd missing packet: seq="+seq+", firstMissing="+pi.firstMissing);
+    return true;
+  }
+  private synchronized void sendNAck(PeerInfo pi)
+  {
+    int ack = pi.firstMissing>0 ? pi.firstMissing-1 : pi.rcvTail;
+
+    if (pi.firstMissing>0 && pi.queue.size()==0)
+      log.severe("inconsistent state");
+    
+    TypedArray a = new TypedArray();
+    for (int i=0; i<pi.queue.size(); i++)
+    {
+      if (pi.queue.get(i)==null)
+        a.addInt(pi.firstMissing+i);
+    }
+    log.fine("send: ack="+ack+", nack="+a);
+
+    Message msg = new Message();
+    msg.setType(mimeType);
+
+    TypedMap map = new TypedMap();
+    map.putString("request", "NAck");
+    map.put("n", a);
+    map.putInt("a", ack);
+    msg.put("nack", "passive", map);
+
+    send(msg, pi);
+    pi.lastNAckTime = System.currentTimeMillis();
+  }
+  private void send(Message msg, PeerInfo pi)
+  {
+    // FIXME: should not use the default stack here
+    msg.setStack(ProtocolCoordinator.getInstance().getDefaultStack(), NAckHandler.class);
+
+    // FIXME: can we use the same key for destRoute and route?
+    TypedMap ts = new TypedMap();
+    ts.put("link", pi.link);
+    msg.put("ts", "param", ts);
+
+    emit.down(msg);
+  }
+
+  private PeerInfo getOrCreate(TransportLink link)
+  {
+    log.finest("remoteId: "+link.remoteId.shortString());
+    PeerInfo pi = (PeerInfo)peers.get(link.remoteId);
+    if (pi!=null)
+    {
+      // always update transport link
+      pi.link = link;
+      return pi;
+    }
+    pi = new PeerInfo(link.remoteId);
+    pi.link = link;
+    peers.put(link.remoteId, pi);
+    return pi;
+  }
+
+  private class FlowThread extends Thread
+  {
+    FlowThread()
+    {
+    }
+    @Override
+    public void run()
+    {
+      // FIXME: possible synchronization problem with peers
+      try
+      {
+        for (;;)
+        {
+          try
+          {
+#ifdef CFG_JAVA15
+            for (PeerInfo pi : peers.values())
+            {
+#else
+            for (Iterator piIter = peers.values().iterator(); piIter.hasNext();)
+            {
+              PeerInfo pi = (PeerInfo)piIter.next();
+#endif
+              if (pi.firstMissing>0 || pi.rcvTail!=pi.lastRcvTail)
+              {
+                pi.lastRcvTail = pi.rcvTail;
+                if (pi.link!=null)
+                  sendNAck(pi);
+                else
+                  log.fine("link==null");
+              }
+            }
+          }
+          catch(Exception x)
+          {
+            log.exception(x);
+          }
+          Thread.sleep(1000);
+        }
+      }
+      catch(InterruptedException x)
+      {
+      }
+      log.fine("FlowThread terminated");
+    }
+  }
+  
+  private class PeerInfo
+  {
+    PeerInfo(GUID id)
+    {
+      remoteId = id;
+    }
+    GUID           remoteId;
+    TransportLink  link;
+    int            sendSeq = 1;
+    int            rcvTail = 0;
+    int            lastRcvTail = 0;
+    long           lastNAckTime = 0;
+    int            firstMissing = 0;
+    int            sendHead = 1;
+#ifdef CFG_JAVA15
+    ArrayList<Message> queue = new ArrayList<Message>();
+    ArrayList<Message> sendQueue = new ArrayList<Message>();
+#else
+    ArrayList queue = new ArrayList();
+    ArrayList sendQueue = new ArrayList();
+#endif
+  }
+
+  private static final String mimeType = "message/mc-nack";
+
+  private FlowThread thread;
+#ifdef CFG_JAVA15
+  private HashMap<GUID,PeerInfo> peers = new HashMap<GUID,PeerInfo>();
+#else
+  private HashMap peers = new HashMap();
+#endif
+  private Logger log = Logger.getLogger("nack");
+}

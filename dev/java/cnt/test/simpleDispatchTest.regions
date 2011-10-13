@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="simpleDispatchTest.regions">
+    <page>
+        <uri>main</uri>
+        <shape>
+            <rectangle height="948.75" width="665.5" top="8388625.25" left="1.859778265E8"/>
+        </shape>
+        <channel>main</channel>
+        <hungry>true</hungry>
+    </page>
+</regionDocument>

@@ -1,0 +1,243 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+import java.util.Enumeration;
+#ifndef CFG_CLDC
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.net.URL;
+#else
+import java.util.Hashtable;
+#endif
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
+#ifdef CFG_XML
+import org.mundo.xml.XMLDeserializer;
+#endif
+
+/**
+ * Abstract base class for the automatically generated MundoCore metaclasses.
+ */
+public abstract class Metaclass
+{
+  public abstract String getExternalTypeName();
+  public abstract Class getJavaClass();
+  public abstract Object newInstance() throws InstantiationException;
+  public void passivate(Object o, TypedMap m) throws Exception
+  {
+  }
+  public void activate(Object o, TypedMap m, TypedMap ctx) throws Exception
+  {
+  }
+  public String getFields()
+  {
+    return "";
+  }
+  public static Metaclass forClass(Class c)
+  {
+    return (Metaclass)class2meta.get(c);
+  }
+  public static Metaclass forExtName(String n)
+  {
+    return (Metaclass)ext2meta.get(n);
+  }
+#ifdef CFG_JAVA15
+  public static Collection<Metaclass> getAll()
+  {
+    return class2meta.values();
+  }
+#endif
+  public String toString()
+  {
+    return getClass().getName().toString()+" extName="+getExternalTypeName();
+  }
+  protected static void register(Metaclass mc)
+  {
+    log.fine("register "+mc);
+    class2meta.put(mc.getJavaClass(), mc);
+    ext2meta.put(mc.getExternalTypeName(), mc);
+  }
+#ifndef CFG_CLDC
+  protected static void register(Class cls)
+  {
+    try
+    {
+//      log.finest("cls="+cls.getName());
+      if (Metaclass.class.isAssignableFrom(cls))
+        register((Metaclass)cls.newInstance());
+    }
+    catch(Exception x)
+    {
+      log.exception(x);
+    }
+  }
+#endif
+#ifdef CFG_JAVA15
+  private static HashMap<Class,Metaclass> class2meta=new HashMap<Class,Metaclass>();
+  private static HashMap<String,Metaclass> ext2meta=new HashMap<String,Metaclass>();
+#else
+#ifndef CFG_CLDC
+  private static HashMap class2meta=new HashMap();
+  private static HashMap ext2meta=new HashMap();
+#else
+  private static Hashtable class2meta=new Hashtable();
+  private static Hashtable ext2meta=new Hashtable();
+#endif
+#endif
+  private static Logger log=new Logger("meta");
+#ifdef CFG_XML
+  private static final String LISTFILE="metaclasses.xml";
+  /**
+   * Processes the metaclasses listfile specified by the input stream.
+   * The metaclasses are loaded using the specified class loader.
+   * @param classLoader  the class loader to use.
+   * @param is  the input stream that provides the listfile.
+   */
+  public static void loadFrom(ClassLoader classLoader, InputStream is)
+  {
+    try
+    {
+      InputStreamReader isr=new InputStreamReader(is);
+      XMLDeserializer deser=new XMLDeserializer();
+      deser.setRootType("map");
+      TypedMap map=(TypedMap)deser.deserializeObject(isr);
+      map=map.getMap("map");
+#ifdef CFG_JAVA15
+      for (String className : map.keySet())
+      {
+#else
+      for (Iterator iter=map.keySet().iterator(); iter.hasNext();)
+      {
+        String className=(String)iter.next();
+#endif
+        try
+        {
+          if (classLoader!=null)
+            register(Class.forName(className, true, classLoader));
+          else
+            register(Class.forName(className));
+        }
+        catch(Exception x)
+        {
+          log.warning("can't load metaclass "+className);
+//          log.exception(x);
+        }
+      }
+    }
+    catch(Exception x)
+    {
+      log.severe("error processing listfile");
+      log.exception(x);
+    }
+  }
+  /**
+   * Loads a metaclasses list file provided by the specified classloader.
+   */
+  public static void loadFrom(ClassLoader classLoader)
+  {
+    InputStream is = classLoader.getResourceAsStream(LISTFILE);
+    if (is==null)
+      return;
+    loadFrom(classLoader, is);
+  }
+  /**
+   * Finds all metaclasses list files provided as resources by the specified
+   * class loader. All metaclasses specified in the list files are then loaded.
+   * This implementation builds on ClassLoader.getResource. Note that this
+   * function first searches parent class loaders and may omit files in child
+   * classloaders.
+   * @param classLoader  the class loader to use. May be set to <code>null</code>.
+   */
+  public static void loadAllFrom(ClassLoader classLoader)
+  {
+    try
+    {
+#ifdef CFG_ANDROID
+      try
+      {
+        InputStream in = Metaclass.class.getClassLoader().getResourceAsStream("assets/"+LISTFILE);
+        if (in != null)
+        {
+          log.fine("Android: processing assets/" + LISTFILE);
+          loadFrom(classLoader, in);
+        }
+        else
+          log.fine("Android: assets/" + LISTFILE + " not found.");
+      }
+      catch(Exception x)
+      {
+        log.warning("Android: failed reading assets/" + LISTFILE);
+        log.exception(x);
+      }
+#endif
+#ifdef CFG_JAVA15
+      Enumeration<URL> e;
+      if (classLoader!=null)
+        e=classLoader.getResources(LISTFILE);
+      else
+        e=ClassLoader.getSystemResources(LISTFILE);
+#else
+      Enumeration e;
+      if (classLoader!=null)
+        e=classLoader.getResources(LISTFILE);
+      else
+        e=ClassLoader.getSystemResources(LISTFILE);
+#endif
+      if (e==null || !e.hasMoreElements())
+      {
+        InputStream is;
+        if (classLoader!=null)
+          is=classLoader.getResourceAsStream(LISTFILE);
+        else
+          is=ClassLoader.getSystemResourceAsStream(LISTFILE);
+        if (is!=null)
+        {
+          log.fine("processing "+LISTFILE);
+          loadFrom(classLoader, is);
+        }
+        return;
+      }
+      log.fine("enumeration of resources succeeded");
+      while (e.hasMoreElements())
+      {
+        URL url=(URL)e.nextElement();
+        log.fine("processing "+url);
+        loadFrom(classLoader, url.openStream());
+      }
+    }
+    catch(Exception x)
+    {
+      log.severe("ClassLoader failed enumerating resources - serialization may not work");
+      log.exception(x);
+    }
+  }
+  static
+  {
+    log.fine("initializing metaclasses");
+    loadAllFrom(null);
+  }
+#endif
+}

@@ -1,0 +1,196 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.reflect;
+
+import java.io.FileReader;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StreamTokenizer;
+import java.util.HashMap;
+
+/**
+ * A parser for CORBA IDL.
+ */
+public class CIDLParser
+{
+  public CIDLParser()
+  {
+  }
+  /**
+   * Returns the package object. This method can be used to obtain the incomplete
+   * package object if parsing failed.
+   */
+  public MPackage getPackage()
+  {
+    return pkg;
+  }
+  /**
+   * Parses the specified file.
+   */
+  public MPackage parseFile(String fn) throws IOException
+  {
+    st=new StreamTokenizer(new BufferedReader(new FileReader(fn)));
+    st.nextToken();
+    parseModule();
+/*
+    while (st.ttype!=st.TT_EOF)
+    {
+      System.out.print(st.ttype+", ");
+      st.nextToken();
+    }
+    System.out.println();
+*/
+    return pkg;
+  }
+  private boolean parseModule() throws IOException
+  {
+    if (!(st.ttype==st.TT_WORD && "module".equals(st.sval)))
+      return false;
+    st.nextToken();
+    if (st.ttype!=st.TT_WORD)
+      throw new IOException("while parsing module: name expected");
+    pkg=new MPackage(st.sval);
+    st.nextToken();
+    if (st.ttype!='{')
+      throw new IOException("while parsing module: '{' expected");
+    st.nextToken();
+    while (st.ttype!=st.TT_EOF && st.ttype!='}')
+    {
+      if (!parseInterface())
+        throw new IOException("while parsing module: interface expected");
+      st.nextToken();
+    }
+    if (st.ttype=='}')
+      st.nextToken();
+    return true;
+  }
+  private boolean parseInterface() throws IOException
+  {
+    if (!(st.ttype==st.TT_WORD && "interface".equals(st.sval)))
+      return false;
+    st.nextToken();
+    if (st.ttype!=st.TT_WORD)
+      throw new IOException("while parsing interface: name expected");
+    MInterface ifc=new MInterface(st.sval);
+    pkg.addInterface(ifc);
+    st.nextToken();
+    if (st.ttype!='{')
+      throw new IOException("while parsing interface: '{' expected");
+    st.nextToken();
+    int i=0;
+    while (st.ttype!=st.TT_EOF && st.ttype!='}')
+    {
+      if (!parseMethod(ifc, i++))
+        throw new IOException("while parsing interface: method expected");
+      if (st.ttype==';')
+        st.nextToken();
+    }
+    if (st.ttype=='}')
+      st.nextToken();
+    return true;
+  }
+  private boolean parseMethod(MInterface ifc, int ord) throws IOException
+  {
+    MType t=parseType();
+    if (t==null)
+      throw new IOException("while parsing method: return type expected");
+    if (st.ttype!=st.TT_WORD)
+      throw new IOException("while parsing method: name expected");
+    MMethod mtd=new MMethod(st.sval);
+    st.nextToken();
+    mtd.setReturnType(t);
+    mtd.getAttributes().putInt("corbaOrdinal", ord);
+    ifc.addMethod(mtd);
+    if (st.ttype!='(')
+      throw new IOException("while parsing method: '(' expected");
+    st.nextToken();
+    while (st.ttype!=st.TT_EOF && st.ttype!=')')
+    {
+      if (!parseParam(mtd))
+        throw new IOException("while parsing method: parameter expected");
+      if (st.ttype==',')
+        st.nextToken();
+    }
+    if (st.ttype==')')
+      st.nextToken();
+    return true;
+  }
+  private MType parseType() throws IOException
+  {
+    if (st.ttype!=st.TT_WORD)
+      return null;
+    MType t = (MType)typeHash.get(st.sval);
+    if (t==null)
+      t=new MType();
+    t.setLang("CORBA");
+    t.setName(st.sval);
+    st.nextToken();
+    return t;
+  }
+  private boolean parseParam(MMethod mtd) throws IOException
+  {
+    if (st.ttype!=st.TT_WORD)
+      return false;
+    MParam.Direction dir;
+    if ("in".equals(st.sval))
+      dir=MParam.Direction.in;
+    else if ("out".equals(st.sval))
+      dir=MParam.Direction.out;
+    else if ("inout".equals(st.sval))
+      dir=MParam.Direction.inout;
+    else
+      throw new IOException("while parsing parameter: direction 'in', 'out', or 'inout' expected");
+    st.nextToken();
+    
+    MType t=parseType();
+    if (t==null)
+      throw new IOException("while parsing parameter: type expected");
+    
+    if (st.ttype!=st.TT_WORD)
+      throw new IOException("while parsing parameter: name expected");
+    mtd.addParam(new MParam(st.sval, t, dir));
+    st.nextToken();
+    return true;
+  }
+
+  private MPackage pkg;
+  private StreamTokenizer st;
+#ifdef CFG_JAVA15
+  private static HashMap<String,MType> typeHash = new HashMap<String,MType>();
+#else
+  private static HashMap typeHash = new HashMap();
+#endif
+  static
+  {
+    typeHash.put("void",     new MBaseType(Void.TYPE));
+    typeHash.put("octet",    new MBaseType(Byte.TYPE));
+    typeHash.put("short",    new MBaseType(Short.TYPE));
+    typeHash.put("long",     new MBaseType(Integer.TYPE));
+    typeHash.put("longlong", new MBaseType(Long.TYPE));
+    typeHash.put("float",    new MBaseType(Float.TYPE));
+    typeHash.put("double",   new MBaseType(Double.TYPE));
+    typeHash.put("char",     new MBaseType(Character.TYPE));
+    typeHash.put("boolean",  new MBaseType(Boolean.TYPE));
+    typeHash.put("string",   new MClassType(String.class));
+  }
+}

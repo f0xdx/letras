@@ -1,0 +1,91 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.net.transport.ip;
+
+import java.net.SocketException;
+import java.net.DatagramSocket;
+
+#ifdef CFG_CHECKED_BUILD
+import org.mundo.rt.Logger;
+#define LOG log
+#else
+#define LOG //
+#endif
+
+/**
+ * Native socket API extensions.
+ */
+public class NetExt
+{
+  /**
+   * Enable/disable the SO_REUSEPORT, or alternatively, the SO_REUSEADDR socket option.
+   * For UDP sockets it may be necessary to bind more than one socket to the same socket
+   * address and port. This is typically for the purpose of receiving broadcast packets.
+   * This option must be enabled prior to binding the socket.
+   * @param sock  the socket.
+   * @param reuse  whether to enable or disable this option.
+   * @throws SocketException  if an error occurs enabling or disabling the SO_REUSEPORT
+   *         socket option, or the socket is closed.
+   */
+  public static void setReusePort(DatagramSocket sock, boolean reuse) throws SocketException
+  {
+    boolean success = false;
+#ifndef CFG_J2ME
+    if ("Mac OS X".equals(System.getProperty("os.name")))
+    {
+      try
+      {
+        if (impl==null)
+          impl = new NetExtImpl();
+        impl.setReusePort(sock, reuse);
+        LOG.finest("setReusePort succeeded");
+        success = true;
+      }
+      catch(java.lang.UnsatisfiedLinkError e)
+      {
+        LOG.warning("Native MundoCore extension library could not be loaded!");
+        LOG.warning(e.toString());
+      }
+      catch(java.lang.NoClassDefFoundError e)
+      {
+        LOG.warning("Native MundoCore extension library could not be loaded!");
+        LOG.warning(e.toString());
+      }
+      catch(Exception x)
+      {
+        LOG.exception(x);
+      }
+    }
+    if (!success)
+    {
+      sock.setReuseAddress(reuse);
+      LOG.finest("setReuseAddress succeeded");
+    }
+#endif
+  }
+  
+  public static NetExtImpl impl;
+#ifdef CFG_CHECKED_BUILD
+  private static Logger log = Logger.getLogger("netext");
+#endif
+}

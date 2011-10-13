@@ -1,0 +1,89 @@
+<project name="scale-kern" default="jar" basedir=".">
+  <!-- allow the user to override setting in an own properties file. -->
+  <!-- use the sameproperties files as for the main project. -->
+  <property file="../../config/build.properties"/>
+
+  <property name="src" value="src" />
+  <property name="prep" value="prep" />
+  <property name="build" value="bin" />
+
+  <property name="optimize" value="on" />
+
+  <property name="mcc" value="../../bin/mcc" />
+  <property name="mc-jar" location="../../lib/mundocore.jar"/>
+
+  <property name="version.major" value="0" />
+  <property name="version.minor" value="2" />
+
+  <path id="project.classpath">
+    <pathelement path="../../lib/mundocore.jar"/>
+  </path>
+	
+  <target name="init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${prep}" />
+  </target>
+
+  <target name="preprocess" depends="init">
+    <apply executable="${mcc}" parallel="true">
+      <arg value="-I${mcinterfaces}" />
+      <arg value="-O${prep}" />
+      <arg value="-x" />
+      <arg value="-Wwsdl" />
+      <fileset dir="${src}">
+        <include name="**/*.java" />
+      </fileset>
+    </apply>
+    <copy file="prep/metaclasses.xml" todir="${build}"/>
+  </target>
+
+  <target name="clean"
+          description="Remove all compiled and preprocessed files">
+    <delete dir="${build}" />
+    <delete dir="${prep}" />
+  </target>
+
+  <target name="compile" depends="preprocess"
+          description="Compile the JAVA sources">
+    <echo message="compiling with debug=${debug} and optimize=${optimize}" />
+    <javac destdir="${build}"
+           optimize="${optimize}" debug="on" debuglevel="lines,vars,source" deprecation="on"
+           encoding="iso-8859-1">
+      <classpath refid="project.classpath" />
+      <src path="${src}" />
+      <src path="${prep}" />
+      <include name="**/*.java" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar jarfile="scale-kern.jar">
+      <fileset dir=".">
+        <include name="META-INF/*"/>
+      </fileset>
+      <fileset dir="${build}">
+        <include name="**"/>
+      </fileset>
+    </jar>
+  </target>
+
+  <target name="appjar" depends="compile">
+    <jar jarfile="scale-kern-app.jar">
+      <fileset dir=".">
+        <include name="META-INF/*"/>
+      </fileset>
+      <fileset dir="${build}">
+        <include name="**"/>
+      </fileset>
+      <zipfileset src="${mc-jar}"/>
+      <manifest>
+        <attribute name="Main-Class" value="org.mundo.util.DefaultApplication"/>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="common">
+          <attribute name="Implementation-Vendor" value="TU Darmstadt"/>
+          <attribute name="Implementation-Title" value="Mundo WorldModelStore"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+</project>

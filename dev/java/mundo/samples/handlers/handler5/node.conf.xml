@@ -1,0 +1,34 @@
+<NodeConfig xsi:type="map" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+  <config-type>overlay</config-type>
+  <ServiceManager xsi:type="map" activeClass="org.mundo.service.ServiceManager$OptServiceManager">
+    <instances xsi:type="array">
+      <new-instance xsi:type="map">
+        <name>ProtocolCoordinator</name>
+        <classname>org.mundo.net.ProtocolCoordinator</classname>
+        <config xsi:type="map" activeClass="ProtocolCoordinator$Options">
+	  <default-stack>mystack1</default-stack>
+	  <stacks xsi:type="map">
+            <mystack1 xsi:type="array">
+              <handler>org.mundo.net.ActivationService</handler>
+              <handler>org.mundo.net.broker.P2PTopicBroker</handler>
+              <handler>org.mundo.net.routing.RoutingService</handler>
+              <handler>org.mundo.net.BinSerializationHandler</handler>
+              <handler>org.mundo.net.BinCollectHandler</handler>
+              <handler>SampleHandler5</handler>
+              <handler>org.mundo.net.BinCollectHandler</handler>
+              <handler>org.mundo.net.transport.ip.IPTransportService</handler>
+	    </mystack1>
+          </stacks>
+        </config>
+      </new-instance>
+    </instances>
+  </ServiceManager>
+
+  <Logger xsi:type="map">
+    <console xsi:type="boolean">true</console>
+    <default-log-level>INFO</default-log-level>
+    <log-levels xsi:type="array">
+      <a xsi:type="map"><category>sample</category><log-level>FINEST</log-level></a>
+    </log-levels>
+  </Logger>
+</NodeConfig>

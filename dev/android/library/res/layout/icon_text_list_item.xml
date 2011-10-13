@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/list_item"
+	android:orientation="horizontal"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="7sp"
+    android:paddingBottom="7sp"
+    >
+
+    <ImageView android:id="@+id/list_icon"
+        android:layout_width="48dip"
+        android:layout_height="48dip" />
+   
+ <LinearLayout 
+	android:orientation="vertical"
+	android:layout_width="wrap_content"
+	android:layout_height="wrap_content"
+	android:layout_gravity="center_vertical"
+	android:layout_weight="1.0"
+	>
+	
+    <TextView android:id="@+id/list_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+		android:text="@string/rdps_service_name"
+		android:textAppearance="@android:style/TextAppearance.Large" 
+		/>
+	<TextView android:id="@+id/list_configure_text"
+       android:layout_width="wrap_content"
+       android:layout_height="wrap_content" 
+       android:text="Config"
+       android:visibility="gone" 
+	/>
+	</LinearLayout>
+	<CheckBox android:id="@+id/list_checkbox" 
+			  android:layout_width="wrap_content" 
+			  android:layout_height="wrap_content" />	
+</LinearLayout>

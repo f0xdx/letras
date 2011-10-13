@@ -1,0 +1,100 @@
+<NodeConfig xsi:type="map" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+  <ServiceManager xsi:type="map" activeClass="org.mundo.service.ServiceManager$OptServiceManager">
+    <instances xsi:type="array">
+
+      <new-instance xsi:type="map">
+        <name>ProtocolCoordinator</name>
+        <classname>org.mundo.net.ProtocolCoordinator</classname>
+        <config xsi:type="map" activeClass="ProtocolCoordinator$Options">
+          <default-stack xsi:type="array">
+            <handler>org.mundo.net.ActivationService</handler>
+            <handler>org.mundo.net.broker.P2PTopicBroker</handler>
+            <handler>org.mundo.net.routing.RoutingService</handler>
+            <if xsi:type="map">
+              <condition>org.mundo.net.transport.ip.IfUDP</condition>
+              <then xsi:type="array">
+                <handler>org.mundo.net.NAckHandler</handler>
+                <handler>org.mundo.net.BinSerializationHandler</handler>
+                <handler>org.mundo.net.BinFragHandler</handler>
+              </then>
+              <else xsi:type="array">
+                <handler>org.mundo.net.BinSerializationHandler</handler>
+              </else>
+            </if>
+            <handler>org.mundo.net.transport.ip.IPTransportService</handler>
+          </default-stack>
+        </config>
+      </new-instance>
+
+      <new-instance xsi:type="map">
+        <name>BinSerializationHandler</name>
+        <classname>org.mundo.net.BinSerializationHandler</classname>
+      </new-instance>
+
+      <new-instance xsi:type="map">
+        <name>Routing</name>
+        <classname>org.mundo.net.routing.RoutingService</classname>
+      </new-instance>
+      
+      <new-instance xsi:type="map">
+        <name>Activation</name>
+        <classname>org.mundo.net.ActivationService</classname>
+      </new-instance>
+      
+      <new-instance xsi:type="map">
+        <name>P2PTopicBroker</name>
+        <classname>org.mundo.net.broker.P2PTopicBroker</classname>
+      </new-instance>
+      
+      <new-instance xsi:type="map">
+        <name>ContentBroker</name>
+        <classname>org.mundo.net.broker.ContentBroker</classname>
+      </new-instance>
+
+      <new-instance xsi:type="map">
+        <name>IPTransport</name>
+        <classname>org.mundo.net.transport.ip.IPTransportService</classname>
+        <config xsi:type="map" activeClass="IPTransportService$Options">
+          <discovery xsi:type="map" activeClass="IPTransportService$OptDiscovery">
+            <primaryPort xsi:type="xsd:int">4242</primaryPort>
+            <answer-broadcasts xsi:type="xsd:boolean">false</answer-broadcasts>
+            <connect-primary xsi:type="xsd:boolean">true</connect-primary>
+            <localhost-udp xsi:type="xsd:boolean">false</localhost-udp>
+            <!-- broadcasts xsi:type="xsd:array">
+              <default xsi:type="map" activeClass="IPTransportService$OptBroadcast">
+                <netmask>255.255.255.0</netmask>
+              </default>
+            </broadcasts -->
+            <!-- multicast xsi:type="map" activeClass="IPTransportService$OptMulticast">
+              <group>224.42.142.242</group>
+              <ttl xsi:type="xsd:int">255</ttl>
+            </multicast -->
+          </discovery>
+          <tcp-server xsi:type="xsd:boolean">true</tcp-server>
+          <udp-server xsi:type="xsd:boolean">false</udp-server>
+        </config>
+      </new-instance>
+
+      <new-instance xsi:type="map">
+        <name>RMC</name>
+        <classname>org.mundo.net.RMCService</classname>
+      </new-instance>
+
+      <new-instance xsi:type="map">
+        <name>Debug</name>
+        <classname>org.mundo.service.DebugService</classname>
+      </new-instance>
+
+    </instances>
+    <!-- plugin-directory>com</plugin-directory -->
+  </ServiceManager>
+
+  <Logger xsi:type="map">
+    <!-- filename>log.txt</filename -->
+    <console xsi:type="boolean">true</console>
+    <default-log-level>SEVERE</default-log-level>
+    <log-levels xsi:type="array">
+      <a xsi:type="map"><category>svcman</category><log-level>INFO</log-level></a>
+    </log-levels>
+  </Logger>
+</NodeConfig>

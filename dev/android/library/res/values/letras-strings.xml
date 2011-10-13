@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item type="id" name="letras_service_id"/>
+    <string name="letras_node_running">Mundo is running</string>
+    <string name="letras_service_name">Letras</string>
+    <string name="app_name">Letras</string>
+    <string name="service_controller_name">Letras Service Controller</string>
+    <string name="start_service_command">Start</string>
+    <string name="stop_service_command">Stop</string>
+    <string name="available_services">Available Services</string>
+    <string name="tap_to_configure">Tap to configure service</string>
+    <string name="pen_model_dialog_title">Pick a pen model</string>
+    <color name="service_entry_background">#CCC</color>
+    <color name="service_entry_color">#000</color>
+    <color name="service_header_background">#555</color>
+    <color name="service_header_color">#DDD</color>
+</resources>

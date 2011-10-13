@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="segmentation1.regions">
+    <page>
+        <uri>page</uri>
+        <shape>
+            <rectangle height="278.75" width="309.75" top="7201.25" left="1.83991859375E8"/>
+        </shape>
+        <channel>page</channel>
+        <hungry>true</hungry>
+    </page>
+    <region>
+        <uri>child</uri>
+        <shape>
+            <rectangle height="127.625" width="126.625" top="7253.25" left="1.83991931125E8"/>
+        </shape>
+        <channel>child</channel>
+        <hungry>false</hungry>
+    </region>
+</regionDocument>

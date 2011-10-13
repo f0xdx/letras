@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="test3.regions">
+    <page>
+        <uri>test3_main</uri>
+        <shape>
+            <rectangle height="313.875" width="314.5" top="7499.625" left="1.83993189375E8"/>
+        </shape>
+        <channel>test3_main</channel>
+        <hungry>false</hungry>
+    </page>
+    <region>
+        <uri>test3_sub1</uri>
+        <shape>
+            <rectangle height="164.625" width="157.625" top="7564.5" left="1.83993256375E8"/>
+        </shape>
+        <channel>test3_sub1</channel>
+        <hungry>false</hungry>
+    </region>
+</regionDocument>

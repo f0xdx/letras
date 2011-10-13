@@ -1,0 +1,618 @@
+<?xml version="1.0"?>
+<project name="letras" default="all" basedir=".">
+
+    <!-- Metadata -->
+
+    <property file="build.properties"/>
+    <property name="vendor" value="TU Darmstadt" />
+    <property name="built-by" value="Telecooperation Labs" />
+    <property name="license" value="Mozilla Public License Version 1.1" />
+    
+    <!-- directory settings -->
+    
+    <property name="src" value="${basedir}/src" />
+    <property name="bin" value="${basedir}/bin" />
+    <property name="gen" value="${basedir}/gen" />
+    <property name="lib" value="${basedir}/lib" />
+    <property name="cnt" value="${basedir}/cnt" />
+    <property name="doc" value="${basedir}/doc" />
+    <property name="tst" value="${basedir}/tst" />
+    <property name="ifc" value="${basedir}/ifc" />
+
+    <!-- Mundo core preprocessor mcc -->
+    <condition property="mcc" value="${basedir}/mundo/bin/mcc.exe">
+        <os family="windows" />
+    </condition>
+    <condition property="mcc" value="${basedir}/mundo/bin/mcc-mac-x86">
+        <os family="mac" />
+    </condition>
+    <condition property="mcc" value="${basedir}/mundo/bin/mcc-linux">
+        <os family="unix" />
+    </condition>
+    
+    <property name="dist" value="${basedir}/dist" />
+
+
+    <!-- class paths -->
+
+    <path id="compile.classpath">
+        <pathelement location="${src}" />
+        <fileset dir="${lib}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <path id="compile.tst.classpath">
+        <pathelement location="${tst}" />
+        <pathelement location="${tst}/junit/junit-4.7.jar" />
+        <fileset dir="${lib}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <path id="tst.classpath">
+        <pathelement location="${bin}" />
+        <pathelement location="${tst}/junit/junit-4.7.jar" />
+        <fileset dir="${lib}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+    <path id="run.classpath">
+        <pathelement location="${bin}" />
+        <fileset dir="${lib}">
+            <include name="**/*.jar" />
+        </fileset>
+    </path>
+
+
+    <!-- executables -->
+    
+    <property name="run.rdps" value="org.letras.ps.rawdata.RawDataProcessor" />
+    <property name="run.rps" value="org.letras.ps.region.RegionProcessor" />
+    <property name="run.penmonitor" value="org.letras.tools.penmonitor.PenMonitor" />
+    <property name="run.regionmonitor" value="org.letras.tools.regionmonitor.RegionMonitor" />
+    <property name="run.penrecorder" value="org.letras.tools.penrecorder.PenRecorder" />
+    <property name="run.regiondesigner" value="org.letras.tools.designer.RegionDesigner" />
+
+
+    <!-- targets -->
+    
+    <target name="all" depends="compile" description="Compiles the complete project">
+    	<echo>[building all project components]</echo>
+    </target>
+
+
+    <target name="compile" 
+            depends="init, preprocess, compile_schema, create_content" 
+            description="Compiles the projects java sources">
+    
+        <echo>[compiling java sources]</echo>
+        
+        <!-- Compile the java code -->
+        <javac  srcdir="${src}" 
+                destdir="${bin}" 
+                failonerror="true" 
+                listfiles="false" 
+                debug="${letras.debug}" 
+                debuglevel="${letras.debuglevel}"
+				includeantruntime="false">
+            
+            <classpath refid="compile.classpath" />
+            <src path="${src}" />
+            <src path="${gen}"/>
+            <compilerarg value="-Xlint:unchecked" />
+        </javac>
+    </target>
+
+
+    <target name="preprocess" 
+            depends="init" 
+            description="Mundo preprocessing (RMC/Serialization/Interface Generation)">
+
+        <echo>[mundo preprocessing]</echo>
+        
+        <chmod file="${mcc}" perm="ugo+rx"/>
+        
+        <apply executable="${mcc}" parallel="true">
+            <arg value="-O${gen}" />
+            <arg value="-W${ifc}"/>
+            <arg value="-x" />
+            <arg value="-09" />
+            <fileset dir="${src}">
+                <include name="**/*.java" />
+            </fileset>
+            <fileset dir="${tst}">
+                <include name="**/*.java"/>
+            </fileset>
+        </apply>
+        <!-- Cleanup the directory mess in ${ifc} and ${gen} -->
+
+        <delete includeemptydirs="true">
+            <fileset dir="${ifc}"  >
+                <and>
+                    <size value="0"/>
+                    <type type="dir"/>
+                </and>
+            </fileset>
+        </delete>
+        <delete includeemptydirs="true">
+            <fileset dir="${gen}"  >
+                <and>
+                    <size value="0"/>
+                    <type type="dir"/>
+                </and>
+            </fileset>
+        </delete>
+
+        <!-- now set the metaclasses.xml file accordingly -->
+        <copy todir="${bin}/">
+            <fileset dir="${gen}">
+                <include name="**/*.xml" />
+            </fileset>
+        </copy>
+    </target>
+
+
+    <target name="compile_tests" 
+            depends="init,compile" 
+            description="Compiles the projects junit test sources">
+    
+        <echo>[compiling junit tests]</echo>
+        
+        <javac srcdir="${tst}" 
+               destdir="${bin}" 
+               failonerror="true" 
+               listfiles="false" 
+               debug="${letras.debug}" 
+               debuglevel="${letras.debuglevel}">
+            <classpath refid="compile.tst.classpath" />
+            <compilerarg value="-Xlint:unchecked" />
+        </javac>
+    </target>
+
+
+    <target name="create_content" 
+            description="Creates needed content (images, icons, resource/config files etc.)">
+        
+        <echo>[creating content]</echo>
+        
+        <mkdir dir="${bin}/rdps"/>
+        <copy todir="${bin}/rdps">
+            <fileset dir="${cnt}/rdps">
+                <include name="**/*.sh" />
+                <include name="**/*.bat" />
+                <include name="**/*.xml" />
+                <exclude name="driver/**" />
+            </fileset>
+        </copy>
+        
+        <mkdir dir="${bin}/rps"/>
+        <copy todir="${bin}/rps">
+            <fileset dir="${cnt}/rps">
+                <include name="**/*.sh" />
+                <include name="**/*.bat" />
+                <include name="**/*.xml" />
+            </fileset>
+        </copy>
+        
+        <chmod dir="${bin}/" perm="ugo+rx" includes="**/*.sh" />
+    </target>
+
+
+    <target name="cr_drv_nokia"
+	    description = "Creates the Nokia SU-1B pen driver">
+
+        <echo>[packing Nokia SU-1B driver]</echo>
+        <jar destfile="${bin}/rdps/drivers/NokiaPenDriver.jar" compress="true">
+            <metainf dir="${cnt}/rdps/driver/nokia">
+                <include name="plugin.xml" />
+            </metainf>
+            <fileset dir="${bin}">
+                <include name="org/letras/ps/rawdata/driver/nokia/**/*.class" />
+            </fileset>
+            
+            <manifest>
+            	<attribute name="Built-By" value="${built-by}" />
+            	<attribute name="Implementation-Vendor" value="${vendor}" />
+            	<attribute name="Implementation-Title" value="Nokia SU-1B Driver" />
+            </manifest>
+        </jar>
+    </target>
+
+
+    <target name="cr_drv_logitech"
+	    description="Creates the Logitech IO2 Bluetooth pen driver">
+
+        <echo>[packing Logitech IO2 BT driver]</echo>
+        <jar destfile="${bin}/rdps/drivers/LogitechPenDriver.jar" compress="true">
+			<metainf dir="${cnt}/rdps/driver/logitech">
+                <include name="plugin.xml" />
+            </metainf>
+            <fileset dir="${bin}">
+                <include name="org/letras/ps/rawdata/driver/logitech/**/*.class" />
+            </fileset>
+            <manifest>
+				<attribute name="Built-By" value="${built-by}" />
+		    	<attribute name="Implementation-Vendor" value="${vendor}" />
+            	<attribute name="Implementation-Title" value="Logitech IO2 BT Driver" />
+            </manifest>
+        </jar>
+    </target>
+
+
+    <target name="cr_drv_adp301"
+	    description="Creates the Anoto ADP-301 pen driver">
+        <echo>[packing Anoto ADP-301 driver]</echo>
+        <jar destfile="${bin}/rdps/drivers/ADP301PenDriver.jar" compress="true">
+			<metainf dir="${cnt}/rdps/driver/adp301">
+                <include name="plugin.xml" />
+            </metainf>
+            <zipfileset dir="${cnt}/rdps/driver/adp301/precompiled">
+                <include name="**" />
+            </zipfileset>
+            <zipfileset dir="${cnt}/rdps/driver/adp301">
+                <include name="jni.properties" />
+            </zipfileset>
+            <fileset dir="${bin}">
+                <include name="org/letras/ps/rawdata/driver/anoto/adp301/**/*.class" />
+            </fileset>
+            
+            <manifest>
+                <attribute name="Built-By" value="${built-by}" />
+                <attribute name="Implementation-Vendor" value="${vendor}" />
+                <attribute name="Implementation-Title" value="ADP-301 Driver" />
+            </manifest>
+        </jar>
+        <copy todir="${bin}/rdps/drivers" file="${cnt}/rdps/driver/adp301/ADP301_README.txt"/>
+    </target>
+
+
+    <target name="create_drivers" 
+            depends="compile,cr_drv_nokia,cr_drv_logitech,cr_drv_adp301" 
+            description="Creates and copies used drivers">
+	<echo>[creating pen drivers]</echo>
+        <mkdir dir="${bin}/rdps/drivers" />
+        <delete includeemptydirs="true">
+            <fileset dir="${bin}/org">
+                <include name="**/driver/**/*" />
+                <include name="**/driver" />
+            </fileset>
+        </delete>
+    </target>
+
+
+    <target name="run_penmonitor" 
+	    depends="compile" 
+	    description="Runs the Pen Monitor tool">
+        <echo>[starting pen monitor (plug:PSI IPen)]</echo>
+        <java dir="${cnt}/tools/penmonitor" 
+              fork="true" 
+              failonerror="true" 
+              classname="${run.penmonitor}">
+            <classpath refid="run.classpath" />
+        </java>
+    </target>
+	
+
+    <target name="run_regionmonitor" 
+	    depends="compile" 
+	    description="Runs the Region Monitor tool">
+        <echo>[starting region monitor (plug:PSI IRegion)]</echo>
+	<java dir="${cnt}/tools/regionmonitor" 
+              fork="true" 
+              failonerror="true"
+              classname="${run.regionmonitor}">
+            <classpath refid="run.classpath" />
+        </java>
+    </target>
+
+
+    <target name="run_penrecorder" 
+	    depends="compile" 
+	    description="Runs the Pen Recorder tool">
+        <echo>[starting pen-recorder (plug:PSI IPen)</echo>
+        <java dir="${cnt}/tools/penrecorder" 
+              fork="true" 
+              failonerror="true" 
+              classname="${run.penrecorder}">
+            <classpath refid="run.classpath" />
+        </java>
+    </target>
+	
+
+    <target name="run_regiondesigner" 
+	    depends="compile" 
+	    description="Runs the Region Designer tool">
+        <echo>[starting region designer (plug:PSI IRegion)</echo>
+	<java dir="${cnt}/tools/regionmonitor" 
+              fork="true"
+              failonerror="true" 
+              classname="${run.regiondesigner}">
+            <classpath refid="run.classpath" />
+        </java>
+    </target>
+
+
+    <target name="unit_test" 
+	    description="Runs the junit tests of the project" 
+	    depends="compile_tests">
+        <echo>[running unit tests]</echo>
+        <junit printsummary="yes" 
+               fork="yes" 
+               haltonfailure="yes" 
+               haltonerror="yes" 
+               dir="cnt/test">
+            <classpath refid="tst.classpath" />
+            <formatter type="plain" usefile="false" />
+            <test name="org.letras.ps.region.broker.LocalRegionTest"/>
+            <test name="org.letras.ps.region.RegionModelTest"/>
+            <test name="org.letras.ps.region.ComplexModelTest"/>
+        </junit>
+    </target>
+	
+    <target name="integration_tests" 
+	    description="Runs the integration tests of the project" 
+	    depends="compile_tests">
+        <echo>[running integration tests]</echo>
+        <junit printsummary="yes" 
+               fork="yes" 
+               haltonfailure="yes" 
+               haltonerror="yes" 
+               dir="cnt/test">
+            <classpath refid="tst.classpath" />
+            <formatter type="plain" usefile="false" />
+            <test name="org.letras.ps.region.complex.RegionCreation"/>
+            <test name="org.letras.ps.region.complex.RegionPublishing"/>
+            <test name="org.letras.ps.region.complex.PenIdForwarding"/>
+            <batchtest>
+                <fileset dir="${tst}">
+                    <include name="org/letras/ps/region/complex/automated/*"/>
+                    <include name="org/letras/ps/region/complex/automated/regionset/*"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
+
+
+    <target name="run_rdps" 
+	    depends="compile, create_drivers" 
+	    description="Runs an instance of the RDPS / Driverstage">
+        <echo>[starting RDPS]</echo>
+        <java dir="${bin}/rdps" 
+              fork="true" 
+              failonerror="true" 
+              maxmemory="64m" 
+              classname="${run.rdps}">
+            <classpath refid="run.classpath" />
+        </java>
+    </target>
+
+
+    <target name="run_rps" 
+	    depends="compile" 
+	    description="Runs a instance of the RPS">
+        <echo>[starting RPS]</echo>
+        <java dir="${bin}/rps" 
+              fork="true" 
+              failonerror="true" 
+              maxmemory="64m" 
+              classname="${run.rps}">
+            <classpath refid="run.classpath" />
+        </java>
+    </target>
+
+
+    <target name="init" description="Sets up the directory structure">
+        <echo>[initializing project]</echo>
+        <mkdir dir="${src}" />
+        <mkdir dir="${bin}" />
+        <mkdir dir="${gen}" />
+        <mkdir dir="${lib}" />
+        <mkdir dir="${cnt}" />
+        <mkdir dir="${doc}" />
+        <mkdir dir="${tst}" />
+        <mkdir dir="${ifc}" />
+    </target>
+
+
+    <target name="package" 
+	    depends="compile" 
+	    description="Packages the project (into jar file)">
+        <echo>[packaging]</echo>
+
+        <mkdir dir="${dist}" />
+        <mkdir dir="${dist}/lib/"/>
+        
+        <jar destfile="${dist}/lib/${ant.project.name}.jar" compress="true">
+            <fileset dir="${bin}">
+                <include name="**/org/**/*" />
+                <include name="**/metaclasses.xml" />
+                <exclude name="**/tools/**/*" />
+                <exclude name="**/tools" />
+                <exclude name="**/rawdata/driver/**/*" />
+                <exclude name="**/rawdata/driver" />
+            </fileset>
+            <manifest>
+                <attribute name="Built-By" value="${built-by}" />
+                <attribute name="Implementation-Vendor" value="${vendor}" />
+                <attribute name="Implementation-Title" value="${ant.project.name}" />
+                <attribute name="License" value="${license}"/>
+            </manifest>
+        </jar>
+    </target>
+
+
+    <target name="dist" 
+	    depends="package, doc, create_drivers" 
+	    description="Copy all relevant files to the in order to make a distribution">
+        <echo>[making distribution]</echo>
+
+        <!-- copy license and readme -->
+        <copy todir="${dist}" file="${cnt}/license.txt"/>
+        <copy todir="${dist}" file="${cnt}/README.txt"/>
+
+        <!-- copy needed libraries  -->
+        <copy todir="${dist}/lib">
+            <fileset dir="${lib}">
+                <include name="mundocore.jar"/>
+                <include name="bluecove-2.1.0.jar"/>
+            </fileset>
+        </copy>
+
+        <!-- 
+	  create info file for linux users (bluecove-gpl-2.1.0.jar cannot be 
+	  included because of GPL) 
+        -->
+	<echo file="${dist}/lib/README_LINUX.txt"> # README LINUX
+	    To use the RawDataProcessingStage on a linux machine please visit 
+	    http://bluecove.org/ and add bluecove-gpl.jar to your classpath.
+	</echo>
+
+        <!-- copy pen drivers, java doc, WSDL files -->
+        <copy todir="${dist}/drivers">
+       	    <fileset dir="${bin}/rdps/drivers" />
+        </copy>
+        <copy todir="${dist}/doc">
+            <fileset dir="${doc}"/>
+        </copy>
+        <copy todir="${dist}/interfaces">
+            <fileset dir="${ifc}"/>
+        </copy>
+		
+        <!-- archive source files -->
+        <zip destfile="${dist}/sources.zip" compress="true">
+            <fileset dir="${basedir}">
+                <include name="build.xml"/>
+                <include name="src/**"/>
+                <include name="cnt/**"/>
+            </fileset>
+        </zip>
+
+        <!-- create and copy the penmonitor -->
+        <mkdir dir="${dist}/tools/penmonitor"/>
+        <copy todir="${dist}/tools/penmonitor">
+            <fileset dir="${cnt}/tools/penmonitor">
+                <include name="*"/>
+                </fileset>
+        </copy>
+        <jar destfile="${dist}/tools/penmonitor/PenMonitor.jar">
+            <fileset dir="${bin}">
+                <include name="org/letras/tools/penmonitor/**/*"/>
+            </fileset>
+        </jar>
+		
+        <!-- create and copy the penrecorder -->
+        <mkdir dir="${dist}/tools/penrecorder"/>
+        <copy todir="${dist}/tools/penrecorder">
+            <fileset dir="${cnt}/tools/penrecorder">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        <jar destfile="${dist}/tools/penrecorder/PenRecorder.jar">
+            <fileset dir="${bin}">
+                <include name="org/letras/tools/penrecorder/**/*"/>
+                <include name="org/letras/tools/designer/dom/*"/>
+                <include name="org/letras/tools/designer/MetaRegionDocument.class"/>
+                <include name="org/letras/tools/designer/RegionDocument.class"/>
+                <include name="org/letras/tools/ui/**/*"/>
+            </fileset>
+        </jar>
+		
+        <!-- create and copy the regionmonitor -->
+        <mkdir dir="${dist}/tools/regionmonitor"/>
+        <copy todir="${dist}/tools/regionmonitor">
+            <fileset dir="${cnt}/tools/regionmonitor">
+                <include name="*"/>
+            </fileset>
+        </copy>
+        <jar destfile="${dist}/tools/regionmonitor/RegionMonitor.jar">
+            <fileset dir="${bin}">
+                <include name="org/letras/tools/regionmonitor/**/*"/>
+                <include name="org/letras/tools/designer/dom/*"/>
+            </fileset>
+        </jar>
+
+        <!-- create and copy the region designer -->
+        <mkdir dir="${dist}/tools/regiondesigner"/>
+        <copy todir="${dist}/tools/regiondesigner">
+            <fileset dir="${cnt}/tools/regiondesigner">
+                <include name="*"/>
+            </fileset>
+        </copy>
+        <jar destfile="${dist}/tools/regiondesigner/RegionDesigner.jar">
+            <fileset dir="${bin}">
+                <include name="org/letras/tools/designer/**/*"/>
+                <include name="org/letras/tools/regionmonitor/regions/view/RegionCanvas*"/>
+                <include name="org/letras/tools/ui/**/*"/>
+            </fileset>
+        </jar>
+
+        <copy todir="${dist}/examples">
+            <fileset dir="${cnt}/examples">
+                <include name="**/*"/>
+            </fileset>
+        </copy>
+        		
+        <!-- make shell scripts executable -->
+        <chmod dir="${dist}" perm="ugo+rx" includes="**/*.sh" />
+    </target>
+	
+	
+    <target name="clean" 
+	    description="Cleans all temporary files">
+        <echo>[cleaning]</echo>
+        <delete verbose="true" failonerror="false">
+            <fileset dir="${basedir}" defaultexcludes="no">
+                <include name="**/*~" />
+            </fileset>
+        </delete>
+        <delete verbose="true" includeemptydirs="true" failonerror="false">
+            <fileset dir="${bin}" defaultexcludes="false"/>
+            <fileset dir="${gen}" />
+            <fileset dir="${ifc}" />
+            <fileset dir="${dist}" defaultexcludes="false" />
+        </delete>
+    </target>
+
+
+    <target name="compile_schema" 
+	    depends="init" 
+	    description="Compile the JAXB region schema">
+        <echo>Compiling regions.xsd</echo>
+        <apply executable="xjc" parallel="false" verbose="true">
+            <arg value="-p"/>
+            <arg value="org.letras.ps.region.document.xml"/>
+            <arg value="-d"/>
+            <arg value="${gen}"/>
+            <arg value="-mark-generated"/>
+            <srcfile/>
+                <fileset dir="cnt/schema">
+                    <include name="**/*.xsd"/>
+                </fileset>
+            <arg value="-b"/>
+            <arg value="cnt/schema/bindings.xjb"/>
+        </apply>
+    </target>
+
+
+    <target name="doc" 
+            description="Generates jdoc for the project">
+        <echo>[generating jdoc]</echo>
+	<javadoc destdir="${doc}" 
+                 author="true" 
+                 version="true" 
+                 use="true" 
+                 windowtitle="${ant.project.name} API Documentation">
+            <classpath refid="compile.classpath" />
+            <sourcepath path="${src}"/>
+            <sourcepath path="${gen}"/>
+            <excludepackage name="org.letras.tools.**"/>
+	    <!--
+            <excludepackage name="org.letras.ps.rawdata.driver.**"/>
+            <fileset dir="${src}" includes="**/*.java" />
+            -->
+        </javadoc>
+    </target>
+
+</project>

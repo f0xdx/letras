@@ -1,0 +1,100 @@
+<project name="LBSRuleService" default="jar" basedir=".">
+  <!-- allow the user to override setting in an own properties file. -->
+  <!-- use the sameproperties files as for the main project. -->
+  <property file="../../config/build.properties"/>
+
+  <property name="src" value="src" />
+  <property name="prep" value="prep" />
+  <property name="build" value="bin" />
+
+  <property name="optimize" value="on" />
+
+  <property name="mcc" value="../../bin/mcc" />
+
+  <property name="version.major" value="0" />
+  <property name="version.minor" value="2" />
+
+  <path id="project.classpath">
+    <pathelement path="../../lib/mundocore.jar"/>
+    <pathelement path="lib/mundocontext.jar"/>
+  </path>
+	
+  <target name="init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${prep}" />
+  </target>
+
+  <!-- target name="import" depends="init">
+    <apply executable="${mcc}">
+      <arg value="-O${prep}"/>
+      <arg value="-iAHKService"/>
+      <arg value="-x"/>
+      <arg value="-09"/>
+      <fileset dir="../../../interfaces">
+	<include name="org/mundo/service/autohotkey/AHKService.xml"/>
+      </fileset>
+    </apply>
+    <apply executable="${mcc}">
+      <arg value="-O${prep}"/>
+      <arg value="-iWMStoreService"/>
+      <arg value="-x"/>
+      <arg value="-09"/>
+      <fileset dir="../../../interfaces">
+        <include name="org/mundo/service/wmstore/WMStoreService.xml"/>
+      </fileset>
+    </apply>
+  </target -->
+
+  <target name="preprocess" depends="init">
+    <apply executable="${mcc}" parallel="true">
+      <arg value="-I${src}" />
+      <arg value="-I../../../interfaces/wsdl" />
+      <arg value="-O${prep}" />
+      <arg value="-x" />
+      <arg value="-09" />
+      <arg value="-W../../../interfaces" />
+      <fileset dir="${src}">
+        <include name="**/*.java" />
+      </fileset>
+    </apply>
+    <copy file="prep/metaclasses.xml" todir="${build}"/>
+  </target>
+
+  <target name="clean"
+          description="Remove all compiled and preprocessed files">
+    <delete dir="${build}" />
+    <delete dir="${prep}" />
+  </target>
+
+  <target name="compile" depends="preprocess"
+          description="Compile the JAVA sources">
+    <echo message="compiling with debug=${debug} and optimize=${optimize}" />
+    <javac destdir="${build}"
+           optimize="${optimize}" debug="on" debuglevel="lines,vars,source" deprecation="on"
+           encoding="iso-8859-1">
+      <classpath refid="project.classpath" />
+      <src path="${src}" />
+      <src path="${prep}" />
+      <include name="**/*.java" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <unjar src="lib/mundocontext.jar" dest="${build}"/>
+    <apply executable="${mcc}">
+      <arg value="-J"/>
+      <arg value="${build}/metaclasses.xml"/>
+      <fileset dir="${prep}">
+        <include name="metaclasses.xml" />
+      </fileset>
+    </apply>
+    <jar jarfile="lbsrule.jar">
+      <fileset dir=".">
+        <include name="META-INF/*"/>
+      </fileset>
+      <fileset dir="${build}">
+        <include name="**"/>
+      </fileset>
+    </jar>
+  </target>
+</project>

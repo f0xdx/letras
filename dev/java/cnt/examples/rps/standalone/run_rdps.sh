@@ -1,0 +1,1 @@
+java -cp ../../../lib/letras.jar:../../../lib/mundocore.jar org.letras.ps.region.RegionProcessor

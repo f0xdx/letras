@@ -1,0 +1,635 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.service;
+
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+#ifndef CFG_J2ME
+import java.net.NetworkInterface;
+import java.net.Inet4Address;
+#endif
+
+import org.mundo.annotation.*;
+import org.mundo.rt.DoObject;
+import org.mundo.rt.GUID;
+import org.mundo.rt.IActivate;
+import org.mundo.rt.IReceiver;
+import org.mundo.rt.LogEntry;
+import org.mundo.rt.Logger;
+import org.mundo.rt.Message;
+import org.mundo.rt.Mundo;
+import org.mundo.rt.ObjectAdapter;
+import org.mundo.rt.Publisher;
+import org.mundo.rt.Service;
+import org.mundo.rt.Signal;
+import org.mundo.rt.Subscriber;
+import org.mundo.rt.TypedMap;
+import org.mundo.net.transport.TransportLink;
+import org.mundo.net.transport.ip.IPTransportService;
+import org.mundo.net.transport.ip.TCPTransportConnection;
+import org.mundo.net.transport.ip.IPLink;
+import org.mundo.net.routing.RoutingService;
+import org.mundo.net.broker.P2PTopicBroker;
+
+/**
+ * <code>DebugService</code> allows to inspect a node from remote. The
+ * <code>cripple</code> methods induce errors and can be used to test
+ * the fault tolerance.
+ *
+ * @author Erwin Aitenbichler
+ */
+@mcRemote
+public class DebugService extends Service
+{
+  /**
+   * Contains general information about the node and a list of the available
+   * network interfaces.
+   */
+  @mcSerialize(className="DebugService.NodeInfo")
+  public static class NodeInfo
+         implements IActivate
+  {
+    public GUID      guid;
+    public int       localPort;
+    public String    version;
+#ifdef CFG_JAVA15
+    public List<NetInterface> netInterfaces;
+#else
+    public List      netInterfaces;
+#endif
+  }
+
+  /**
+   * Contains information about a network interface.
+   */
+  @mcSerialize(className="DebugService.NetInterface")
+  public static class NetInterface
+         implements IActivate
+  {
+    public String    name;
+    public String    addr;
+    @mcField(optional=true)
+    public String    netmask;
+    @mcField(optional=true)
+    public String    bcast;
+  }
+
+  /**
+   * Contains information about a transport connection to a remote peer.
+   */
+  @mcSerialize(className="DebugService.ConnEntry")
+  public static class ConnEntry
+         implements IActivate
+  {
+    public GUID    remoteId;
+    @mcField(optional=true)
+    public String  remoteName;
+    public String  addr; // obsolete!
+    public int     port; // obsolete!
+    @mcField(optional=true)
+    public String  peerExtAddr;
+    @mcField(optional=true)
+    public String  peerIntAddr;
+    @mcField(optional=true)
+    public String  localExtAddr;
+    public boolean open;
+    public boolean active;
+    public int     timeout;
+    public int     metric;
+    @mcField(optional=true)
+    public String  protocol;
+  }
+
+  /**
+   * Contains information about a hosted service.
+   */
+  @mcSerialize(className="DebugService.ServiceEntry")
+  public static class ServiceEntry
+         implements IActivate
+  {
+    public GUID   guid;
+    public String className;
+    public String instanceName;
+#ifdef CFG_JAVA15
+    public List<SubscriberEntry> subscribers;
+    public List<PublisherEntry>  publishers;
+#else
+    public List   subscribers;
+    public List   publishers;
+#endif    
+  }
+
+  /**
+   * Contains information about a subscription of a service.
+   */
+  @mcSerialize(className="DebugService.SubscriberEntry")
+  public static class SubscriberEntry
+         implements IActivate
+  {
+    public String channelName;
+    public String zoneName;
+    @mcField(optional=true)
+    public String interfaceName;
+  }
+  
+  /**
+   * Contains information about an advertisement of a service.
+   */
+  @mcSerialize(className="DebugService.PublisherEntry")
+  public static class PublisherEntry
+         implements IActivate
+  {
+    public String channelName;
+    public String zoneName;
+    @mcField(optional=true)
+    public String interfaceName;
+  }
+
+  /**
+   * Contains information about an Event Routing Service import.
+   */
+  @mcSerialize(className="DebugService.ERSImportEntry")
+  public static class ERSImportEntry
+         implements IActivate
+  {
+    public String zoneName;
+    public String channelName;
+  }
+
+  /**
+   * Contains information about an Event Routing Service export.
+   */
+  @mcSerialize(className="DebugService.ERSExportEntry")
+  public static class ERSExportEntry
+         implements IActivate
+  {
+    public String channelName;
+    public GUID   receiverId;
+  }
+
+  /**
+   * Contains a log entry.
+   */
+  @mcSerialize(className="DebugService.LogEntry")
+  public static class LogEntry
+         implements IActivate
+  {
+    public String  severity;
+    public int     level;
+    public String  channel;
+    public String  text;
+    @mcField(optional=true)
+    public String  source;
+  }
+
+  /**
+   * Initializes a new debug service.
+   */
+  public DebugService()
+  {
+  }
+  /**
+   * Initializes the service. The service interface is connected to a channel
+   * with the name <code>nodeId + ".DebugService"</code>, where <code>nodeId</code>
+   * is the string representation of this node's GUID.
+   */
+  @Override
+  public void init()
+  {
+    super.init();
+    try
+    {
+      Signal.connect(getSession().subscribe("lan", Mundo.getNodeId()+".DebugService"), this);
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+    }
+//    Logger.global.addHandler(LOG_HANDLER);
+  }
+  /**
+   * 
+   */
+  @Override
+  public void shutdown()
+  {
+//    Logger.global.removeHandler(LOG_HANDLER);
+    super.shutdown();
+  }
+  /**
+   * Returns a <code>NodeInfo</code> object containing general information about
+   * the node and a list of available network interfaces.
+   * @return  a <code>NodeInfo</code> object.
+   * @see DebugService.NodeInfo
+   */
+  @mcMethod
+  public NodeInfo getNodeInfo()
+  {
+    NodeInfo ni=new NodeInfo();
+    ni.guid=Mundo.getNodeId();
+    ni.version=Mundo.getVersion();
+
+    // enumerate network interfaces
+#ifdef CFG_JAVA15
+    ni.netInterfaces=new ArrayList<NetInterface>();
+#else
+    ni.netInterfaces=new ArrayList();
+#endif
+
+#ifdef CFG_J2ME
+    // J2ME does not offer a good way to enumerate the available network
+    // interfaces.
+    try
+    {
+      InetAddress addrs[]=InetAddress.getAllByName(InetAddress.getLocalHost().getHostName());
+      for (int i=0; i<addrs.length; i++)
+      {
+        NetInterface nif=new NetInterface();
+        nif.addr = addrs[i].getHostAddress();
+        ni.netInterfaces.add(nif);
+      }
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+    }
+#else
+    // NetworkInterface is a reliable and clean way to enumerate the available
+    // network interfaces, but requires Java 1.4
+    Enumeration ifEnum=null;
+    try
+    {
+      ifEnum=NetworkInterface.getNetworkInterfaces();
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+    }
+    if (ifEnum!=null)
+    {
+      while (ifEnum.hasMoreElements())
+      {
+        NetworkInterface iface=(NetworkInterface)ifEnum.nextElement();
+        Enumeration addrEnum=iface.getInetAddresses();
+        while (addrEnum.hasMoreElements())
+        {
+          InetAddress addr=(InetAddress)addrEnum.nextElement();
+          if (addr instanceof Inet4Address)
+          {
+            NetInterface nif=new NetInterface();
+            nif.name = iface.getName();
+            nif.addr = addr.getHostAddress();
+            ni.netInterfaces.add(nif);
+          }
+        }
+      }
+    } 
+#endif
+
+    IPTransportService ipts = (IPTransportService)Mundo.getServiceByType(IPTransportService.class);
+    if (ipts!=null)
+      ni.localPort = ipts.getLocalPort();
+
+    return ni;
+  }
+  /**
+   * Returns a list of open transport connections to adjacent nodes.
+   * @return  a <code>List</code> containing <code>ConnEntry</code> objects.
+   * @see DebugService.ConnEntry
+   */
+  @mcMethod
+  public List getConnections()
+  {
+    RoutingService rs = (RoutingService)Mundo.getServiceByType(RoutingService.class);
+    Collection clt = rs.getLinks();
+    TransportLink l;
+#ifdef CFG_JAVA15
+    ArrayList<ConnEntry> v = new ArrayList<ConnEntry>();
+#else
+    ArrayList v = new ArrayList();
+#endif    
+    for (Iterator i=clt.iterator(); i.hasNext();)
+    {
+      l = (TransportLink)i.next();
+      ConnEntry e = new ConnEntry();
+      e.remoteId = l.remoteId;
+      e.remoteName = l.remoteName;
+      e.metric = l.getMetric();
+      e.timeout = l.timeout;
+      if (l instanceof org.mundo.net.transport.ip.IPLink)
+      {
+        org.mundo.net.transport.ip.IPLink ipr = (org.mundo.net.transport.ip.IPLink)l;
+        InetSocketAddress a = ipr.getPeerExtAddress();
+        if (a!=null)
+          e.peerExtAddr = a.toString();
+        a = ipr.getPeerIntAddress();
+        if (a!=null)
+          e.peerIntAddr = a.toString();
+        a = ipr.getLocalExtAddress();
+        if (a!=null)
+          e.localExtAddr = a.toString();
+        e.addr = null;
+        e.port = 0;
+        e.active = (rs.getActiveLink(l.remoteId) == l);
+
+        int proto = ipr.getProto();
+        if (proto == ipr.PROTO_TCP)
+          e.protocol = "TCP";
+        else if (proto == ipr.PROTO_UDP)
+          e.protocol = "UDP";
+        else
+          e.protocol = "?";
+
+        if (ipr.iptc!=null)
+        {
+          e.open = true;
+          if (ipr.iptc instanceof TCPTransportConnection)
+            e.timeout = ((TCPTransportConnection)ipr.iptc).getTimeout();
+        }
+      }
+      v.add(e);
+    }
+    return v;
+  }
+  /**
+   * Returns a list of services hosted in this node.
+   * @return  a <code>List</code> of <code>ServiceEntry</code> objects.
+   * @see DebugService.ServiceEntry
+   */
+  @mcMethod
+  public List getServices()
+  {
+    Service s;
+    ServiceEntry se;
+#ifdef CFG_JAVA15
+    ArrayList<ServiceEntry> v=new ArrayList<ServiceEntry>();
+#else
+    ArrayList v=new ArrayList();
+#endif    
+    for (Iterator i=Mundo.getServices().iterator(); i.hasNext();)
+    {
+      s=(Service)i.next();
+      se=new ServiceEntry();
+      se.guid=s.getServiceId();
+      se.className=s.getClass().getName();
+      se.instanceName=s.getServiceInstanceName();
+      v.add(se);
+    }
+    return v;
+  }
+  /**
+   *
+   */
+  @mcMethod
+  public ServiceEntry getServiceInfo(GUID guid)
+  {
+    Service s=null;
+    ServiceEntry se=null;
+    for (Iterator i=Mundo.getServices().iterator(); i.hasNext();)
+    {
+      s=(Service)i.next();
+      if (guid.equals(s.getServiceId()))
+      {
+        se=new ServiceEntry();
+        se.guid=guid;
+        se.className=s.getClass().getName();
+        se.instanceName=s.getServiceInstanceName();
+        break;
+      }
+    }
+    if (se==null)
+      return null;
+#ifdef CFG_JAVA15
+    se.subscribers=new ArrayList<SubscriberEntry>();
+    se.publishers=new ArrayList<PublisherEntry>();
+#else
+    se.subscribers=new ArrayList();
+    se.publishers=new ArrayList();
+#endif
+    for (Iterator i=s.getSession().getSubscribers().iterator(); i.hasNext();)
+    {
+      Subscriber sub=(Subscriber)i.next();
+      SubscriberEntry sube=new SubscriberEntry();
+      sube.channelName=sub.getChannel().getName();
+      sube.zoneName=sub.getChannel().getZone();
+      IReceiver rcv=sub.getReceiver();
+      if (rcv instanceof ObjectAdapter)
+      {
+        Object obj=((ObjectAdapter)rcv).getTarget();
+        if (obj!=null)
+          sube.interfaceName=obj.getClass().getName();
+      }
+      se.subscribers.add(sube);
+    }
+    for (Iterator i=s.getSession().getPublishers().iterator(); i.hasNext();)
+    {
+      Publisher pub=(Publisher)i.next();
+      PublisherEntry pube=new PublisherEntry();
+      pube.channelName=pub.getChannel().getName();
+      pube.zoneName=pub.getChannel().getZone();
+      Object sender=pub.getSender();
+      if (sender instanceof DoObject)
+        pube.interfaceName=((DoObject)sender)._getInterfaceName();
+      se.publishers.add(pube);
+    }
+    return se;
+  }
+  /**
+   * Returns a list of Event Routing Service Imports. A channel is element of
+   * the import set if there exists a subscriber in this node that is subscribed
+   * to this channel.
+   * @return  a <code>List</code> of <code>ERSImportEntry</code> objects.
+   * @see DebugService.ERSImportEntry
+   */
+  @mcMethod
+  public List getERSImports()
+  {
+    P2PTopicBroker ers=(P2PTopicBroker)Mundo.getServiceByType(P2PTopicBroker.class);
+    return ers.debugGetImports();
+  }
+  /**
+   * Returns a list of Event Routing Service Exports. A channel is element of
+   * the export set if there exists a publisher in this node that publishes
+   * to that channel and there exists at least one subscriber to that channel
+   * on a remote node. For each element in the export set, the export list
+   * contains a tuple <code>(ch, id)</code>, where <code>id</code> is the node
+   * identifier of the remote node hosting a subscriber to channel <code>ch</code>.
+   * @return  a <code>List</code> of <code>ERSExportEntry</code> objects.
+   * @see DebugService.ERSExportEntry
+   */
+  @mcMethod
+  public List getERSExports()
+  {
+    P2PTopicBroker ers=(P2PTopicBroker)Mundo.getServiceByType(P2PTopicBroker.class);
+    return ers.debugGetExports();
+  }
+  /**
+   *
+   */
+  public static void rawSent(Message raw)
+  {
+    rawReceived(raw);
+  }
+  /**
+   * Returns a list of log entries.
+   * @return  a <code>List</code> of <code>LogEntry</code> objects.
+   * @see DebugService.LogEntry
+   */
+  @mcMethod
+  public List getLogMessages()
+  {
+#ifndef CFG_CLDC
+#ifdef CFG_JAVA15
+    ArrayList<LogEntry> dest = new ArrayList<LogEntry>();
+    ArrayList<org.mundo.rt.LogEntry> src = Logger.global.entries;
+#else
+    ArrayList dest = new ArrayList();
+    ArrayList src = Logger.global.entries;
+#endif
+#else
+    ArrayList dest = new ArrayList();
+    ArrayList src = Logger.global.entries;
+#endif
+    int i, s=src.size();
+    for (i=0; i<s; i++)
+    {
+      org.mundo.rt.LogEntry e = (org.mundo.rt.LogEntry)src.get(i);
+      LogEntry le = new LogEntry();
+      le.level    = e.getLevel();
+#ifndef CFG_J2ME
+      le.severity = Character.toString(Logger.logLevelToChar(e.getLevel()));
+#else
+      le.severity = ""+Logger.logLevelToChar(e.getLevel());
+#endif
+      le.channel  = e.getCategory();
+      le.text     = e.getText();
+      dest.add(le);
+    }
+    return dest;
+  }
+  @mcMethod
+  public void shutdownNode()
+  {
+    new ShutdownThread().start();
+  }
+  /**
+   * Returns the configuration of this node as passive object tree.
+   */
+  @mcMethod
+  public TypedMap getNodeConfig()
+  {
+    try
+    {
+      return (TypedMap)TypedMap.passivate(Mundo.getConfig());
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+      return null;
+    }
+  }
+  /**
+   * Cripples all <code>IPTransportConnections</code> to the specified node by
+   * blocking all send operations for twice the connection's timeout period.
+   * The response should be that MundoCore discards all faulty connections.
+   * @param remoteId  the node ID which should become temporarily unreachable.
+   * @return  <code>true</code> if at least one connection was found, or
+   *          <code>false</code> otherwise.
+   */
+  @mcMethod
+  public boolean crippleBlockSendsTo(GUID remoteId)
+  {
+    boolean success = false;
+    RoutingService rs = (RoutingService)Mundo.getServiceByType(RoutingService.class);
+    Collection clt = rs.getLinks();
+    for (Iterator i=clt.iterator(); i.hasNext();)
+    {
+      TransportLink l = (TransportLink)i.next();
+      if (l instanceof org.mundo.net.transport.ip.IPLink && remoteId.equals(l.remoteId))
+      {
+        org.mundo.net.transport.ip.IPLink ipl = (org.mundo.net.transport.ip.IPLink)l;
+        if (ipl.iptc instanceof TCPTransportConnection)
+        {
+          ((TCPTransportConnection)ipl.iptc).setCrippleBlockSends();
+          success = true;
+        }
+      }
+    }
+    return success;
+  }
+  static void rawReceived(Message raw)
+  {
+    if (rawReceivers==null)
+      return;
+    for (Iterator i=rawReceivers.iterator(); i.hasNext();)
+      ((IReceiver)i.next()).received(raw, null);
+  }
+  /**
+   * Registers a raw listener. A raw listener receives all messages received
+   * by the node at transport level. This mechanism is intended for debugging
+   * only.
+   */
+  public static void addRawListener(IReceiver receiver)
+  {
+    if (rawReceivers==null)
+#ifdef CFG_JAVA15
+      rawReceivers=new ArrayList<IReceiver>();
+#else
+      rawReceivers=new ArrayList();
+#endif
+    rawReceivers.add(receiver);
+  }
+  /**
+   * Unregisters a raw listener.
+   */
+  public static void removeRawListener(IReceiver receiver)
+  {
+    rawReceivers.remove(receiver);
+    if (rawReceivers.size()==0)
+      rawReceivers=null;
+  }
+  
+  private class ShutdownThread extends Thread
+  {
+    ShutdownThread()
+    {
+    }
+    public void run()
+    {
+      Mundo.shutdown();
+      System.exit(0);
+    }
+  }
+
+#ifdef CFG_JAVA15
+  static ArrayList<LogEntry> logEntries = new ArrayList<LogEntry>();
+  static ArrayList<IReceiver> rawReceivers = null;
+#else
+  static ArrayList rawReceivers = null;
+#endif
+}

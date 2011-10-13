@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="http://www.globus.de/wnd/leaflet/1/page/2">
+    <page>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/page</uri>
+        <shape>
+            <rectangle height="957.625" width="668.125" top="1937518.625" left="1.82985036125E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/page</channel>
+        <hungry>false</hungry>
+    </page>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/1</uri>
+        <shape>
+            <rectangle height="218.0" width="232.0" top="1937563.75" left="1.82985055E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/1</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/2</uri>
+        <shape>
+            <rectangle height="209.0" width="219.125" top="1937803.125" left="1.82985050375E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/2</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/3</uri>
+        <shape>
+            <rectangle height="451.0" width="231.25" top="1937564.875" left="1.82985317125E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/3</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/8</uri>
+        <shape>
+            <rectangle height="199.0" width="116.25" top="1938273.25" left="1.8298504475E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/8</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/11</uri>
+        <shape>
+            <rectangle height="196.5" width="197.75" top="1938277.625" left="1.829851965E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/11</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/10</uri>
+        <shape>
+            <rectangle height="199.75" width="260.875" top="1938276.375" left="1.82985425375E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/10</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/4</uri>
+        <shape>
+            <rectangle height="222.75" width="117.0" top="1937792.125" left="1.82985586625E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/4</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/5</uri>
+        <shape>
+            <rectangle height="215.625" width="131.375" top="1938038.5" left="1.82985048625E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/5</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/6</uri>
+        <shape>
+            <rectangle height="224.25" width="166.125" top="1938037.5" left="1.82985204E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/6</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>http://www.globus.de/wnd/leaflet/1/page/2/7</uri>
+        <shape>
+            <rectangle height="214.375" width="280.75" top="1938034.875" left="1.82985423125E8"/>
+        </shape>
+        <channel>http://www.globus.de/wnd/leaflet/1/page/2/7</channel>
+        <hungry>false</hungry>
+    </region>
+</regionDocument>

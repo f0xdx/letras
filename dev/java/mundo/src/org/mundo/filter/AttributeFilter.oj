@@ -1,0 +1,166 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.filter;
+
+import org.mundo.annotation.*;
+import org.mundo.rt.IActivate;
+import org.mundo.rt.TypedContainer;
+import org.mundo.rt.TypedMap;
+
+/**
+ * <code>AttributeFilter</code> is the abstract base class for attribute filters.
+ * An attribute filter tests a certain condition on an attribute.
+ * @see TypedMapFilter
+ * @author Erwin Aitenbichler
+ */
+@mcSerialize
+public abstract class AttributeFilter implements IActivate, IFilterConstants
+{
+  /**
+   * Tests if this attribute filter matches the specified attribute.
+   */
+  public abstract boolean matches(Object o);
+
+  /**
+   * Returns the comparison value.
+   */
+  public abstract Object getValue();
+
+  /**
+   * Returns the operator.
+   */
+  public int getOp()
+  {
+    return op;
+  }
+
+  /**
+   * Converts an operator symbol given as string to a constant.
+   */
+  public static int parseOp(String s)
+  {
+    if (s.equals("=="))
+      return OP_EQUAL;
+    if (s.equals("!="))
+      return OP_NOT_EQUAL;
+    if (s.equals("<"))
+      return OP_LESS;
+    if (s.equals("<="))
+      return OP_LESS_EQUAL;
+    if (s.equals(">"))
+      return OP_GREATER;
+    if (s.equals(">="))
+      return OP_GREATER_EQUAL;
+    if (s.equals("starts"))
+      return OP_STARTS;
+    if (s.equals("ends"))
+      return OP_ENDS;
+    if (s.equals("contains"))
+      return OP_CONTAINS;
+    throw new IllegalStateException("unknown operator '"+s+"'");
+  }
+
+  /**
+   * Returns the operator as string.
+   */
+  public static String opToString(int op)
+  {
+    switch (op)
+    {
+      case OP_EQUAL:
+        return "==";
+      case OP_NOT_EQUAL:
+        return "!=";
+      case OP_LESS:
+        return "<";
+      case OP_LESS_EQUAL:
+        return "<=";
+      case OP_GREATER:
+        return ">";
+      case OP_GREATER_EQUAL:
+        return ">=";
+      case OP_STARTS:
+        return "starts";
+      case OP_ENDS:
+        return "ends";
+      case OP_CONTAINS:
+        return "contains";
+      case OP_IGNORE:
+        return "ignore";
+      case OP_FILTER:
+        return "filter";
+    }
+    return "?";
+  }
+  public String opToString()
+  {
+    return opToString(op);
+  }
+
+  /**
+   * Returns a matching <code>AttributeFilter</code> for the specified value object.
+   * The created filter tests for equality.
+   */
+  public static AttributeFilter forValue(Object value)
+  {
+    int o=TypedContainer.getOrdinal(value.getClass());
+    switch (o)
+    {
+      case TypedContainer.ORD_BYTE:
+      case TypedContainer.ORD_UBYTE:
+      case TypedContainer.ORD_SHORT:
+      case TypedContainer.ORD_USHORT:
+      case TypedContainer.ORD_INTEGER:
+        return new IntegerAttributeFilter(OP_EQUAL, ((Number)value).intValue());
+      case TypedContainer.ORD_UINTEGER:
+      case TypedContainer.ORD_LONG:
+      case TypedContainer.ORD_ULONG:  // FIXME: unsigned long is truncated here
+        return new LongAttributeFilter(OP_EQUAL, ((Number)value).longValue());
+      case TypedContainer.ORD_FLOAT:
+      case TypedContainer.ORD_DOUBLE:
+        return new DoubleAttributeFilter(OP_EQUAL, ((Number)value).doubleValue());
+      case TypedContainer.ORD_BOOLEAN:
+        return new BooleanAttributeFilter(OP_EQUAL, ((Boolean)value).booleanValue());
+      case TypedContainer.ORD_STRING:
+        return new StringAttributeFilter(OP_EQUAL, (String)value);
+      case TypedContainer.ORD_MAP:
+        return new TypedMapFilter(OP_EQUAL, (TypedMap)value);
+      case TypedContainer.ORD_CHAR:
+        return new CharAttributeFilter(OP_EQUAL, ((Character)value).charValue());
+      case TypedContainer.ORD_GUID:
+      case TypedContainer.ORD_ARRAY:
+      case TypedContainer.ORD_JAVAXDR:
+        return new GenericAttributeFilter(OP_EQUAL, value);
+    }
+    return null;
+  }
+
+  // Force concrete filter classes to implement these.
+  public abstract boolean equals(Object o);
+  public abstract int hashCode();
+
+  /**
+   * The operator.
+   */
+  protected int op;
+}

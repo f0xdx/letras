@@ -1,0 +1,99 @@
+<TestScript>
+  <exec name="1" node="ts.node1" cmdline="$java-interpreter -logfile log1.txt">
+    <TestScript>
+      <expect channel="channel1" request="TestMsg">
+        <ln>message from 2</ln>
+      </expect>
+      <expect channel="channel1" request="TestMsg">
+        <ln>message from 3</ln>
+      </expect>
+      <expect channel="channel1" request="TestMsg">
+        <ln>message from 4</ln>
+      </expect>
+      <commitSubscriptions/>
+      <send channel="channel2" request="TestMsg">
+        <ln>message from 1</ln>
+      </send>
+      <send channel="channel3" request="TestMsg">
+        <ln>message from 1</ln>
+      </send>
+      <send channel="channel4" request="TestMsg">
+        <ln>message from 1</ln>
+      </send>
+      <timeout secs="10"/>
+    </TestScript>
+  </exec>
+  <exec name="2" node="ts.node2" cmdline="$java-interpreter -logfile log2.txt">
+    <TestScript>
+      <expect channel="channel2" request="TestMsg">
+        <ln>message from 1</ln>
+      </expect>
+      <expect channel="channel2" request="TestMsg">
+        <ln>message from 3</ln>
+      </expect>
+      <expect channel="channel2" request="TestMsg">
+        <ln>message from 4</ln>
+      </expect>
+      <commitSubscriptions/>
+      <send channel="channel1" request="TestMsg">
+        <ln>message from 2</ln>
+      </send>
+      <send channel="channel3" request="TestMsg">
+        <ln>message from 2</ln>
+      </send>
+      <send channel="channel4" request="TestMsg">
+        <ln>message from 2</ln>
+      </send>
+      <timeout secs="10"/>
+    </TestScript>
+  </exec>
+  <exec name="3" node="ts.node3" cmdline="$java-interpreter -logfile log3.txt">
+    <TestScript>
+      <expect channel="channel3" request="TestMsg">
+        <ln>message from 1</ln>
+      </expect>
+      <expect channel="channel3" request="TestMsg">
+        <ln>message from 2</ln>
+      </expect>
+      <expect channel="channel3" request="TestMsg">
+        <ln>message from 4</ln>
+      </expect>
+      <commitSubscriptions/>
+      <send channel="channel1" request="TestMsg">
+        <ln>message from 3</ln>
+      </send>
+      <send channel="channel2" request="TestMsg">
+        <ln>message from 3</ln>
+      </send>
+      <send channel="channel4" request="TestMsg">
+        <ln>message from 3</ln>
+      </send>
+      <timeout secs="10"/>
+    </TestScript>
+  </exec>
+  <exec name="4" node="ts.node4" cmdline="$java-interpreter -logfile log4.txt">
+    <TestScript>
+      <expect channel="channel4" request="TestMsg">
+        <ln>message from 1</ln>
+      </expect>
+      <expect channel="channel4" request="TestMsg">
+        <ln>message from 2</ln>
+      </expect>
+      <expect channel="channel4" request="TestMsg">
+        <ln>message from 3</ln>
+      </expect>
+      <commitSubscriptions/>
+      <send channel="channel1" request="TestMsg">
+        <ln>message from 4</ln>
+      </send>
+      <send channel="channel2" request="TestMsg">
+        <ln>message from 4</ln>
+      </send>
+      <send channel="channel3" request="TestMsg">
+        <ln>message from 4</ln>
+      </send>
+      <timeout secs="10"/>
+    </TestScript>
+  </exec>
+  <timeout secs="30"/>
+</TestScript>

@@ -1,0 +1,755 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.service.dver;
+
+#define LOG_MODULE
+
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.mundo.rt.Service;
+import org.mundo.rt.GUID;
+import org.mundo.rt.Signal;
+import org.mundo.rt.Message;
+import org.mundo.rt.MessageContext;
+import org.mundo.rt.Publisher;
+import org.mundo.rt.Subscriber;
+import org.mundo.rt.IBCLProvider;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.TypedArray;
+import org.mundo.rt.Mundo;
+import org.mundo.rt.Channel;
+import org.mundo.rt.IReceiver;
+import org.mundo.rt.IMessageHandler;
+import org.mundo.rt.Mutex;
+import org.mundo.rt.ProtocolStack;
+import org.mundo.net.ProtocolCoordinator;
+import org.mundo.net.routing.IRoutingService;
+import org.mundo.net.transport.ITransportService;
+#ifdef LOG_MODULE
+import org.mundo.rt.Logger;
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+/**
+ * Server-side service of the DVER event broker.
+ */
+public class DVEventRouter extends Service
+       implements IRoutingService.IConn, IBCLProvider.ISignal, IMessageHandler
+       emits IMessageHandler
+{
+  public DVEventRouter()
+  {
+  }
+  /**
+   * Initializes the service.
+   */
+  public void init()
+  {
+    super.init();
+    LOG.fine("init");
+  
+    // watch arriving/departing nodes
+    Signal.connect("rt", IRoutingService.IConn.class, this);
+
+    // register mimeType to receive control messages
+    ProtocolCoordinator.register(mimeType, this);
+  }
+  /**
+   * Raised when a new node is available.
+   * @param id  the GUID of the new node.
+   */
+  public void nodeAdded(GUID id) /* IRoutingService.IConn */
+  {
+    LOG.fine("node + "+id.shortString());
+    
+    TypedMap map=new TypedMap();
+    map.put("request", "ServerAd");
+    map.put("server", Mundo.getNodeId());
+    sendMsg(id, map);
+  }
+  /**
+   * Raised when no routes are left to a node.
+   * @param id  the GUID of the node lost.
+   */
+  public void nodeRemoved(GUID id) /* IRoutingService.IConn */
+  {
+    LOG.fine("node - "+id.toString());
+    mutex.lock();
+    SubEntry se = new SubEntry(id);
+    AdvEntry ae = new AdvEntry(id);
+#ifdef CFG_JAVA15
+    for (RTEntry rte : routeMap.values())
+    {
+#else
+    for (Iterator rteIter = routeMap.values().iterator(); rteIter.hasNext();)
+    {
+      RTEntry rte = (RTEntry)rteIter.next();
+#endif
+      rte.subs.remove(se);
+      rte.advs.remove(ae);
+    }
+    mutex.unlock();
+  }
+  /**
+   * Raised on a local subscribe.
+   */
+  public void subscriberAdded(Subscriber s) /* IBCLProvider.ISignal */
+  {
+    String channelName=s.getChannel().getName();
+    if (s.getSession()==session || "*".equals(channelName))
+      return;
+    mutex.lock();
+    RTEntry entry=gocEntry(channelName);
+    LOG.fine(channelName+" sub+ local");
+#ifdef CFG_CHECKED_BUILD
+    LOG.finest("subscriber.session={"+s.getSession()+"}");
+#endif
+    SubEntry se=new SubEntry(GUID.NULL);
+    if (!entry.subs.add(se))
+    {
+      LOG.warning("duplicate subscribe for "+channelName+" from local");
+    }
+    updateAll();
+    mutex.unlock();
+  }
+  /**
+   * Raised on a local unsubscribe.
+   */
+  public void subscriberRemoved(Subscriber s) /* IBCLProvider.ISignal */
+  {
+    String channelName=s.getChannel().getName();
+    if (s.getSession()==session || "*".equals(channelName))
+      return;
+    mutex.lock();
+    RTEntry entry = (RTEntry)routeMap.get(channelName);
+    if (entry==null)
+    {
+      LOG.warning("no matching channel entry in unsubscribe for "+channelName);
+    }
+    else
+    {
+      LOG.fine(channelName+" sub- local");
+      SubEntry se=new SubEntry(GUID.NULL);
+      if (!entry.subs.remove(se))
+      {
+        LOG.warning("no subscription for "+channelName+" from local");
+      }
+    }
+    updateAll();
+    mutex.unlock();
+  }
+  /**
+   * Raised on a local advertise.
+   */
+  public void publisherAdded(Publisher p) /* IBCLProvider.ISignal */
+  {
+    if (p.getSession()==session)
+      return;
+    String channelName=p.getChannel().getName();
+    mutex.lock();
+    RTEntry entry=gocEntry(channelName);
+    LOG.fine(channelName+" pub+ local");
+    AdvEntry ae=new AdvEntry(GUID.NULL);
+    if (!entry.advs.add(ae))
+    {
+      LOG.warning("duplicate advertise for "+channelName+" from local");
+    }
+    updateAll();
+    mutex.unlock();
+  }
+  /**
+   * Raised on a local unadvertise.
+   */
+  public void publisherRemoved(Publisher p) /* IBCLProvider.ISignal */
+  {
+    if (p.getSession()==session)
+      return;
+    String channelName=p.getChannel().getName();
+    mutex.lock();
+    RTEntry entry = (RTEntry)routeMap.get(channelName);
+    if (entry==null)
+    {
+      LOG.warning("no matching channel entry in unadvertise for "+channelName);
+    }
+    else
+    {
+      LOG.fine(channelName+" pub- local");
+      AdvEntry ae=new AdvEntry(GUID.NULL);
+      if (!entry.advs.remove(ae))
+      {
+        LOG.warning("no advertisement for "+channelName+" from local");
+      }
+    }
+    updateAll();
+    mutex.unlock();
+  }
+  /**
+   *
+   */
+  public boolean down(Message msg) // IMessageHandler
+  {
+    String channelName;
+    try
+    {
+      channelName=msg.getMap(CHUNK_NAME, "passive").getString("channel");
+    }
+    catch(NullPointerException x)
+    {
+      LOG.severe("missing channel name parameter in down");
+      return false;
+    }
+
+    LOG.finer("local msg for "+channelName);
+    mutex.lock();
+    try
+    {
+      RTEntry rte = (RTEntry)routeMap.get(channelName);
+      if (rte==null)
+        return true;
+#ifdef CFG_JAVA15
+      for (SubEntry se : rte.subs)
+      {
+#else
+      for (Iterator seIter = rte.subs.iterator(); seIter.hasNext();)
+      {
+        SubEntry se = (SubEntry)seIter.next();
+#endif
+        if (GUID.NULL.equals(se.nodeId))
+          continue;
+        LOG.finer("forwarding to "+se.nodeId.toString());
+
+        Message dmsg = msg.copyFrame();
+        TypedMap amap = new TypedMap();
+        amap.put("destType", "node");
+        amap.put("destId", se.nodeId);
+        dmsg.put("rs", "param", amap);
+        if (!emit.down(dmsg))
+        {
+          LOG.warning("send failed > "+se.nodeId.toString());
+        }
+      }
+    }
+    catch(Throwable x)
+    {
+      log.exception(x);
+      return true;
+    }
+    mutex.unlock();
+    return true;
+  }
+
+  /**
+   * Raised when an external message has been received.
+   */
+  public boolean up(Message msg) // IMessageHandler
+  {
+    TypedMap map=msg.getMap(CHUNK_NAME, "passive");
+    if (map==null)
+      return false;
+    String request=map.getString("request", null);
+    if (request==null)
+      return false;
+    mutex.lock();
+    if (request.equals("Update"))
+    {
+      try
+      {
+        handleUpdate(map);
+        updateAll();
+      }
+      catch(Throwable x)
+      {
+        LOG.exception(x);
+      }
+    }
+    else if (request.equals("Message"))
+    {
+      try
+      {
+        handleClientMessage(map, msg);
+      }
+      catch(Throwable x)
+      {
+        LOG.exception(x);
+      }
+    }
+    mutex.unlock();
+    return true;
+  }
+
+  /**
+   *
+   */
+  private void updateAll()
+  {
+    updateAdvState();
+    updateClients();
+    updateLocalSubscriptions();
+  }
+  /**
+   * Handle update request from client.
+   */
+  private void handleUpdate(TypedMap map)
+  {
+    GUID clientId = map.getGUID("clientId");
+    TypedArray array = map.getArray("subscribes", null);
+    if (array!=null)
+    {
+#ifdef CFG_JAVA15
+      for (Object obj : array)
+      {
+        TypedMap m = (TypedMap)obj;
+#else
+      for (Iterator iter = array.iterator(); iter.hasNext();)
+      {
+        TypedMap m = (TypedMap)iter.next();
+#endif
+        String channelName = m.getString("channel");
+        RTEntry entry = gocEntry(channelName);
+        LOG.fine(channelName+" sub+ "+clientId.toString());
+        SubEntry se = new SubEntry(clientId);
+        if (!entry.subs.add(se))
+        {
+          LOG.warning("duplicate subscribe for "+channelName+" from "+clientId.toString());
+        }
+      }
+    }
+    array=map.getArray("unsubscribes", null);
+    if (array!=null)
+    {
+#ifdef CFG_JAVA15
+      for (Object obj : array)
+      {
+        TypedMap m = (TypedMap)obj;
+#else
+      for (Iterator iter = array.iterator(); iter.hasNext();)
+      {
+        TypedMap m = (TypedMap)iter.next();
+#endif
+        String channelName=m.getString("channel");
+        RTEntry entry = (RTEntry)routeMap.get(channelName);
+        if (entry==null)
+        {
+          LOG.warning("no matching channel entry in unsubscribe for "+channelName);
+        }
+        else
+        {
+          LOG.fine(channelName+" sub- "+clientId.toString());
+          SubEntry se=new SubEntry(clientId);
+          if (!entry.subs.remove(se))
+          {
+            LOG.warning("no subscription for "+channelName+" by "+clientId.toString());
+          }
+        }
+      }
+    }
+    array=map.getArray("advertises", null);
+    if (array!=null)
+    {
+#ifdef CFG_JAVA15
+      for (Object obj : array)
+      {
+        TypedMap m = (TypedMap)obj;
+#else
+      for (Iterator iter = array.iterator(); iter.hasNext();)
+      {
+        TypedMap m = (TypedMap)iter.next();
+#endif
+        String channelName = m.getString("channel");
+        RTEntry entry=gocEntry(channelName);
+        LOG.fine(channelName+" adv+ "+clientId.toString());
+        AdvEntry ae=new AdvEntry(clientId);
+        if (!entry.advs.add(ae))
+        {
+          LOG.warning("duplicate advertise for "+channelName+" from "+clientId.toString());
+        }
+      }
+    }
+    array=map.getArray("unadvertises", null);
+    if (array!=null)
+    {
+#ifdef CFG_JAVA15
+      for (Object obj : array)
+      {
+        TypedMap m = (TypedMap)obj;
+#else
+      for (Iterator iter = array.iterator(); iter.hasNext();)
+      {
+        TypedMap m = (TypedMap)iter.next();
+#endif
+        String channelName = m.getString("channel");
+        RTEntry entry = (RTEntry)routeMap.get(channelName);
+        if (entry==null)
+        {
+          LOG.warning("no matching channel entry in unadvertise for "+channelName);
+        }
+        else
+        {
+          LOG.fine(channelName+" adv- "+clientId.toString());
+          AdvEntry ae = new AdvEntry(clientId);
+          if (!entry.advs.remove(ae))
+          {
+            LOG.warning("no advertisement for "+channelName+" by "+clientId.toString());
+          }
+        }
+      }
+    }
+  }
+  /**
+   * Updates the states of advertisements.
+   */
+  private void updateAdvState()
+  {
+#ifdef CFG_JAVA15
+    for (RTEntry rte : routeMap.values())
+    {
+      for (AdvEntry ae : rte.advs)
+      {
+#else
+    for (Iterator rteIter = routeMap.values().iterator(); rteIter.hasNext();)
+    {
+      RTEntry rte = (RTEntry)rteIter.next();
+      for (Iterator aeIter = rte.advs.iterator(); aeIter.hasNext();)
+      {
+        AdvEntry ae = (AdvEntry)aeIter.next();
+#endif
+        if (ae.state == IRRELEVANT_SYNC)
+        {
+          if (isRelevant(ae, rte.subs))
+            ae.state = RELEVANT;
+        }
+        else if (ae.state == RELEVANT_SYNC)
+        {
+          if (!isRelevant(ae, rte.subs))
+            ae.state = IRRELEVANT;
+        }
+        else if (ae.state == RELEVANT)
+        {
+          if (!isRelevant(ae, rte.subs))
+            ae.state = IRRELEVANT_SYNC;
+        }
+      }
+    }
+  }
+  /**
+   * Updates the subscriptions at clients.
+   */
+  public void updateClients()
+  {
+#ifdef CFG_JAVA15
+    HashMap<GUID,TypedMap> requests = new HashMap<GUID,TypedMap>();
+    for (RTEntry rte : routeMap.values())
+    {
+      for (AdvEntry ae : rte.advs)
+      {
+#else
+    HashMap requests = new HashMap();
+    for (Iterator rteIter = routeMap.values().iterator(); rteIter.hasNext();)
+    {
+      RTEntry rte = (RTEntry)rteIter.next();
+      for (Iterator aeIter = rte.advs.iterator(); aeIter.hasNext();)
+      {
+        AdvEntry ae = (AdvEntry)aeIter.next();
+#endif
+        if (ae.state == RELEVANT)
+        {
+          if (GUID.NULL.equals(ae.nodeId))
+          {
+            LOG.fine("enable "+rte.channelName+" at local");
+          }
+          else
+          {
+            LOG.fine("enable "+rte.channelName+" at "+ae.nodeId.toString());
+            ae.state = RELEVANT_SYNC;
+            TypedMap req = (TypedMap)requests.get(ae.nodeId);
+            if (req==null)
+            {
+              req=new TypedMap();
+              requests.put(ae.nodeId, req);
+            }
+            TypedArray enables=req.getArray("enables", null);
+            if (enables==null)
+            {
+              enables=new TypedArray();
+              req.put("enables", enables);
+            }
+            TypedMap m=new TypedMap();
+            m.put("channel", rte.channelName);
+            enables.add(m);
+          }
+        }
+        else if (ae.state == IRRELEVANT)
+        {
+          if (GUID.NULL.equals(ae.nodeId))
+          {
+            LOG.fine("disable "+rte.channelName+" at local");
+          }
+          else
+          {
+            LOG.fine("disable "+rte.channelName+" at "+ae.nodeId.toString());
+            ae.state = IRRELEVANT_SYNC;
+            TypedMap req = (TypedMap)requests.get(ae.nodeId);
+            if (req==null)
+            {
+              req=new TypedMap();
+              requests.put(ae.nodeId, req);
+            }
+            TypedArray disables = req.getArray("disables", null);
+            if (disables==null)
+            {
+              disables=new TypedArray();
+              req.put("disables", disables);
+            }
+            TypedMap m=new TypedMap();
+            m.put("channel", rte.channelName);
+            disables.add(m);
+          }
+        }
+      }
+    }
+#ifdef CFG_JAVA15
+    for (Map.Entry<GUID,TypedMap> e : requests.entrySet())
+    {
+#else
+    for (Iterator iter = requests.entrySet().iterator(); iter.hasNext();)
+    {
+      Map.Entry e = (Map.Entry)iter.next();
+#endif
+      TypedMap m = (TypedMap)e.getValue();
+      m.put("request", "Enable");
+      sendMsg((GUID)e.getKey(), m);
+    }
+  }
+  /**
+   *
+   */
+  public void updateLocalSubscriptions()
+  {
+#ifdef CFG_JAVA15
+    for (RTEntry rte : routeMap.values())
+    {
+#else
+    for (Iterator rteIter = routeMap.values().iterator(); rteIter.hasNext();)
+    {
+      RTEntry rte = (RTEntry)rteIter.next();
+#endif
+      if (rte.localSub==null && !rte.subs.isEmpty())
+      {
+        LOG.fine("enable local "+rte.channelName);
+        rte.localSub=session.subscribe("lan", rte.channelName, intMsgHandler);
+      }
+      else if (rte.localSub!=null && rte.subs.isEmpty())
+      {
+        LOG.fine("disable local "+rte.channelName);
+        session.unsubscribe(rte.localSub);
+        rte.localSub=null;
+      }
+    }
+  }
+  /**
+   * Tests if an advertisement is relevant for a given set of subscribers.
+   * Advertisement and all subscriptions must be for the same channel.
+   */
+#ifdef CFG_JAVA15
+  private boolean isRelevant(AdvEntry ae, HashSet<SubEntry> subs)
+#else
+  private boolean isRelevant(AdvEntry ae, HashSet subs)
+#endif
+  {
+    if (subs.size()>1)
+      return true;
+    if (subs.size()==0)
+      return false;
+#ifdef CFG_JAVA15
+    Iterator<SubEntry> iter = subs.iterator();
+#else
+    Iterator iter = subs.iterator();
+#endif
+    SubEntry se = (SubEntry)iter.next();
+    return !ae.nodeId.equals(se.nodeId);
+  }
+  /**
+   * Handles a message incoming from a client.
+   */
+  private void handleClientMessage(TypedMap map, Message msg)
+  {
+    String channel = map.getString("channel");
+    GUID clientId = map.getGUID("clientId");
+    LOG.finer("message for "+channel+" from "+clientId.toString());
+    RTEntry rte = (RTEntry)routeMap.get(channel);
+    if (rte==null)
+      return;
+#ifdef CFG_JAVA15
+    for (SubEntry se : rte.subs)
+    {
+#else
+    for (Iterator seIter = rte.subs.iterator(); seIter.hasNext();)
+    {
+      SubEntry se = (SubEntry)seIter.next();
+#endif
+      if (GUID.NULL.equals(se.nodeId))
+      {
+        LOG.finer("forwarding to local");
+        Mundo.bcl.send(new Channel("rt", channel), msg, session);
+      }
+      else if (!se.nodeId.equals(clientId))
+      {
+        LOG.finer("forwarding to "+se.nodeId.toString());
+        Message dmsg = msg.copyFrame();
+        TypedMap amap = new TypedMap();
+        amap.put("destType", "node");
+        amap.put("destId", se.nodeId);
+        dmsg.put("rs", "param", amap);
+        dmsg.setStack(ProtocolCoordinator.getInstance().getDefaultStack(), IBCLProvider.ISignal.class);
+        if (!emit.down(dmsg))
+        {
+          LOG.warning("send failed > "+se.nodeId.toString());
+        }
+      }
+    }
+  } 
+  /**
+   * Sends a message to the specified client.
+   */
+  private void sendMsg(GUID nodeId, TypedMap map)
+  {
+    Message msg = new Message();
+    msg.put(CHUNK_NAME, "passive", map);
+
+    TypedMap amap = new TypedMap();
+    amap.put("destType", "node");
+    amap.put("destId", nodeId);
+    msg.put("rs", "param", amap);
+
+    msg.setStack(ProtocolCoordinator.getInstance().getDefaultStack(), IBCLProvider.ISignal.class);
+    msg.setType(mimeType);
+    emit.down(msg);
+  }
+  /**
+   * Retrieves or creates an entry in the routing table.
+   */
+  private RTEntry gocEntry(String channelName)
+  {
+    RTEntry e = (RTEntry)routeMap.get(channelName);
+    if (e!=null)
+      return e;
+    e=new RTEntry(channelName);
+    routeMap.put(channelName, e);
+    return e;
+  }
+
+  private class SubEntry
+  {
+    SubEntry(GUID id)
+    {
+      nodeId=id;
+    }
+    public int hashCode()
+    {
+      return nodeId.hashCode();
+    }
+    public boolean equals(Object obj)
+    {
+      if (!(obj instanceof SubEntry))
+        return false;
+      return nodeId.equals(((SubEntry)obj).nodeId);
+    }
+    GUID nodeId;
+  }
+
+  private static final int IRRELEVANT = 1;
+  private static final int IRRELEVANT_SYNC = 2;
+  private static final int RELEVANT = 3;
+  private static final int RELEVANT_SYNC = 4;
+
+  private class AdvEntry
+  {
+    AdvEntry(GUID id)
+    {
+      nodeId = id;
+    }
+    public int hashCode()
+    {
+      return nodeId.hashCode();
+    }
+    public boolean equals(Object obj)
+    {
+      if (!(obj instanceof AdvEntry))
+        return false;
+      return nodeId.equals(((AdvEntry)obj).nodeId);
+    }
+    GUID nodeId;
+    int state = IRRELEVANT_SYNC;
+  }
+
+  private class RTEntry
+  {
+    RTEntry(String channelName)
+    {
+      this.channelName=channelName;
+    }
+    String channelName;
+#ifdef CFG_JAVA15
+    HashSet<SubEntry> subs = new HashSet<SubEntry>();
+    HashSet<AdvEntry> advs = new HashSet<AdvEntry>();
+#else
+    HashSet subs = new HashSet();
+    HashSet advs = new HashSet();
+#endif
+    Subscriber localSub;
+  }
+
+  private final IReceiver intMsgHandler = new IReceiver()
+  {
+    public void received(Message msg, MessageContext ctx)
+    {
+      msg = msg.copyFrame();
+
+      TypedMap map = new TypedMap();
+      map.put("request", "Message");
+      map.put("channel", ctx.channel.getName());
+      map.put("clientId", Mundo.getNodeId());
+      map.put("contentType", msg.getType());
+      msg.put(CHUNK_NAME, "passive", map);
+ 
+      msg.setType(mimeType); 
+      ProtocolCoordinator.getInstance().firstDown(msg);
+    }
+  };
+
+  private Logger log = Logger.getLogger("dver");
+  private Mutex mutex = new Mutex();
+#ifdef CFG_JAVA15
+  private HashMap<String,RTEntry> routeMap = new HashMap<String,RTEntry>();
+#else
+  private HashMap routeMap = new HashMap();
+#endif
+  // Event Router Client/Server Protocol
+  private static final String CHUNK_NAME = "ercsp";
+  private static final String mimeType = "message/mc-ercsp";
+}

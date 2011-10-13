@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<item type="id" name="rdps_service_id"/>
+    <string name="rdps_service_name">RawDataProcessor</string>
+    <string name="rdp_pref_title">RawDataProcessor</string>
+    <string name="rdp_pref_summary">Set preferences</string>
+    <string name="rdp_service_penmodel_preference">rdp_service_penmodel_preference</string>
+    <string name="rdp_service_startup_preference">rdp_service_startup_preference</string>
+    <string name="rdp_service_pap_zone_preference">rdp_service_pap_zone_preference</string>
+    <string-array name="rdp_zones">
+    	<item>rt</item>
+    	<item>lan</item>
+    </string-array>
+    <string-array name="rdp_pen_models">
+    	<item>Nokia SU-1B</item>
+    	<item>Logitech IO2</item>
+    </string-array>
+</resources>

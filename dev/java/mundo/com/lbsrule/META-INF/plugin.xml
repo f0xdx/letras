@@ -1,0 +1,299 @@
+<plug-in xmlns="http://mundo.org/2004/plugin/">
+  <service xmlns="http://mundo.org/2004/plugin/service"
+           xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+    <classname>org.mundo.service.lbsrule.LBSRuleService</classname>
+    <new-instance xsi:type="map">
+      <name>LBSRule</name>
+      <classname>LBSRuleService</classname>
+      <config xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$Config">
+        <wmstore>wmstore</wmstore>
+        <sr-channel>speech.utterance</sr-channel>
+        <locations xsi:type="array" activeClass="java.util.ArrayList">
+
+          <location xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$Location">
+            <name>meet</name>
+            <ahk-channel>meet.ahk</ahk-channel>
+            <status-channel>meet.status</status-channel>
+	        <commands xsi:type="array" activeClass="java.util.ArrayList">
+		      <!-- browser commands -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open browser</utterance>
+	            <script>Run www.tu-darmstadt.de</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close browser</utterance>
+	            <script>WinClose, TU Darmstadt</script>
+              </command>
+              <!-- presentation commands -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open presentation</utterance>
+	            <script>Run H:\loewe\docs\presentation.ppt</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>start presentation</utterance>
+	            <script>Send, {F5}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close presentation</utterance>
+	            <script>Send, {ESC}
+WinClose, Microsoft PowerPoint</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide presentation</utterance>
+	            <script>Send, {ESC}
+WinMinimize, Microsoft PowerPoint</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show presentation</utterance>
+	            <script>WinMaximize, Microsoft PowerPoint</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>next slide</utterance>
+	            <script>Send, {Right}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>go back</utterance>
+	            <script>Send, {Left}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>previous slide</utterance>
+	            <script>Send, {Left}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>first slide</utterance>
+	            <script>Send, 1{Enter}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>blank page</utterance>
+	            <script>Send, W</script>
+              </command>
+              <!-- worldview -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show map</utterance>
+	            <script>WinMaximize, Mundo WorldView</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open map</utterance>
+	            <script>WinMaximize, Mundo WorldView</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide map</utterance>
+	            <script>WinMinimize, Mundo WorldView</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close map</utterance>
+	            <script>WinMinimize, Mundo WorldView</script>
+              </command>
+              <!-- dissim editor -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>edit disaster</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Editor</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show disaster editor</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Editor</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open disaster editor</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Editor</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide disaster editor</utterance>
+	            <script>WinMinimize, Disaster Visualisation - Editor</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close disaster editor</utterance>
+	            <script>WinMinimize, Disaster Visualisation - Editor</script>
+              </command>
+              <!-- dissim player -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>play disaster</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Player</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show disaster player</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Player</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open disaster player</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Player</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide disaster player</utterance>
+	            <script>WinMinimize, Disaster Visualisation - Player</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close disaster player</utterance>
+	            <script>WinMinimize, Disaster Visualisation - Player</script>
+              </command>
+              <!-- annotations -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show annotations</utterance>
+	            <script>WinMaximize, LAPJUERGEN</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open annotations</utterance>
+	            <script>WinMaximize, LAPJUERGEN</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide annotations</utterance>
+	            <script>WinMinimize, LAPJUERGEN</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close annotations</utterance>
+	            <script>WinMinimize, LAPJUERGEN</script>
+              </command>
+              <!-- help -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>what can i say</utterance>
+	            <script>Run, h:\loewe\docs\help.html</script>
+              </command>
+            </commands>
+          </location>
+
+          <location xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$Location">
+            <name>mttable</name>
+            <ahk-channel>mttable.ahk</ahk-channel>
+            <status-channel>mttable.status</status-channel>
+	        <commands xsi:type="array" activeClass="java.util.ArrayList">
+		      <!-- browser commands -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open browser</utterance>
+	            <script>Run www.tu-darmstadt.de</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close browser</utterance>
+	            <script>WinClose, TU Darmstadt</script>
+              </command>
+              <!-- presentation commands -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open presentation</utterance>
+	            <script>Run H:\loewe\docs\presentation.ppt</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>start presentation</utterance>
+	            <script>Send, {F5}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close presentation</utterance>
+	            <script>Send, {ESC}
+WinClose, Microsoft PowerPoint</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide presentation</utterance>
+	            <script>Send, {ESC}
+WinMinimize, Microsoft PowerPoint</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show presentation</utterance>
+	            <script>WinMaximize, Microsoft PowerPoint</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>next slide</utterance>
+	            <script>Send, {Right}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>go back</utterance>
+	            <script>Send, {Left}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>previous slide</utterance>
+	            <script>Send, {Left}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>first slide</utterance>
+	            <script>Send, 1{Enter}</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>blank page</utterance>
+	            <script>Send, W</script>
+              </command>
+              <!-- worldview -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show map</utterance>
+	            <script>WinMaximize, Mundo WorldView</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open map</utterance>
+	            <script>WinMaximize, Mundo WorldView</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide map</utterance>
+	            <script>WinMinimize, Mundo WorldView</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close map</utterance>
+	            <script>WinMinimize, Mundo WorldView</script>
+              </command>
+              <!-- dissim editor -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>edit disaster</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Editor</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show disaster editor</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Editor</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open disaster editor</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Editor</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide disaster editor</utterance>
+	            <script>WinMinimize, Disaster Visualisation - Editor</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close disaster editor</utterance>
+	            <script>WinMinimize, Disaster Visualisation - Editor</script>
+              </command>
+              <!-- dissim player -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>play disaster</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Player</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show disaster player</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Player</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open disaster player</utterance>
+	            <script>WinMaximize, Disaster Visualisation - Player</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide disaster player</utterance>
+	            <script>WinMinimize, Disaster Visualisation - Player</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close disaster player</utterance>
+	            <script>WinMinimize, Disaster Visualisation - Player</script>
+              </command>
+              <!-- annotations -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>show annotations</utterance>
+	            <script>WinMaximize, LAPJUERGEN</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>open annotations</utterance>
+	            <script>WinMaximize, LAPJUERGEN</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>hide annotations</utterance>
+	            <script>WinMinimize, LAPJUERGEN</script>
+              </command>
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>close annotations</utterance>
+	            <script>WinMinimize, LAPJUERGEN</script>
+              </command>
+              <!-- help -->
+              <command xsi:type="map" activeClass="org.mundo.service.lbsrule.LBSRuleService$LocCommand">
+	            <utterance>what can i say</utterance>
+	            <script>Run, h:\loewe\docs\help.html</script>
+              </command>
+            </commands>
+          </location>
+
+        </locations>
+      </config>
+    </new-instance>
+  </service>
+</plug-in>

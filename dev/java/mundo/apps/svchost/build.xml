@@ -1,0 +1,42 @@
+<project name="ServiceHost" default="compile" basedir=".">
+  <property name="src" location="src"/>
+  <property name="build" location="classes"/>
+  <property name="mc-jar" location="../../lib/mundocore.jar"/>
+
+  <target name="init">
+    <mkdir dir="classes"/>
+  </target>
+
+  <target name="compile" depends="init">
+    <javac srcdir="${src}" destdir="${build}" includeAntRuntime="false">
+      <classpath>
+        <pathelement path="${mc-jar}"/>
+      </classpath>
+    </javac>
+  </target>
+
+  <target name="run">
+    <java classname="ServiceHost" fork="true">
+      <classpath>
+        <pathelement location="classes"/>
+        <pathelement path="${mc-jar}"/>
+      </classpath>
+    </java>
+  </target>
+  
+  <target name="jar">
+    <copy todir="tmp">
+      <fileset dir="${build}"/>
+    </copy>
+    <unjar src="${mc-jar}" dest="tmp"/>
+    <jar jarfile="svchost.jar" manifest="META-INF/MANIFEST.MF">
+      <fileset dir="tmp">
+        <include name="**/*.class"/>
+      </fileset>
+      <fileset dir=".">
+        <include name="META-INF/node.conf.xml"/>
+      </fileset>
+    </jar>
+    <delete dir="tmp"/>
+  </target>
+</project>

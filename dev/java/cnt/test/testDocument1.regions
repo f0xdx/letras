@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="testDocument1.regions">
+    <page>
+        <uri>1bab2c3</uri>
+        <shape>
+            <rectangle height="956.0" width="661.375" top="8388621.125" left="1.8597782675E8"/>
+        </shape>
+        <channel>1bab2c3</channel>
+        <hungry>false</hungry>
+    </page>
+    <region>
+        <uri>d7c6bf</uri>
+        <shape>
+            <rectangle height="329.0" width="530.375" top="8388680.375" left="1.85977885E8"/>
+        </shape>
+        <channel>d7c6bf</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>10e8647</uri>
+        <shape>
+            <rectangle height="367.75" width="484.125" top="8389061.0" left="1.85977927625E8"/>
+        </shape>
+        <channel>10e8647</channel>
+        <hungry>false</hungry>
+    </region>
+</regionDocument>

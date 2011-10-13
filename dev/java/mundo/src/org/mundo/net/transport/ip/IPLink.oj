@@ -1,0 +1,183 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.net.transport.ip;
+
+import java.net.InetSocketAddress;
+
+import org.mundo.rt.Semaphore;
+import org.mundo.net.transport.TransportLink;
+import org.mundo.net.transport.ITransportConnection;
+import org.mundo.net.transport.ITransportService;
+
+/**
+ * Describes an IP-based link to an adjacent peer.
+ * @author Erwin Aitenbichler
+ */
+public class IPLink extends TransportLink
+{
+  public IPLink(IPTransportService s, int pr)
+  {
+    ipts = s;
+    proto = pr;
+  }
+  /**
+   * Initializes a new IP link.
+   * @param s  the transport service that owns this route.
+   * @param a  the peer's external address.
+   * @param pr  the protocol: PROTO_TCP or PROTO_UDP.
+   */
+  public IPLink(IPTransportService s, InetSocketAddress a, int pr)
+  {
+    ipts = s;
+    set(a, pr);
+  }
+  /**
+   * Initializes this route with the specified peer address and port and
+   * generates the metric value based on this information.
+   */
+  public void set(InetSocketAddress a, int pr)
+  {
+    peerExtAddr = a;
+    proto = pr;
+
+    if (isLoopback())
+    {
+      if (isPrimary())
+        metric = 9;
+      else
+        metric = 10;
+    }
+    else
+    {
+      if (proto==PROTO_UDP)
+        metric = 19;
+      else
+        metric = 20;
+    }
+  }
+  public void set(InetSocketAddress extAddr, InetSocketAddress intAddr, int pr)
+  {
+    set(extAddr, pr);
+    peerIntAddr = intAddr;
+  }
+  /**
+   * Returns the associated transport service owning this route.
+   */
+  public ITransportService getService()
+  {
+    return ipts;
+  }
+  /**
+   * Returns the connection object associated with this route.
+   */
+  public ITransportConnection getConnection()
+  {
+    return iptc;
+  }
+  /**
+   * Returns the peer's external address. This is the address under which
+   * the peer is visible to us. In case of NAT, the peer's external and
+   * internal addresses may be different.
+   */
+  public InetSocketAddress getPeerExtAddress()
+  {
+    return peerExtAddr;
+  }
+  /**
+   * Returns the peer's internal address. This is the address of the
+   * peer behind NAT, if there is any.
+   */
+  public InetSocketAddress getPeerIntAddress()
+  {
+    return peerIntAddr;
+  }
+  /**
+   * Returns the local external address. This is the address of this node
+   * as it appears to the peer.
+   */
+  public InetSocketAddress getLocalExtAddress()
+  {
+    return localExtAddr;
+  }
+  public void setLocalExtAddress(InetSocketAddress a)
+  {
+    localExtAddr = a;
+  }
+  
+  /**
+   * Returns the protocol. One of <code>PROTO_TCP</code> or <code>PROTO_UDP</code>.
+   */
+  public int getProto()
+  {
+    return proto;
+  }
+  /**
+   * Checks if the remote address is a loopback address.
+   * @return  <code>true</code> if the remote address is a loopback address;
+   *          <code>false</code> otherwise.
+   */
+  public boolean isLoopback()
+  {
+    if (peerExtAddr==null)
+      return false;
+    // InetAddress.isLoopbackAddress() is available only in 1.4
+    byte[] a = peerExtAddr.getAddress().getAddress();
+    return (a[0]==127 && a[1]==0 && a[2]==0);
+  }
+  /**
+   * Checks if one end of the route is a primary port on the local host.
+   * @return  <code>true</code> if one end of the route is a primary port on
+   *          the local host; or <code>false</code> otherwise.
+   */
+  public boolean isPrimary()
+  {
+    return isLoopback() &&
+           proto == PROTO_TCP &&
+           (ipts.getLocalPort()==ipts.primaryPort || peerExtAddr.getPort()==ipts.primaryPort);
+  }
+  /**
+   * Converts this object to a string representation.
+   */
+  public String toString()
+  {
+    StringBuffer sb=new StringBuffer();
+    if (remoteId!=null)
+      sb.append(remoteId.shortString()).append(" ");
+    if (proto==PROTO_TCP)
+      sb.append("tcp:/");
+    else if (proto==PROTO_UDP)
+      sb.append("udp:/");
+    sb.append(peerExtAddr);
+    return sb.toString();
+  }
+
+  public IPTransportService     ipts;
+  public IIPTransportConnection iptc;
+  private int                   proto;
+  public static final int       PROTO_TCP = 0;
+  public static final int       PROTO_UDP = 1;
+  private InetSocketAddress     peerExtAddr;
+  private InetSocketAddress     peerIntAddr;
+  private InetSocketAddress     localExtAddr;
+  public Semaphore emitSem = new Semaphore(1);
+}

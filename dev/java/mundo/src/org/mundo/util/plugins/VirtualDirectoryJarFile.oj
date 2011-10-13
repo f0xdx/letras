@@ -1,0 +1,269 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.util.plugins;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.CodeSigner;
+import java.security.cert.Certificate;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.Iterator;
+import java.util.List;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import org.mundo.util.DirectoryWalker;
+
+/**
+ * A VirtualDirectoryJarFile points to a directory (and not a JAR), but
+ * otherwise behaves exactly like a JarFile. i.e. Entries that are read from
+ * this particular JarFile instance are translated into file system calls.
+ * 
+ * @author AHa
+ */
+public class VirtualDirectoryJarFile extends JarFile {
+
+  /**
+   * Arguably, it is a bit sick to create an empty zip/jar file just to make the
+   * super-constructor work, but hey - there is no other way to build a Jar file
+   * that is actually not one. (I miss duck typing).
+   */
+  private static final File NULL_ZIP;
+
+  static {
+    try {
+      NULL_ZIP = File.createTempFile("VirtualJAR", ".jar");
+      NULL_ZIP.deleteOnExit();
+
+      ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(NULL_ZIP));
+      zos.putNextEntry(new ZipEntry("Foo"));
+      zos.closeEntry();
+      zos.close();
+      NULL_ZIP.deleteOnExit();
+    } catch(IOException couldnotcreate) {
+      throw new Error("Could not create a new JAR file for the VirtualDirectoryJAR");
+    }
+  }
+
+  /**
+   * The directory to read from
+   */
+  private File dir;
+
+  /**
+   * Creates a new {@link VirtualDirectoryJarFile} for a given directory. The
+   * directory does not have to be present at the moment of creating the object,
+   * all methods that access entries of this JAR are looked up lazily when
+   * required.
+   * 
+   * @param dir the directory to locate the element in
+   * @throws IOException never
+   */
+  public VirtualDirectoryJarFile(File dir) throws IOException {
+    super(NULL_ZIP);
+
+    this.dir = dir.getAbsoluteFile();
+  }
+
+#ifdef CFG_JAVA15
+  @Override
+  public Enumeration<JarEntry> entries()
+#else
+  public Enumeration entries()
+#endif
+  {
+#ifdef CFG_JAVA15
+    Iterator<File> _it;
+#else
+    Iterator _it;
+#endif
+    String _dirname = "";
+    try {
+      _it = new DirectoryWalker(dir).iterator();
+      _dirname = dir.getCanonicalPath();
+    } catch(IOException e) {
+#ifdef CFG_JAVA15
+      List<File> l = Collections.emptyList();
+#else
+      List l = Collections.emptyList();
+#endif
+      _it = l.iterator();
+    }
+
+#ifdef CFG_JAVA15
+    final Iterator<File> it = _it;
+#else
+    final Iterator it = _it;
+#endif
+    final String dirname = _dirname;
+#ifdef CFG_JAVA15
+    return new Enumeration<JarEntry>()
+#else
+    return new Enumeration()
+#endif
+    {
+      public boolean hasMoreElements() {
+        return it.hasNext();
+      }
+
+#ifdef CFG_JAVA15
+      public JarEntry nextElement()
+#else
+      public Object nextElement()
+#endif
+      {
+        try {
+          File nextfile = ((File)it.next()).getCanonicalFile();
+          String name = nextfile.getPath();
+          if(name.startsWith(dirname))
+            name = name.substring(dirname.length() + 1);
+          name = name.replace(File.separatorChar, '/');
+
+          return new VirtualJarEntry(name, nextfile);
+        } catch(IOException e) {
+          return nextElement();
+        }
+      }
+    };
+  }
+
+  @Override
+  public ZipEntry getEntry(String name) {
+    return getJarEntry(name);
+  }
+
+  @Override
+  public synchronized InputStream getInputStream(ZipEntry ze) throws IOException {
+    assert ze instanceof VirtualJarEntry;
+    
+    return new FileInputStream(((VirtualJarEntry)ze).file);
+  }
+
+  @Override
+  public JarEntry getJarEntry(String name) {
+    File file = new File(dir, name);
+    if(!file.exists())
+      return null;
+    
+    // check if the absolute path of the file also contains the path of the directory
+    // that way it should be ensured that tricks with .. or similar do not lead to security holes
+    if(file.getAbsolutePath().startsWith(dir.getPath()))
+      return new VirtualJarEntry(name, file);
+    else
+      return null;
+  }
+
+  @Override
+  public void close() throws IOException {
+  }
+
+  /**
+   * Returns the path name of the directory, according to the contract of
+   * ZipFile
+   */
+  @Override
+  public String getName() {
+    return dir.getPath();
+  }
+
+  /**
+   * Gets the current number of files in the directory and all of its
+   * subdirectories. This method always recursively checks the directories and
+   * therefore may be slow.
+   */
+  @Override
+  public int size() {
+    int sz = 0;
+    try
+    {
+#ifdef CFG_JAVA15
+      for (File subdir : new DirectoryWalker(dir))
+#else
+      for (Iterator iter = new DirectoryWalker(dir).iterator(); iter.hasNext(); iter.next())
+#endif
+        sz++;
+    } catch(IOException e) {
+    }
+    return sz;
+  }
+
+  private class VirtualJarEntry extends JarEntry {
+
+    File file;
+    
+    public VirtualJarEntry(String name, File file) {
+      super(name);
+      this.file = file;
+    }
+
+    @Override
+    public Attributes getAttributes() throws IOException {
+      Manifest man = getManifest();
+      return man != null ? man.getAttributes(getName()) : null;
+    }
+
+    @Override
+    public Certificate[] getCertificates() {
+      return null;
+    }
+
+    @Override
+    public CodeSigner[] getCodeSigners() {
+      return null;
+    }
+
+    @Override
+    public long getCompressedSize() {
+      return getSize();
+    }
+
+    @Override
+    public int getMethod() {
+      return STORED;
+    }
+
+    @Override
+    public long getSize() {
+      return file.length();
+    }
+
+    @Override
+    public long getTime() {
+      return file.lastModified();
+    }
+
+    @Override
+    public boolean isDirectory() {
+      return file.isDirectory();
+    }
+    
+  };
+}

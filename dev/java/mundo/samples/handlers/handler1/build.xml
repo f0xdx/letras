@@ -1,0 +1,28 @@
+<project name="samples-handler1" default="runscript" basedir=".">
+  <property file="../../../config/build.properties"/>
+
+  <property name="src" location="src" />
+  <property name="build" location="bin" />
+
+  <target name="init">
+    <mkdir dir="${build}"/>
+  </target>
+
+  <target name="compile" depends="init">
+    <javac destdir="${build}" debug="on" debuglevel="lines,vars,source" includeantruntime="false">
+      <classpath>
+        <pathelement path="${mclib}/mundocore.jar"/>
+      </classpath>
+      <src path="src" />
+    </javac>
+  </target>
+
+  <target name="runscript" depends="compile">
+    <echo file="runsender.sh" append="false">java -cp ${mclib}/mundocore.jar:bin TestSender</echo>
+    <chmod file="runsender.sh" perm="+x"/>
+    <echo file="runsender.bat" append="false">java -cp ${mclib}/mundocore.jar;bin TestSender</echo>
+    <echo file="runreceiver.sh" append="false">java -cp ${mclib}/mundocore.jar:bin TestReceiver</echo>
+    <chmod file="runreceiver.sh" perm="+x"/>
+    <echo file="runreceiver.bat" append="false">java -cp ${mclib}/mundocore.jar;bin TestReceiver</echo>
+  </target>
+</project>

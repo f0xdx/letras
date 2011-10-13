@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="testDocument3.regions">
+    <page>
+        <uri>58acf6cc</uri>
+        <shape>
+            <rectangle height="942.75" width="649.75" top="8388626.75" left="1.8597782675E8"/>
+        </shape>
+        <channel>58acf6cc</channel>
+        <hungry>true</hungry>
+    </page>
+    <region>
+        <uri>c4772af1</uri>
+        <shape>
+            <rectangle height="336.25" width="554.0" top="8388678.375" left="1.85977878875E8"/>
+        </shape>
+        <channel>c4772af1</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>5862f4f7</uri>
+        <shape>
+            <rectangle height="188.625" width="386.625" top="8388720.375" left="1.85977901875E8"/>
+        </shape>
+        <channel>5862f4f7</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>4783230f</uri>
+        <shape>
+            <rectangle height="87.0" width="328.25" top="8388917.875" left="1.85977921625E8"/>
+        </shape>
+        <channel>4783230f</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>8a971623</uri>
+        <shape>
+            <rectangle height="352.375" width="535.625" top="8389077.375" left="1.85977900375E8"/>
+        </shape>
+        <channel>8a971623</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>8489a928</uri>
+        <shape>
+            <rectangle height="286.0" width="458.625" top="8389114.875" left="1.85977934375E8"/>
+        </shape>
+        <channel>8489a928</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>90f132b</uri>
+        <shape>
+            <rectangle height="212.125" width="395.5" top="8389140.25" left="1.8597797E8"/>
+        </shape>
+        <channel>90f132b</channel>
+        <hungry>false</hungry>
+    </region>
+</regionDocument>

@@ -1,0 +1,127 @@
+<mcbuild version="1">
+  <description>
+    Build-time settings for the MundoCore library.
+  </description>
+  <container key="general" name="General">
+    <description>
+      General build-time settings for the library.
+    </description>
+    <feature key="target" name="Target" type="enum">
+      <description>
+        Target options.
+      </description>
+      <option key="java15" name="Java 5 (or higher)" default="enabled">
+        <define target="mcc" key="CFG_JAVA15"/>
+      </option>
+      <option key="java14" name="J2SE 1.4"/>
+      <option key="cdc" name="J2ME/CDC">
+        <define target="mcc" key="CFG_J2ME"/>
+      </option>
+      <option key="cldc" name="J2ME/CLDC">
+        <define target="mcc" key="CFG_J2ME"/>
+        <define target="mcc" key="CFG_CLDC"/>
+      </option>
+      <option key="android" name="Android">
+        <define target="mcc" key="CFG_JAVA15"/>
+        <define target="mcc" key="CFG_ANDROID"/>
+      </option>
+    </feature>
+    <feature key="xml" name="XML Support" type="boolean" default="enabled">
+      <define target="mcc" key="CFG_XML"/>
+      <description>
+        Defines <code>CFG_XML</code>.
+      </description>
+    </feature>
+    <feature key="streams" name="Streams" type="enum">
+      <option key="disabled">
+        <define target="src-exclude" key="org/mundo/stream/**"/>
+      </option>
+      <option key="enabled" default="enabled"/>
+      <description>
+        Build with support for MundoStreams. There are ByteBuffers used in the MundoInputStream, so a JVM of version 1.4 is required.
+      </description>
+    </feature>
+    <feature key="xquery" name="XQuery Parser" type="enum">
+      <option key="disabled">
+        <define target="src-exclude" key="org/mundo/xml/xqparser/**"/>
+        <define target="src-exclude" key="org/mundo/filter/Compound*"/>
+      </option>
+      <option key="enabled" default="enabled">
+        <define target="ant-rule" key="xquery-parser"/>
+      </option>
+    </feature>
+    <feature key="debug" name="Generate debug information" type="boolean" default="enabled">
+      <define target="javac" key="debug" value="on"/>
+      <define target="javac" key="debuglevel" value="lines,vars,source"/>
+      <description>
+        Instructs the Java compiler to generate debug information.
+      </description>
+    </feature>
+    <feature key="checked-build" name="Checked Build" type="boolean" default="enabled">
+      <define target="mcc" key="CFG_CHECKED_BUILD"/>
+      <description>
+        Defines <code>CFG_CHECKED_BUILD</code>.
+        <p>Enable this option during development, but disable it during production use.</p>
+        <p>A Checked Build differs in the following aspects to a release build:</p>
+        <ul>
+          <li>Additional sanity checks for parameters passed to the MundoCore API are enabled. Developers will get more meaningful exceptions when wrong parameters are passed.</li>
+          <li>Log statements with level <code>DEBUG</code> and lower are generated.</li>
+          <li>The drawback of a Checked Build is the increased code size and the overall performance of MundoCore will be lower by a factor of 2x-3x.</li>
+        </ul>
+        <p>The decreased performance is usually not noticeable on desktop platforms, but may have significant effects on slower embedded platforms, e.g., mobile phones.</p>
+      </description>
+    </feature>
+  </container>
+  <container key="transport" name="Transport Services">
+    <description>
+      Transport services provide message transport to adjacent peers and peer discovery.
+    </description>
+    <module key="legacy-ipts" name="IP Transport" default="enabled">
+      <description>
+        Provides the standard IP-based transport service.
+      </description>
+    </module>
+  </container>
+  <container key="routing" name="Routing Services">
+    <description>
+      Routing services provide message routing to remote peers using direct addressing.
+    </description>
+    <module key="RoutingService" name="RoutingService" default="enabled">
+      <description>
+        This is the standard routing implementation that also supports forwarding and source routing.
+      </description>
+      <src file="org/mundo/net/routing/RoutingService.oj"/>
+      <src file="org/mundo/net/routing/RSSubscription.oj"/>
+    </module>
+    <module key="LeafRoutingService" name="LeafRoutingService" default="disabled">
+      <description>
+        This compact implementation only supports the functionality needed by a "leaf node" in the network.
+        It does not support any message forwarding.
+      </description>
+      <src file="org/mundo/net/routing/LeafRoutingService.oj"/>
+    </module>
+  </container>
+  <container key="broker" name="Broker Services">
+    <description>
+      Broker services provide message brokering to remote peers based on indirect addressing.
+    </description>
+    <module key="P2PTopicBroker" name="P2PTopicBroker" default="enabled">
+      <description>
+        Provides a peer-to-peer publish/subscribe broker with channel-based addressing.
+      </description>
+      <src file="org/mundo/net/broker/P2PTopicBroker.oj"/>
+    </module>
+    <module key="ContentBroker" name="ContentBroker" default="enabled">
+      <description>
+        Provides a very simple content-based publish/subscribe implementation.
+        <code>ContentBroker</code> uses <code>P2PTopicBroker</code> as underlying broker.
+      </description>
+      <src file="org/mundo/net/broker/ContentBroker.oj"/>
+      <src file="org/mundo/net/broker/ContentSubscription.oj"/>
+    </module>
+    <module key="FilteredBroker" name="FilteredBroker" default="enabled">
+      <src file="org/mundo/net/broker/Filtered*"/>
+    </module>
+  </container>
+</mcbuild>
+

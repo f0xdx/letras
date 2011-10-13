@@ -1,0 +1,450 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+import org.mundo.rt.Logger;
+import org.mundo.rt.DoObject.Options;
+
+import java.util.List;
+import java.util.ArrayList;
+
+
+#ifdef CFG_CHECKED_BUILD
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+/**
+ * <code>AsyncCall</code> objects are returned by stub methods that perform
+ * asynchronous remote method calls. The client uses such objects to wait for
+ * completion of the RMC and to obtain the result.
+ *
+ * @see DoObject
+ * @author Erwin Aitenbichler
+ */
+public class AsyncCall
+{
+  /**
+   * Creates a new AsyncCall object. This constructor is usually only called
+   * from automatically-generated stub code.
+   * @param cs              the client stub creating the call object.
+   * @param interfaceName   globally-unique name of interface that the
+   *                        remote object implements.
+   * @param methodName      the name of the method to call.
+   * @param req             a map holding the parameter values and options
+   *                        that will be passed to the server stub.
+   */
+  public AsyncCall(DoObject cs, String interfaceName, String methodName, TypedMap req)
+  {
+    clientStub=cs;
+    guid=new GUID();
+    request=req;
+    if (methodName!=null)
+      request.put("request", methodName);
+    request.put("sessionId", clientStub._getPublisher().getSession().getId());
+    request.put("callId", guid);
+    request.put("interface", interfaceName);
+  }
+
+  /**
+   * Returns the GUID of the call. Each call is assigned an unique ID.
+   * @return   the unique ID of this call.
+   */
+  public GUID getId()
+  {
+    return guid;
+  }
+
+  /**
+   * Invokes a request/reply remote method. For oneway-calls, use
+   * a different invoke method and specify a proper options parameter.
+   */
+  public void invoke()
+  {
+    invoke(DoObject.ASYNC);
+  }
+  /**
+   * Invokes the remote method. Builds the request message and sends
+   * it to the remote service. <code>invoke</code> returns
+   * immediately after the request message has been sent.
+   * @param opts  options for the call
+   */
+  public void invoke(Options opts)
+  {
+    if (opts.test(DoObject.ONEWAY))
+    {
+      request.putBoolean("oneWay", true);
+    }
+    else
+    {
+      clientStub._getPublisher().getSession().addCall(this);
+    }
+    
+    Message msg;
+    if (opts.test(DoObject.PASSIVE_PARAMS))
+    {
+      msg = new Message();
+      msg.put("main", "passive", request);
+    }
+    else
+    {
+      msg = new Message(request);
+    }
+
+    if (expectedReplies==1 && !opts.test(DoObject.MULTICAST))
+    {
+      TypedMap pmap = new TypedMap();
+      pmap.putBoolean("once", true);
+      msg.put("ers", "param", pmap);
+    }
+
+    log.fine("invoke: "+request.getString("request"));
+    allReplyMaps = new ArrayList();
+    nReplies = 0;
+    clientStub._getPublisher().send(msg);
+  }
+
+  /**
+   * This sets the number of expected replies for this RMC call. 
+   * @param n number of replies to wait for until the call is removed from the session.
+   * The value -1 is special and the call will not automatically removed from the session.
+   */
+  public void setExpectedReplies(int n)
+  {
+    expectedReplies = n;
+  }
+  
+    /**
+   * Wait for the replies. This method waits until the remote method call
+   * has received at least one reply 
+   * @return  <code>true</code> on success; or <code>false</code> if an
+   *          exception has occurred on the server side.
+   * @throws RMCException  in case of a timeout.
+   */
+  public synchronized boolean waitForReply()
+  {
+    return waitForReply(1);
+  }
+
+  /**
+   * Wait for the replies. This method waits until the remote method call
+   * has received a number of replies. 
+   * @param n number of replies to wait for.
+   * @return  <code>true</code> on success; or <code>false</code> if an
+   *          exception has occurred on the server side.
+   * @throws RMCException  in case of a timeout.
+   */
+  public synchronized boolean waitForReply(int n)
+  {
+    long deadline = System.currentTimeMillis() + clientStub._getTimeout();
+    while (nReplies < n || n == -1)
+    {
+      try
+      {
+        long d = deadline - System.currentTimeMillis();
+        if (d < 1)
+          throw new RMCException("Timeout waiting for RMC reply");
+        wait(d);
+      }
+      catch(IllegalMonitorStateException x)
+      {
+        // current thread is not the owner of the object's monitor; won't happen
+        log.exception(x);
+      }
+      catch(InterruptedException x)
+      {
+        exception = new RMCException("Wait has been interrupted", x);
+        return false;
+      }
+    }
+    return exception==null;
+  }
+  
+  /**
+   * Returns the exception pending.
+   * @return  the exception object describing the problem that has occured;
+   *          or <code>null</code> if no exception is pending.
+   */
+  public Exception getException()
+  {
+    return exception;
+  }
+
+  /**
+   * Returns the return value of the RMC. The method implicitly blocks
+   * until the RMC has completed.
+   * @return   the return value of the remote method call.
+   */
+  public Object getObj()
+  {
+    waitForReply();
+    if (replyMap==null)
+      return null;
+    return replyMap.getObject("value");
+  }
+  
+  /**
+   * Returns the return value of the RMC as passive map. The method implicitly
+   * blocks until the RMC has completed.
+   * @return   the return value of the remote method call.
+   */
+  public TypedMap getReturnValueAsMap()
+  {
+    waitForReply();
+    if (replyMap==null)
+      return null;
+    return replyMap.getMap("pasvalue");
+  }
+  
+  /**
+   * Returns the whole reply message. Beside the return value, the reply
+   * message may contain additional information from the server stub.
+   * The method implicitly blocks until the RMC has completed.
+   * @return   the reply message containing the return value and
+   *           additional stub-dependent information.
+   */
+  public TypedMap getMap()
+  {
+    waitForReply();
+    return replyMap;
+  }
+  
+    /**
+   * Returns all reply messages received so far. May return an empty list if no messages have been received.
+   * @return   the list of reply messages containing the return value and
+   *           additional stub-dependent information.
+   */
+  public List getAllResults()
+  {
+    return allReplyMaps;
+  }
+
+  /**
+   * Returns the number of replies that have been received
+   * @return   the number of reply messages that have been received
+   */
+  public int getNumberOfResults()
+  {
+    return nReplies;
+  }
+  
+
+  /**
+   * Called by the session once the reply message has been received.
+   */
+  void returned(Message msg)
+  {
+//  LOG.finest("got reply: "+msg);
+    synchronized(this)
+    {
+      if (nReplies > expectedReplies && expectedReplies != -1)
+      {
+        log.warning("Received more replies for RMC call than expected. request="+msg.getMap().getString("request"));
+        return;
+      }
+      nReplies++;
+      if (nReplies == expectedReplies && expectedReplies != -1)
+      {
+        clientStub._getPublisher().getSession().removeCall(this);
+      }
+      
+      try
+      {
+      	boolean isLocal=false;
+        replyMap=msg.getMap("main", "passive");
+        if (replyMap==null)
+        {
+          isLocal=true;
+          replyMap=msg.getMap();
+        }
+        if (replyMap.get("request").equals("ErrorResponse"))
+        {
+          if ("no such method".equals(replyMap.getString("error", null)))
+          {
+            exception=new RMCException("no such method: "+request.getString("interface", "")+
+                                       "."+request.getString("request", ""));
+          }
+          try
+          {
+            exception=(Exception)replyMap.getObject("exceptionJavaObject");
+          }
+          catch(Exception x)
+          {
+#ifdef CFG_CLDC
+            exception=new RMCException(replyMap.getString("exceptionClass"));
+#else
+            try
+            {
+              exception=(Exception)Class.forName(replyMap.getString("exceptionClass"))
+                        .getConstructor(new Class[] { String.class })
+                        .newInstance(new Object[] { replyMap.getString("exceptionText") });
+            }
+            catch(Exception y)
+            {
+              exception=new RMCException("can't instantiate exception class "+replyMap.getString("exceptionClass"), y);
+            }
+#endif
+          }
+        }
+        else
+        {
+          // Check if a protocol handler had problems processing the reply
+          TypedMap map=msg.getMap("error", "active");
+          if (map!=null)
+          {
+            // Don't care about activation errors, because we activate replies here
+            if (ignoreClientErrors || ("ActivationService".equals(map.getString("service", null))))
+            {
+              log.warning(map.getObject("exception", null).toString());
+            }
+            else
+              exception=(Exception)map.getObject("exception", null);
+          }
+
+          if (!isLocal)
+          {
+            TypedMap ctx=new TypedMap();
+            ctx.put("session", clientStub._getPublisher().getSession());
+            ctx.put("classLoader", clientStub.getClass().getClassLoader());
+
+            // FIXME: We only activate the return value here, because the parameters
+            // to restore are activated in the stub. However, object references in
+            // restored parameters will not be activated correctly this way.
+            Object pasReturnValue=replyMap.get("value");
+            replyMap.put("pasvalue", pasReturnValue);
+            if (pasReturnValue!=null &&
+                (pasReturnValue instanceof TypedContainer
+#ifndef CFG_CLDC
+                 || pasReturnValue instanceof TypedContainer.JavaXDR
+#endif
+                ))
+            {
+              try
+              {
+                replyMap.put("value", TypedContainer.activate(pasReturnValue, ctx));
+              }
+              catch(Exception x)
+              {
+                replyMap.put("value", null);
+                if (ignoreClientErrors)
+                {
+                  log.warning(x.toString());
+                }
+                else
+                  exception=x;
+              }
+            }
+          }
+          // FIXME: in the local case, we'll have to clone the ClientStubs in the message
+          // for the appropriate session
+        }
+      }
+      catch(Exception x)
+      {
+        log.warning(x.toString());
+        replyMap=null;
+      }
+      notify();
+    }
+    allReplyMaps.add(replyMap);
+    try
+    {
+      if (resultListener!=null)
+        resultListener.resultReceived(this);
+    }
+    catch(Throwable t)
+    {
+      log.exception(t);
+    }
+  }
+
+  /**
+   * Sets the result listener for an asynchronous call. To avoid race conditions,
+   * asynchronous method calls with listeners should be performed like this:
+   * <pre>
+   * AsyncCall callObj = stub.someMethod(stub.CREATEONLY);
+   * callObj.setResultListener(listener);
+   * callObj.invoke();</pre>
+   *
+   * @param l  the result listener.
+   */
+  public void setResultListener(IResultListener l)
+  {
+    resultListener = l;
+  }
+
+  /**
+   * Sets whether errors during processing of the reply message should
+   * lead to exceptions or not. This option is useful when calling remote
+   * methods via reflection and objects in the reply message may be unknown.
+   */
+  public void setIgnoreClientErrors(boolean b)
+  {
+    ignoreClientErrors = b;
+  }
+  
+  /**
+   * Sets options for the call.
+   */
+//  public void setOptions(DoObject.Options opt)
+//  {
+//    if (opt.test(DoObject.PASSIVE_PARAMS))
+//      passiveParams = true;
+//  }
+
+  /**
+   * Implement this interface to listen for the result of a
+   * asynchronous method call.
+   * @author Erwin Aitenbichler
+   */
+  public interface IResultListener
+  {
+    /**
+     * Called when a remote method call has returned.
+     * @param c  the call object.
+     */
+    public void resultReceived(AsyncCall c);
+  }
+
+  private Exception exception;
+  private DoObject clientStub;
+  private TypedMap request;
+  private TypedMap replyMap;
+  private GUID guid;
+  private IResultListener resultListener = null;
+  private boolean ignoreClientErrors = false;
+//  private boolean passiveParams = false;
+
+  private List allReplyMaps;
+  private int nReplies = 0;
+  private int expectedReplies = 1;
+  
+  private final int STATUS_OK = 1;
+  private final int STATUS_NO_SUCH_METHOD = 2;
+  private final int STATUS_EXCEPTION = 3;
+
+  private static final String mimeType = "message/mc-rmc";
+
+  private static Logger log=Logger.getLogger("acall");
+}

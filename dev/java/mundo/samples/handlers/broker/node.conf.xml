@@ -1,0 +1,40 @@
+<NodeConfig xsi:type="map" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+  <config-type>overlay</config-type>
+  <ServiceManager xsi:type="map" activeClass="org.mundo.service.ServiceManager$OptServiceManager">
+    <instances xsi:type="array">
+      <new-instance xsi:type="map">
+        <name>ProtocolCoordinator</name>
+        <classname>org.mundo.net.ProtocolCoordinator</classname>
+        <config xsi:type="map" activeClass="ProtocolCoordinator$Options">
+	  <default-stack>mystack1</default-stack>
+	  <stacks xsi:type="map">
+            <mystack1 xsi:type="array">
+              <handler>org.mundo.net.ActivationService</handler>
+              <handler>DumbTopicBroker</handler>
+              <handler>org.mundo.net.routing.RoutingService</handler>
+              <handler>org.mundo.net.BinSerializationHandler</handler>
+              <handler>org.mundo.net.BinCollectHandler</handler>
+              <handler>org.mundo.net.transport.ip.IPTransportService</handler>
+	    </mystack1>
+          </stacks>
+        </config>
+      </new-instance>
+      
+      <new-instance xsi:type="map">
+        <name>BinCollectHandler</name>
+        <classname>org.mundo.net.BinCollectHandler</classname>
+      </new-instance>
+    </instances>
+  </ServiceManager>
+
+  <Logger xsi:type="map">
+    <!-- filename>log.txt</filename -->
+    <console xsi:type="boolean">true</console>
+    <default-log-level>INFO</default-log-level>
+    <log-levels xsi:type="array">
+      <a xsi:type="map"><category>dumbtb</category><log-level>FINEST</log-level></a>
+      <a xsi:type="map"><category>binser</category><log-level>FINEST</log-level></a>
+      <a xsi:type="map"><category>rs</category><log-level>FINEST</log-level></a>
+    </log-levels>
+  </Logger>
+</NodeConfig>

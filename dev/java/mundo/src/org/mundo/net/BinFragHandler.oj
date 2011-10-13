@@ -1,0 +1,257 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.net;
+
+import java.util.HashMap;
+
+import org.mundo.rt.GUID;
+import org.mundo.rt.IMessageHandler;
+import org.mundo.rt.Message;
+import org.mundo.rt.Service;
+import org.mundo.rt.Blob;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.Logger;
+import org.mundo.net.transport.TransportLink;
+
+#ifdef CFG_CHECKED_BUILD
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+/**
+ * An experimental fragmentation handler.
+ */
+public class BinFragHandler extends Service implements IMessageHandler emits IMessageHandler
+{
+  public BinFragHandler()
+  {
+    // Leave room for up to 256 bytes overhead
+    maxSize = 4096-256;
+  }
+  public void init()
+  {
+    super.init();
+    ProtocolCoordinator.register(mimeType, this);
+  }
+  /**
+   *
+   */
+  public boolean down(Message msg)
+  {
+    Blob blob = msg.getBlob("payload", "bin");
+    if (blob==null)
+      return emit.down(msg);
+    int n = (blob.size()+maxSize-1)/maxSize;
+    if (n<2)
+      return emit.down(msg);
+
+    byte[] buffer = blob.getBuffer();
+    int fragSize = buffer.length/n+1;
+    LOG.fine("splitting all:bin into "+n+" fragments with "+fragSize+" bytes");
+    int pos = 0;
+    int left = blob.size();
+    int i = 0;
+
+    BinSerializer ser = new BinSerializer();
+
+    // Clone original message
+    Message fragMsg = msg.copyFrame();
+    fragMsg.setType(mimeType);
+
+    // Create fragment header
+    TypedMap hdr = new TypedMap();
+    hdr.putInt("i", i);
+    hdr.putInt("n", n);
+    hdr.putString("mt", msg.getType());
+    try
+    {
+      fragMsg.put("frag", "bin", ser.serialize(hdr));
+    }
+    catch(Exception x)
+    {
+      LOG.exception(x);
+      return false;
+    }
+
+    // Add fragment of payload
+    Blob frag = new Blob();
+    frag.write(buffer, pos, fragSize);
+    fragMsg.put("payload", "bin", frag);
+    if (!emit.down(fragMsg))
+      return false;
+    
+    pos += fragSize;
+    left -= fragSize;
+    
+    for (i=1; i<n; i++)
+    {
+      if (i==n-1)
+        fragSize = left;
+
+      // Clone original message
+      fragMsg = msg.copyFrame();
+      fragMsg.setType(mimeType);
+
+      // Create fragment header
+      hdr = new TypedMap();
+      hdr.putInt("i", i);
+      hdr.putInt("n", n);
+      hdr.putString("mt", msg.getType());
+      try
+      {
+        fragMsg.put("frag", "bin", ser.serialize(hdr));
+      }
+      catch(Exception x)
+      {
+        LOG.exception(x);
+        return false;
+      }
+
+      // Add fragment of payload
+      frag = new Blob();
+      frag.write(buffer, pos, fragSize);
+      fragMsg.put("payload", "bin", frag);
+      if (!emit.down(fragMsg))
+        return false;
+      
+      pos += fragSize;
+      left -= fragSize;
+    }
+    return true;
+  }
+  /**
+   *
+   */
+  public boolean up(Message msg)
+  {
+    // Ignore message if it has no hlfrag header
+    Blob blob = msg.getBlob("frag", "bin");
+    if (blob==null)
+    {
+#ifdef CFG_CHECKED_BUILD
+      if (msg.getType().equals(mimeType))
+      {
+        LOG.severe("internal error: message has type "+mimeType+", but does not contain a frag:bin chunk!");
+        return false;
+      }
+#endif
+      return emit.up(msg);
+    }
+    
+    BinDeserializer deser = new BinDeserializer();
+    TypedMap hdr;
+    try
+    {
+      hdr = (TypedMap)deser.deserialize(blob);
+    }
+    catch(Exception x)
+    {
+      LOG.exception(x);
+      return false;
+    }
+    
+    // Get or create peer info structure
+    TypedMap tshdr = msg.getMap("ts", "param");
+    TransportLink route = (TransportLink)tshdr.getObject("link");
+    PeerInfo pi = getOrCreate(route);
+    Blob frag = msg.getBlob("payload", "bin");
+
+    int i = hdr.getInt("i");
+    if (i==0)
+    {
+      // First fragment
+      if (pi.msg!=null)
+      {
+        LOG.info("last fragment missing - previous packet dropped");
+      }
+      pi.msg = msg;
+      pi.blob = frag;
+      pi.i = 1;
+      return true;
+    }
+
+    if (pi.blob==null)
+    {
+      LOG.info("no packet open - fragment dropped");
+      return true;
+    }
+    if (i!=pi.i)
+    {
+      LOG.info("wrong fragment: got="+i+", expected="+pi.i);
+      pi.blob = null;
+      return true;
+    }
+    pi.blob.write(frag);
+    pi.i = i+1;
+    if (i < hdr.getInt("n")-1)
+      return true;
+    
+    // Last fragment
+    msg = pi.msg;
+    pi.msg = null;
+    msg.setType(hdr.getString("mt"));
+#ifdef CFG_CHECKED_BUILD
+    if (hdr.getString("mt").equals(mimeType))
+    {
+      LOG.severe("internal error: type is still "+mimeType+" - this will create an infinte loop!");
+      return false;
+    }
+#endif
+    return emit.up(msg);
+  }  
+
+  private PeerInfo getOrCreate(TransportLink link)
+  {
+    PeerInfo pi = (PeerInfo)peers.get(link.remoteId);
+    if (pi!=null)
+      return pi;
+    pi = new PeerInfo(link.remoteId);
+    pi.link = link;
+    peers.put(link.remoteId, pi);
+    return pi;
+  }
+
+  private class PeerInfo
+  {
+    PeerInfo(GUID id)
+    {
+      remoteId = id;
+      blob = null;
+    }
+    GUID           remoteId;
+    Message        msg;
+    TransportLink  link;
+    Blob           blob;
+    int            i;
+  }
+
+  private int maxSize;
+#ifdef CFG_JAVA15
+  private HashMap<GUID,PeerInfo> peers = new HashMap<GUID,PeerInfo>();
+#else
+  private HashMap peers = new HashMap();
+#endif
+  private Logger log = Logger.getLogger("frag");
+  private static final String mimeType = "message/mc-frag";
+}

@@ -1,0 +1,258 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+import java.util.Random;
+#ifndef CFG_CLDC
+import java.util.Arrays;
+#endif
+#ifdef CFG_JAVA15
+import java.security.SecureRandom;
+#endif
+
+// USE_SECURE_RANDOM
+//
+// SecureRandom can be used to generate a good seed for the random number generator.
+// However, there can be major performance issues with SecureRandom:
+//
+// - More than 15 seconds on Windows XP under some circumstances. This could be
+//   connected to the getLocalHost().getHostName() issue.
+//
+// - Always more than 5 seconds on NSIcom JSCP (J2ME/PP).
+//
+// If SecureRandom is not used, then the random number generator is initialized
+// using (the most accurate) system timer. As a result, two nodes might be initialized
+// with the same seed if they are started within the same system timer tick.
+// This typically happens when using test scripts with many processes.
+//
+//#ifndef CFG_J2ME
+//#define USE_SECURE_RANDOM
+//#endif
+
+/**
+ * Instances of <code>GUID</code> encapsulate 128-bit unique identifiers.
+ * Objects are immutable.
+ *
+ * @author Erwin Aitenbichler
+ * @author Andreas Hartl
+ */
+#ifdef CFG_CLDC
+public final class GUID implements Cloneable
+#else
+public final class GUID implements Cloneable, Comparable
+#endif
+{
+  public static final int GUID_SIZE = 16;
+  public static final GUID NULL = new GUID(0);
+
+  private static Random rng;
+  static
+  {
+    rng = new Random();
+#ifdef USE_SECURE_RANDOM
+    long startTime = System.currentTimeMillis();
+    SecureRandom sr = new SecureRandom();
+    rng.setSeed(sr.nextLong());
+    Logger.global.fine("SecureRandom took "+(System.currentTimeMillis()-startTime)+" ms");
+#else
+#ifdef CFG_JAVA15
+    rng.setSeed(System.nanoTime());
+#else
+    rng.setSeed(System.currentTimeMillis());
+#endif
+#endif
+  }
+
+  private byte[] data;
+
+  /**
+   * Initializes a GUID with a new random number.
+   */  
+  public GUID()
+  {
+    data=new byte[GUID_SIZE];
+#ifdef CFG_CLDC
+    for (int i=0; i<GUID_SIZE; i++)
+      data[i]=(byte)rng.nextInt();
+#else
+    rng.nextBytes(data);
+#endif
+  }
+  /**
+   * Initializes a GUID from a byte array.
+   * @throws IllegalStateException  if the length of the byte array
+   *         is not equal to GUID_SIZE.
+   */
+  public GUID(byte src[])
+  {
+    if (src.length!=GUID_SIZE)
+      throw new IllegalStateException("src.length must be "+GUID_SIZE);
+    data = new byte[GUID_SIZE];
+    System.arraycopy(src, 0, data, 0, GUID_SIZE);
+  }
+  /**
+   *
+   */
+  private GUID(int v)
+  {
+    data=new byte[GUID_SIZE];
+    for (int i=0; i<GUID_SIZE; i++)
+      data[i]=0;
+  }
+  /**
+   * Creates and returns a copy of this object.
+   */
+  public Object clone()
+  {
+    return this;
+  }
+  /**
+   * Returns the byte array representing the GUID.
+   */  
+  public byte[] getBytes()
+  {
+    byte[] a = new byte[GUID_SIZE];
+    System.arraycopy(data, 0, a, 0, GUID_SIZE);
+    return a;
+  }
+  /**
+   * Returns <code>true</code> if this <code>GUID</code> is the same as the
+   * obj argument.
+   * 
+   * @return <code>true</code> if this <code>GUID</code> is the same as the
+   *            obj argument.
+   */
+  public boolean equals(Object obj)
+  {
+    if (this==obj)
+      return true;
+    if (obj==null)
+      return false;
+    GUID g=(GUID)obj;
+#ifdef CFG_CLDC
+    for (int i=0; i<data.length; i++)
+      if (data[i]!=g.data[i])
+        return false;
+    return true;
+#else
+    return Arrays.equals(data, g.data);
+#endif
+  }
+  public int compareTo(Object obj)
+  {
+    if (this==obj)
+      return 0;
+    GUID g=(GUID)obj;
+    for (int i=0; i<GUID_SIZE; i++)
+    {
+      if ((data[i]&0xff)<(g.data[i]&0xff))
+        return -1;
+      if ((data[i]&0xff)>(g.data[i]&0xff))
+        return 1;
+    }
+    return 0;
+  }
+  /**
+   * Returns a hash code value for the object.
+   * @return  a hash code value for this object.
+   */
+  public int hashCode()
+  {
+    int i, v = 0;
+    for (i = 0; i < data.length; i++)
+    {
+      v <<= 2;
+      v ^= data[i];
+    }
+    return v;
+  }
+  /**
+   * Returns a string representation of the object.
+   * @return  a string representation of the object.
+   */  
+  public String toString()
+  {
+    StringBuffer sb = new StringBuffer(GUID_SIZE*2);
+    for (int i=0; i<data.length; i++)
+    {
+      byte b = data[i];
+      sb.append(hexDigits[(b>>4)&0xf]);
+      sb.append(hexDigits[b&0xf]);
+    }
+    return sb.toString();
+/*
+    StringBuffer buf = new StringBuffer(GUID_SIZE*2);
+    for (int i=0; i<data.length; i++)
+    {
+      String t = Integer.toHexString(data[i] & 0xff).toUpperCase();
+      if (t.length() == 1)
+        buf.append("0").append(t);
+      else
+        buf.append(t);
+    }
+    return buf.toString();
+*/
+  }
+  private static final char[] hexDigits = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+
+  /**
+   * Returns an abbreviated string representation for this ID.
+   * @return  an abbreviated string representation for this ID.
+   */
+  public String shortString()
+  {
+    String s=toString();
+    return s.substring(0, 4)+".."+s.substring(s.length()-4);
+  }
+  /**
+   * Creates a new GUID object from its string representation.
+   * 
+   * @param s
+   *              a GUID string formed like the output of <code>toString()</code>
+   * @return the GUID object for the string
+   * @throws IllegalArgumentException
+   *               if the string has the wrong format
+   */
+  public static GUID parse(String s) throws IllegalArgumentException
+  {
+    if (s.length() != GUID_SIZE * 2)
+      throw new IllegalArgumentException("GUID String has an incorrect length");
+
+    byte data[] = new byte[GUID_SIZE];
+    for (int i = 0; i < GUID_SIZE; i++)
+    {
+      data[i] = (byte) Integer.parseInt(s.substring(i * 2, (i + 1) * 2), 16);
+      // parseInt automatically throws a NumberFormatException (which is a
+      // subclass of IllegalArgumentException) if unparsable characters are
+      // part of the String
+    }
+    return new GUID(data);
+  }
+
+  public static boolean isGUID(String s) {
+    if (s.length() != GUID_SIZE * 2) return false;
+    GUID tmp = parse(s);
+    return tmp.toString().equals(s);
+  }
+
+}

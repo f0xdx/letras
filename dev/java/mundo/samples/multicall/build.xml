@@ -1,0 +1,33 @@
+<project name="multicall" default="compile" basedir=".">
+  <property file="../../config/build.properties"/>
+
+  <target name="init">
+    <mkdir dir="bin"/>
+    <mkdir dir="prep"/>
+  </target>
+
+
+<target name="preprocess" depends="init">
+    <apply executable="${mcc}" parallel="true">
+      <arg value="-Oprep" />
+      <arg value="-x" />
+      <arg value="-09" />
+      <fileset dir="src">
+        <include name="*.java" />
+      </fileset>
+    </apply>
+  </target>
+
+
+  <target name="compile" depends="preprocess">
+    <javac srcdir="src" destdir="bin" source="1.5" target="1.5">
+      <classpath>
+        <pathelement path="../../lib/mundocore.jar"/>
+      </classpath>
+      <src path="src" />
+      <src path="prep" />
+    </javac>
+  </target>
+
+  
+</project>

@@ -1,0 +1,1 @@
+java -cp ../../lib/mundocore.jar:RegionMonitor.jar:../../lib/letras.jar org.letras.tools.regionmonitor.RegionMonitor 

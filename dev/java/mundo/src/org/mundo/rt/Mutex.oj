@@ -1,0 +1,163 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+#ifdef CFG_JAVA15
+#ifdef CFG_CHECKED_BUILD
+#define DEBUG_MUTEX
+#endif
+#endif
+
+/**
+ * Extended mutual exclusion class with deadlock detection.
+ * @author Erwin Aitenbichler
+ */
+public class Mutex
+{
+  private static final int timeout=5000;
+
+  /**
+   * Initializes a <code>Semaphore</code> with the specified number of permits.
+   */
+  public Mutex()
+  {
+  }
+  /**
+   *
+   */
+  public synchronized void lock()
+  {
+#ifdef CFG_JAVA15
+    while (!tryLock())
+    {
+      try
+      {
+#ifdef DEBUG_MUTEX
+        long startTime=System.currentTimeMillis();
+        wait(timeout);
+        if (owner!=null && System.currentTimeMillis()-startTime>timeout-100)
+        {
+          System.out.println("deadlock?");
+          System.out.println("trying to lock:");
+          try
+          {
+            throw new Exception();
+          }
+          catch(Exception x)
+          {
+            printTrace(x.getStackTrace());
+          }
+          System.out.println("locked by:");
+          printTrace(stackTrace);
+        }
+#else
+        wait();
+#endif
+      }
+      catch(InterruptedException x)
+      {
+        throw new RuntimeException("interrupted", x);
+      }
+    }
+#else
+    try
+    {
+      while (!tryLock())
+        wait();
+    }
+    catch(InterruptedException x)
+    {
+      throw new RuntimeException("interrupted: "+x.toString());
+    }
+#endif
+  }
+#ifdef DEBUG_MUTEX
+  private static void printTrace(StackTraceElement[] list)
+  {
+    for (int i=0; i<list.length; i++)
+    {
+      String s=list[i].toString();
+      if (!s.startsWith("org.mundo.rt.Mutex"))
+        System.out.println(s);
+    }
+  }
+  private void saveStack()
+  {
+    try
+    {
+      throw new Exception();
+    }
+    catch(Exception x)
+    {
+      stackTrace=x.getStackTrace();
+    }
+  }
+#endif
+  /**
+   *
+   */
+  public synchronized boolean tryLock()
+  {
+    Thread current=Thread.currentThread();
+    if (owner==null)
+    {
+      owner=current;
+      value=1;
+#ifdef DEBUG_MUTEX
+      saveStack();
+#endif
+      return true;
+    }
+    if (owner==current)
+    {
+      value++;
+      return true;
+    }
+    return false;
+  }
+  /**
+   *
+   */
+  public synchronized void unlock()
+  {
+    if (owner==null)
+      throw new IllegalStateException("Mutex is not locked");
+    if (owner!=Thread.currentThread())
+      throw new IllegalStateException("Mutex not owned by current thread");
+    value--;
+    if (value==0)
+    {
+      owner=null;
+#ifdef DEBUG_MUTEX
+      stackTrace=null;
+#endif
+      notify();
+    }
+  }
+
+  private Thread owner;
+  private int value;
+#ifdef DEBUG_MUTEX
+  private StackTraceElement[] stackTrace;
+#endif
+}

@@ -1,0 +1,16 @@
+<NodeConfig xsi:type="map" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+  <config-type>overlay</config-type>
+  <name>server</name>
+
+  <ServiceManager xsi:type="map" activeClass="ServiceManager$Options">
+    <plugin-directory>com</plugin-directory>
+  </ServiceManager>
+
+  <Logger xsi:type="map">
+    <console xsi:type="boolean">true</console>
+    <default-log-level>WARNING</default-log-level>
+    <log-levels xsi:type="array">
+      <a xsi:type="map"><category>agent</category><log-level>INFO</log-level></a>
+    </log-levels>
+  </Logger>
+</NodeConfig>

@@ -1,0 +1,18 @@
+<plug-in xmlns="http://mundo.org/2004/plugin/">
+  <service xmlns="http://mundo.org/2004/plugin/service"
+           xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+
+    <classname>org.mundo.rfid.SimonVossRFIDReaderService</classname>
+    <new-instance xsi:type="map">
+      <name>TransponderReader</name>
+      <classname>org.mundo.rfid.SimonVossRFIDReaderService</classname>
+      <config xsi:type="map" activeClass="org.mundo.rfid.SimonVossRFIDReaderService$Options">
+        <channel>kaffeekueche.rfid</channel>
+        <serial-channel>serialports</serial-channel>
+        <port-description>USB Serial Port</port-description>
+        <reader-id>transponder</reader-id>
+      </config>
+    </new-instance>
+
+  </service>
+</plug-in>

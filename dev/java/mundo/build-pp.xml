@@ -1,0 +1,169 @@
+<project name="Mundo" default="buildjar" basedir=".">
+  <description>
+This file builds the MundoCore classes for the J2ME Personal Profile.
+
+Before running this buildfile, create a build.properties file in the /config
+subdirectory. You can use the existing files in the /config subdirectory as
+templates.
+
+Example config/build.properties:
+mcc=bin/mcc.exe
+  </description>
+
+  <!-- allow the user to override setting in an own propertiesfile. -->
+  <property file="config/build.properties"/>
+
+  <property name="src" value="src" />
+  <property name="prep" value="prep-pp" />
+  <property name="build" value="classes-pp" />
+  <property name="dist" value="lib" />
+  <!-- property name="crimson-jar" location="lib/crimson-pp.jar"/ -->
+  <property name="cdcVMClasses" location="C:\Programme\NSIcom JSCP V4.00\lib\VMclasses.zip"/>
+
+  <property name="optimize" value="off" />
+  <property name="debug" value="on" />
+
+  <property name="mcc" value="./bin/mcc" />
+
+  <property name="version.major" value="0" />
+  <property name="version.minor" value="2" />
+
+  <property environment="env"/>
+
+  <target name="init">
+    <mkdir dir="${prep}" />
+    <mkdir dir="${build}" />
+    <mkdir dir="${dist}" />
+  </target>
+
+  <target name="clean"
+          description="Remove all compiled and preprocessed files">
+    <delete dir="${prep}" />
+    <delete dir="${build}" />
+  </target>
+
+  <target name="preprocessinit">
+    <echo message="checking for mcc at '${mcc}'..." />
+    <available file="${mcc}" type="file" property="mcc.present"/>
+    <mkdir dir="${build}" />
+  </target>
+
+  <target name="checkIdlc" depends="preprocessinit" unless="mcc.present" >
+    <fail message="cannot find mcc at ${mcc}! Adjust property mcc in mundo.properties" />
+  </target>
+
+  <target name="checkClasspath" if="env.CLASSPATH">
+    <fail message="Please clear the CLASSPATH variable. This will break the build!" />
+  </target>
+
+  <target name="preprocess" depends="checkIdlc, checkClasspath"
+        description="Preprocess the IDL files">
+    <apply executable="${mcc}" parallel="true">
+      <arg value="-rjava" />
+      <arg value="-wjava" />
+      <arg value="-I${src}" />
+      <arg value="-O${prep}" />
+      <arg value="-rmc" />
+      <arg value="-c" />
+      <arg value="-a" />
+      <arg value="-target1.2" />
+      <arg value="-DCFG_J2ME" />
+      <!-- arg value="-DCFG_COMPAT" /-->
+      <fileset dir="${src}">
+        <include name="org/mundo/annotation/*.oj" />
+        <include name="org/mundo/rt/*.oj" />
+        <include name="org/mundo/net/*.oj" />
+        <exclude name="org/mundo/net/CLDC*.oj" />
+        <exclude name="org/mundo/net/TraceHandler.oj" />
+        <include name="org/mundo/net/ip/*.oj" />
+        <include name="org/mundo/filter/*.oj" />
+        <include name="org/mundo/service/IService*.oj" />
+        <include name="org/mundo/service/Service*.oj" />
+        <!-- <include name="org/mundo/xml/*.oj" /> -->
+        <exclude name="**/CLDC*.oj" />
+        <exclude name="org/mundo/rt/Cloneable.oj" />
+        <exclude name="org/mundo/rt/Iterator.oj" />
+        <include name="org/mundo/util/DefaultApplication.oj" />
+      </fileset>
+    </apply>
+
+    <exec executable="${mcc}">
+      <arg value="-O${prep}" />
+      <arg value="-M" />
+      <arg value="org.mundo.rt.Metaclasses" />
+    </exec>
+  </target>
+
+  <target name="compile" depends="init, preprocess, checkClasspath" unless="jmf.present"
+          description="Compile the JAVA sources">
+     <echo message="compiling with debug=${debug}, optimize=${optimize}, JMF=off" />
+     <!-- classpath must be set empty, otherwise ant automagically does scrap! -->
+     <javac destdir="${build}"
+            optimize="${optimize}" debug="${debug}" deprecation="on"
+            encoding="iso-8859-1"
+            source="1.2" target="1.1"
+            includeAntRuntime="no">
+        <bootclasspath>
+          <pathelement path="${cdcVMClasses}"/>
+        </bootclasspath>
+        <classpath/>
+        <src path="${src}" />
+        <src path="${prep}" />
+        <include name="org/mundo/annotation/*.java" />
+        <include name="org/mundo/rt/*.java" />
+        <include name="org/mundo/net/*.java" />
+        <exclude name="org/mundo/net/CLDC*.java" />
+        <include name="org/mundo/net/ip/*.java" />
+        <include name="org/mundo/filter/*.java" />
+        <include name="org/mundo/service/Service*.java" />
+        <include name="org/mundo/service/SrvIServiceManager.java" />
+        <include name="org/mundo/service/DoIServiceManager.java" />
+        <include name="org/mundo/util/DefaultApplication.java" />
+        <!-- <include name="org/mundo/xml/*.java" /> -->
+        <!-- include name="org/mundo/context/TAPersonalization.java" / -->
+    </javac>
+  </target>
+
+  <target name="compile-config" depends="compile">
+    <exec executable="java">
+      <arg value="-jar" />
+      <arg value="tools/x2j.jar" />
+      <arg value="config/default-pp.conf.xml" />
+      <arg value="${prep}/org/mundo/rt/DefaultConfig.java" />
+      <arg value="org.mundo.rt.DefaultConfig" />
+    </exec>
+    <javac destdir="${build}"
+           optimize="${optimize}" debug="${debug}" deprecation="on"
+           encoding="iso-8859-1"
+           source="1.2" target="1.1"
+           includeAntRuntime="no">
+      <bootclasspath>
+        <pathelement path="${cdcVMClasses}"/>
+      </bootclasspath>
+      <classpath/>
+      <src path="${prep}" />
+      <include name="org/mundo/rt/DefaultConfig.java" />
+    </javac>
+  </target>
+
+  <target name="buildjar" depends="compile-config"
+          description="Pack all compiled files into a single jar">
+    <jar jarfile="${dist}/mundocore-pp.jar" manifest="src/manifest.mf">
+      <fileset dir="${build}">
+        <include name="**/*.class" />
+      </fileset>
+    </jar>
+  </target>
+  
+  <target name="docs">
+    <javadoc destdir="docs/api" windowtitle="MundoCore">
+      <packageset dir="src">
+        <include name="**" />
+      </packageset>
+      <packageset dir="classes">
+        <include name="**" />
+      </packageset>
+    </javadoc>
+  </target>
+  
+</project>

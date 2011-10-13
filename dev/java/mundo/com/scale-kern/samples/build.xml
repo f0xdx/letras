@@ -1,0 +1,58 @@
+<project name="ScaleTest" default="compile" basedir=".">
+  <!-- allow the user to override setting in an own properties file. -->
+  <!-- use the sameproperties files as for the main project. -->
+  <property file="../../../config/build.properties"/>
+
+  <property name="src" value="src" />
+  <property name="prep" value="prep" />
+  <property name="build" value="bin" />
+
+  <property name="optimize" value="on" />
+
+  <property name="mcc" value="../../../bin/mcc" />
+  <property name="mc-jar" location="../../../lib/mundocore.jar"/>
+
+  <property name="version.major" value="0" />
+  <property name="version.minor" value="2" />
+
+  <path id="project.classpath">
+    <pathelement path="${mc-jar}"/>
+  </path>
+	
+  <target name="init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${prep}" />
+  </target>
+
+  <target name="preprocess" depends="init">
+    <apply executable="${mcc}" parallel="true">
+      <arg value="-I${mcinterfaces}" />
+      <arg value="-O${prep}" />
+      <arg value="-x" />
+      <fileset dir="${src}">
+        <include name="**/*.java" />
+      </fileset>
+    </apply>
+    <copy file="prep/metaclasses.xml" todir="${build}"/>
+  </target>
+
+  <target name="clean"
+          description="Remove all compiled and preprocessed files">
+    <delete dir="${build}" />
+    <delete dir="${prep}" />
+  </target>
+
+  <target name="compile" depends="preprocess"
+          description="Compile the JAVA sources">
+    <echo message="compiling with debug=${debug} and optimize=${optimize}" />
+    <javac destdir="${build}"
+           optimize="${optimize}" debug="on" debuglevel="lines,vars,source" deprecation="on"
+           encoding="iso-8859-1">
+      <classpath refid="project.classpath" />
+      <src path="${src}" />
+      <src path="${prep}" />
+      <include name="**/*.java" />
+    </javac>
+  </target>
+
+</project>

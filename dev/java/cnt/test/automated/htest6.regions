@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="htest6.regions">
+    <page>
+        <uri>htest6_main</uri>
+        <shape>
+            <rectangle height="322.375" width="332.625" top="7779.25" left="1.83992173625E8"/>
+        </shape>
+        <channel>htest6_main</channel>
+        <hungry>true</hungry>
+    </page>
+    <region>
+        <uri>htest6_sub1</uri>
+        <shape>
+            <rectangle height="192.75" width="208.625" top="7849.5" left="1.83992258625E8"/>
+        </shape>
+        <channel>htest6_sub1</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>htest6_sub1_1</uri>
+        <shape>
+            <rectangle height="90.875" width="87.5" top="7904.125" left="1.83992338375E8"/>
+        </shape>
+        <channel>htest6_sub1_1</channel>
+        <hungry>false</hungry>
+    </region>
+</regionDocument>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    >
+
+
+
+<TextView android:id="@+id/TextView01" 
+		  android:layout_height="wrap_content" 
+		  android:text="@string/available_services" 
+		  android:textColor="@color/service_header_color" 
+		  android:background="@color/service_header_background" 
+		  android:layout_width="fill_parent">
+</TextView>
+
+<LinearLayout android:layout_height="wrap_content" 
+			  android:orientation="horizontal" 
+			  android:layout_width="fill_parent" 
+			  android:background="@color/service_entry_background" 
+			  android:id="@+id/rdps_service_entry">
+	  <LinearLayout android:id="@+id/LinearLayout03" 
+	  				android:layout_width="fill_parent" 
+	  				android:layout_weight="1" 
+	  				android:layout_height="fill_parent" 
+	  				android:orientation="vertical">
+			 <TextView android:id="@+id/TextView02" 
+	  				   android:layout_width="wrap_content" 
+	  				   android:layout_height="wrap_content" 
+	  				   android:text="@string/rdps_service_name" 
+	  				   android:textColor="@color/service_entry_color" 
+	  				   android:layout_gravity="left" 
+	  				   android:layout_weight="1" 
+	  				   android:textSize="20dp" 
+	  				   android:gravity="center">
+	  		 </TextView>
+	  		 <TextView android:id="@+id/TextView03" 
+	  		 		   android:layout_width="wrap_content" 
+	  		 		   android:layout_height="wrap_content" 
+	  		 		   android:text="@string/tap_to_configure" 
+	  		 		   android:textColor="@color/service_header_background">
+	  		 </TextView>
+	  </LinearLayout>
+
+	  <LinearLayout android:id="@+id/LinearLayout02" 
+	  				android:layout_width="wrap_content" 
+	  				android:layout_height="wrap_content">
+	  		  <Button android:layout_width="wrap_content" 
+	  		  		  android:layout_height="wrap_content" 
+	  		  		  android:id="@+id/RDPStartButton" 
+	  		  		  android:text="@string/start_service_command" 
+	  		  		  android:minWidth="80dp" android:layout_gravity="right" >
+	  		  </Button>
+	  		  <Button android:layout_width="wrap_content" 
+	  		  		  android:layout_height="wrap_content" 
+	  		  		  android:id="@+id/RDPStopButton" 
+	  		  		  android:text="@string/stop_service_command" 
+	  		  		  android:minWidth="80dp" 
+	  		  		  android:layout_gravity="right">
+	  		  </Button>
+	  </LinearLayout>
+</LinearLayout>
+
+<LinearLayout android:layout_height="wrap_content" 
+			  android:orientation="horizontal" 
+			  android:layout_width="fill_parent" 
+			  android:background="@color/service_entry_background" 
+			  android:id="@+id/rdps_service_entry">
+	  <LinearLayout android:id="@+id/LinearLayout03" 
+	  				android:layout_width="fill_parent" 
+	  				android:layout_weight="1" 
+	  				android:layout_height="fill_parent" 
+	  				android:orientation="vertical">
+			 <TextView android:id="@+id/TextView02" 
+	  				   android:layout_width="wrap_content" 
+	  				   android:layout_height="wrap_content" 
+	  				   android:text="@string/rps_service_name" 
+	  				   android:textColor="@color/service_entry_color" 
+	  				   android:layout_gravity="left" 
+	  				   android:layout_weight="1" 
+	  				   android:textSize="20dp" 
+	  				   android:gravity="center">
+	  		 </TextView>
+	  		 <!--<TextView android:id="@+id/TextView03" 
+	  		 		   android:layout_width="wrap_content" 
+	  		 		   android:layout_height="wrap_content" 
+	  		 		   android:text="@string/tap_to_configure" 
+	  		 		   android:textColor="@color/service_header_background">
+	  		 </TextView> -->
+	  </LinearLayout>
+
+	  <LinearLayout android:id="@+id/LinearLayout02" 
+	  				android:layout_width="wrap_content" 
+	  				android:layout_height="wrap_content">
+	  		  <Button android:layout_width="wrap_content" 
+	  		  		  android:layout_height="wrap_content" 
+	  		  		  android:id="@+id/RPStartButton" 
+	  		  		  android:text="@string/start_service_command" 
+	  		  		  android:minWidth="80dp" android:layout_gravity="right" >
+	  		  </Button>
+	  		  <Button android:layout_width="wrap_content" 
+	  		  		  android:layout_height="wrap_content" 
+	  		  		  android:id="@+id/RPStopButton" 
+	  		  		  android:text="@string/stop_service_command" 
+	  		  		  android:minWidth="80dp" 
+	  		  		  android:layout_gravity="right">
+	  		  </Button>
+	  </LinearLayout>
+</LinearLayout>
+
+</LinearLayout>

@@ -1,0 +1,6 @@
+<plug-in xmlns="http://mundo.org/2004/plugin/">
+  <service xmlns="http://mundo.org/2004/plugin/service"
+           xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+    <classname>agent.MyAgent</classname>
+  </service>
+</plug-in>

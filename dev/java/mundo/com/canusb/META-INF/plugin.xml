@@ -1,0 +1,18 @@
+<plug-in xmlns="http://mundo.org/2004/plugin/">
+  <service xmlns="http://mundo.org/2004/plugin/service"
+           xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+
+    <classname>org.mundo.service.canusb.CANUSBService</classname>
+    <new-instance xsi:type="map">
+      <name>CANUSB</name>
+      <classname>org.mundo.service.canusb.CANUSBService</classname>
+      <config xsi:type="map" activeClass="org.mundo.service.canusb.CANUSBService$Options">
+        <channel>showroom.CAN</channel>
+        <serial-channel>serialports</serial-channel>
+        <port-name>/dev/ttyUSB0</port-name>
+        <!-- port-description>Lawicel CANUSB</port-description -->
+      </config>
+    </new-instance>
+
+  </service>
+</plug-in>

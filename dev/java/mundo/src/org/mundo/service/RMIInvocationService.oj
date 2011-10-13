@@ -1,0 +1,325 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.service;
+
+#define LOG_MODULE
+
+import java.util.HashMap;
+import java.rmi.Naming;
+import java.rmi.Remote;
+import java.lang.reflect.Method;
+
+import org.mundo.rt.IBCLProvider;
+import org.mundo.rt.Service;
+import org.mundo.rt.IMessageHandler;
+import org.mundo.rt.Message;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.Publisher;
+import org.mundo.rt.Subscriber;
+import org.mundo.rt.ProtocolStack;
+import org.mundo.rt.ObjectAdapter;
+import org.mundo.net.RMCService;
+
+#ifdef LOG_MODULE
+import org.mundo.rt.Logger;
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+/**
+ * This service bridges from RMC to RMI. It accepts RMC invocation messages and
+ * performs calls as an RMI client. In the opposite direction, it provides
+ * an RMI server to translate incoming RMI requests to RMC invocations.
+ *
+ * If RMI bridging is used, exactly one instance of this service must be
+ * created. A missing service leads to runtime exceptions and the behaviour
+ * is undefined if multiple instances exist.
+ */
+public class RMIInvocationService
+       extends Service
+       implements IMessageHandler, IBCLProvider.ISignal
+{
+  /**
+   * Initializes a new <code>RMIInvocationService</code>.
+   */
+  public RMIInvocationService()
+  {
+    singleton=this;
+  }
+  /**
+   * Returns the singleton instance of this service. If RMI bridging is used,
+   * exactly one instance of this service should be created. If the service was
+   * never instantiated (from the configuration file), then the return value is
+   * <code>null</code>.
+   * @return  the singleton instance of this service, or <code>null</code>
+   *          in case of error.
+   */
+  public static RMIInvocationService getInstance()
+  {
+    return singleton;
+  }
+  /**
+   * Called when a message is passed down from a higher protocol handler.
+   */
+  public boolean down(Message msg) // IMessageHandler
+  {
+//    System.out.println(msg);
+
+    // Get payload and address information from Message
+    TypedMap map = msg.getMap();
+    String channelName = msg.getMap("ers", "param").getString("channel");
+    TypedMap opts = msg.getHandler().getOptions();
+
+    // Lookup imported object
+    Import imp = (Import)imports.get(channelName);
+    if (imp==null)
+    {
+      String objectURI="";
+      Object rmiStub;
+      try
+      {
+        // Perform a JNDI naming lookup
+        objectURI=opts.getString("objectURI");
+        rmiStub=Naming.lookup(objectURI);
+      }
+      catch(java.util.NoSuchElementException x)
+      {
+        LOG.severe("the protocol handler option 'objectURI' must specify the object URI for the JNDI lookup");
+        return false;
+      }
+      catch(java.rmi.NotBoundException x)
+      {
+        LOG.severe("the object "+objectURI+" is not bound");
+        return false;
+      }
+      catch(Exception x)
+      {
+        LOG.exception(x);
+        return false;
+      }
+      imp=new Import(channelName, objectURI, rmiStub);
+      LOG.fine("object "+objectURI+"="+rmiStub.toString()+": lookup successful");
+    }
+
+    try
+    {
+      // Get the method reflection object
+      Class[] pTypes=typeCode2classes(map);
+      Method mtd=imp.rmiStub.getClass().getMethod(map.getString("request"), pTypes);
+
+      Object ret;
+      if (pTypes.length>0)
+      {
+        // Build parameter array
+        Object[] params=new Object[pTypes.length];
+        for (int i=0; i<params.length; i++)
+          params[i]=map.get("p"+i);
+
+        // Call method with parameters
+        ret = mtd.invoke(imp.rmiStub, params);
+      }
+      else
+      {
+        // Call method without parameters
+#ifdef CFG_JAVA15
+        ret = mtd.invoke(imp.rmiStub);
+#else
+        ret = mtd.invoke(imp.rmiStub, null);
+#endif
+      }
+      
+      if (!map.getBoolean("oneWay", false))
+      {
+        // Create response message
+        TypedMap rmap=new TypedMap();
+        rmap.put("callId", map.get("callId"));
+        rmap.put("request", map.getString("request")+"Reply");
+        rmap.put("value", ret);
+        Message rmsg=new Message(rmap);
+//        System.out.println(rmsg);
+        session.send(map.getGUID("sessionId"), rmsg);
+      }
+    }
+    catch(Exception x)
+    {
+      LOG.exception(x);
+      return false;
+    }
+
+    return true;
+  }
+  /**
+   * Called when a message is passed up from a lower protocol handler.
+   */
+  public boolean up(Message msg) // IMessageHandler
+  {
+    return false;
+  }
+  /**
+   *
+   */
+  public void publisherAdded(Publisher p) // IBCLProvider.ISignal
+  {
+    LOG.fine("publisherAdded "+p.toString());
+  }
+  /**
+   *
+   */
+  public void publisherRemoved(Publisher p) // IBCLProvider.ISignal
+  {
+    LOG.fine("publisherRemoved "+p.toString());
+  }
+  /**
+   *
+   */
+  public void subscriberAdded(Subscriber s) // IBCLProvider.ISignal
+  {
+    ProtocolStack.Handler h=s.getChannel().getStack().get(0);
+    String channelName=s.getChannel().getName();
+    TypedMap opts=h.getOptions();
+    LOG.fine("subscriberAdded "+s.toString());
+
+    Export exp = (Export)exports.get(channelName);
+    if (exp==null)
+    {
+      LOG.fine("bind "+opts.toString());
+      try
+      {
+        RMIStub stub=(RMIStub)Class.forName(
+            "RMI"+((Class)opts.get("interface")).getName()).newInstance();
+        stub.name=channelName;
+        Naming.rebind(opts.getString("objectURI"), (Remote)stub);
+        exp=new Export(channelName);
+        exports.put(channelName, exp);
+      }
+      catch(java.util.NoSuchElementException x)
+      {
+        LOG.severe("the protocol handler option 'objectURI' must specify the "+
+                   "object URI for the JNDI bind and the option 'interface' must "+
+                   "specify the RMI interface name");
+      }
+      catch(Exception x)
+      {
+        LOG.exception(x);
+      }
+    }
+  }
+  /**
+   *
+   */
+  public void subscriberRemoved(Subscriber s) // IBCLProvider.ISignal
+  {
+    LOG.fine("subscriberRemoved "+s.toString());
+  }
+  /**
+   * Returns the local server object for the given name.
+   * @param name  the channel name of the object.
+   * @return  the local object.
+   */
+  public Object getLocalObj(String name)
+  {
+    LOG.fine("getLocalObj "+name);
+    ObjectAdapter oa=RMCService.getInstance().getObjectAdapter(name);
+    if (oa==null)
+      return null;
+    return oa.getTarget();
+  }
+  /**
+   * Returns an array of class objects for a String containing a paramter
+   * type code list.
+   */
+  private Class[] typeCode2classes(TypedMap map)
+  {
+    String ptypes=map.getString("ptypes");
+    if (ptypes==null || ptypes.length()<1)
+      return new Class[0];
+    String[] names=ptypes.split(",");
+    Class[] cls=new Class[names.length];
+    for (int i=0; i<names.length; i++)
+    {
+      // Check if the type code stands for a TYPE
+      cls[i]=typeCode2class(names[i]);
+      // Otherwise obtain the class object from the parameter
+      if (cls[i]==null)
+        cls[i]=map.get("p"+i).getClass();
+    }
+    return cls;
+  }
+  /**
+   * Returns the class object for a parameter type code.
+   */
+  private Class typeCode2class(String name)
+  {
+    if (name.length()==1)
+    {
+      switch (name.charAt(0))
+      {
+        case 'b': return Byte.TYPE;
+        case 'c': return Character.TYPE;
+        case 'j': return Short.TYPE;
+        case 'i': return Integer.TYPE;
+        case 'l': return Long.TYPE;
+        case 'f': return Float.TYPE;
+        case 'd': return Double.TYPE;
+        case 't': return Boolean.TYPE;
+        case 's': return String.class;
+      }
+    }
+    return null;
+  }
+
+  private static class Import
+  {
+    Import(String cn, String uri, Object rs)
+    {
+      channelName=cn;
+      objectURI=uri;
+      rmiStub=rs;
+    }
+    String  channelName;
+    String  objectURI;
+    Object  rmiStub;
+  }
+
+  private static class Export
+  {
+    Export(String cn)
+    {
+      channelName=cn;
+    }
+    String  channelName;
+  }
+
+#ifdef CFG_JAVA15
+  private HashMap<String,Import> imports = new HashMap<String,Import>();
+  private HashMap<String,Export> exports = new HashMap<String,Export>();
+#else
+  private HashMap imports = new HashMap();
+  private HashMap exports = new HashMap();
+#endif
+  private static RMIInvocationService singleton;
+#ifdef LOG_MODULE
+  private static Logger log = Logger.getLogger("rmi");
+#endif
+}

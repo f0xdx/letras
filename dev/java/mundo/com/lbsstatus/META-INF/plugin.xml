@@ -1,0 +1,13 @@
+<plug-in xmlns="http://mundo.org/2004/plugin/">
+  <service xmlns="http://mundo.org/2004/plugin/service"
+           xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+    <classname>org.mundo.service.lbsstatus.LBSStatusService</classname>
+    <new-instance xsi:type="map">
+      <name>LBSStatus</name>
+      <classname>LBSStatusService</classname>
+      <config xsi:type="map" activeClass="org.mundo.service.lbsstatus.LBSStatusService$Config">
+        <status-channel>mttable.status</status-channel>
+      </config>
+    </new-instance>
+  </service>
+</plug-in>

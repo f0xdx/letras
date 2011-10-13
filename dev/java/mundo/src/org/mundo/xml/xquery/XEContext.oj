@@ -1,0 +1,79 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.xml.xquery;
+
+import java.util.Stack;
+import java.util.HashMap;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.URL;
+
+import org.mundo.xml.XMLDeserializer;
+
+class XEContext
+{
+  void openDocument(String urlString) throws XEngine.ExecException
+  {
+    try
+    {
+      URL url=new URL(urlString);
+      XMLDeserializer deser=new XMLDeserializer();
+      InputStream is=url.openStream();
+      InputStreamReader isr=new InputStreamReader(is);
+      Object obj=deser.deserializeObject(isr);
+      isr.close();
+      is.close();
+      stack.push(obj);
+    }
+    catch(IOException x)
+    {
+      throw new XEngine.ExecException("can't read source document '"+urlString+"'", x);
+    }
+  }
+  void push(Object obj)
+  {
+    stack.push(obj);
+  }
+  Object pop()
+  {
+    return stack.pop();
+  }
+  void set(String varName, Object value)
+  {
+    vars.put(varName, value);
+  }
+  Object get(String varName)
+  {
+    return vars.get(varName);
+  }
+
+#ifdef CFG_JAVA15
+  Stack<Object> stack = new Stack<Object>();
+  HashMap<String,Object> vars = new HashMap<String,Object>();
+#else
+  Stack stack = new Stack();
+  HashMap vars = new HashMap();
+#endif
+  StringBuffer result;
+}

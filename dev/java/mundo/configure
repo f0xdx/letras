@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ ! -f "tools/configure.jar" ]; then
+  cd tools/config
+  ant
+  cd ../..
+fi
+java -jar tools/configure.jar -lib

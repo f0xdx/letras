@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+      package="org.letras.app"
+      android:versionCode="1" android:versionName="0.1">
+
+
+    <application android:icon="@drawable/icon" 
+    			 android:label="@string/app_name">
+    	<activity 	android:label="LetrasExample"
+    				android:name=".demo.Example">
+    		<intent-filter>
+    			<action android:name="android.intent.action.MAIN"/>
+    			<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+    	</activity>
+    	
+    	
+    	<activity android:name="org.letras.android.LetrasServiceUI"
+                  android:label="@string/service_controller_name">
+            <intent-filter>
+				<action android:name="android.intent.action.MAIN" /> 
+				<category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+        </activity>
+        <activity android:name=".rdps.RDPServicePreferencesActivity"
+				  android:label="RDP Preferences">
+			<intent-filter>
+				<category android:name="android.intent.category.PREFERENCE"/>
+			</intent-filter>
+		</activity>
+        
+		<service android:name="org.letras.android.LetrasService" 
+				 android:label="@string/letras_service_name"
+				 android:icon="@drawable/letras_icon"/>
+    	
+    </application>
+</manifest>

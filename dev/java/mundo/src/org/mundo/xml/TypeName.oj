@@ -1,0 +1,149 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.xml;
+
+import org.mundo.rt.Blob;
+import org.mundo.rt.GUID;
+import org.mundo.rt.TypedArray;
+import org.mundo.rt.TypedContainer;
+import org.mundo.rt.TypedMap;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Enumeration;
+import java.util.Vector;
+
+/**
+* TypeName is an enumeration of all xsd type names recognized by MundoCore.
+*
+* @author AHa
+*/
+#ifdef CFG_JAVA15
+#define _
+public enum TypeName {
+#else
+public final class TypeName {
+#define _ = new TypeName
+
+  // the list of all values of this enumeration
+#ifdef CFG_CLDC
+  private static final Vector VALUES = new Vector();
+#else
+  private static final List VALUES = new ArrayList();
+#endif
+
+  // enumerations have an ordinal number
+  private final int ordinalnr;
+
+  // type definition
+  public static final TypeName 
+#endif
+
+  Byte _ ("byte", Byte.class, 1),
+  UByte _ ("unsignedByte", TypedContainer.UnsignedByte.class, 1),
+  Short _ ("short", Short.class, 2),
+  UShort _ ("unsignedShort", TypedContainer.UnsignedShort.class, 2),
+  Int _ ("int", Integer.class, 4),
+  UInt _ ("unsignedInt", TypedContainer.UnsignedInteger.class, 4),
+  Long _ ("long", Long.class, 8),
+  ULong _ ("unsignedLong", TypedContainer.UnsignedLong.class, 8),
+  Float _ ("float", Float.class, 4),
+  Char _ ("char", Character.class, 2),
+  String _ ("string", String.class, -1),
+  ID _ ("ID", GUID.class, GUID.GUID_SIZE),
+  JavaXDR _ ("JavaXDR", TypedContainer.JavaXDR.class, -1),
+  Array _ ("array", TypedArray.class, -1),
+  Map _ ("map", TypedMap.class, -1),
+  Blob _ ("blob", Blob.class, -1)
+#ifndef CFG_CLDC
+  ,
+  Double _ ("double", Double.class, 8),
+  Boolean _ ("boolean", Boolean.class, 1)
+#endif
+  ;
+
+  private final String typename;
+  private final Class clazz;
+  private final int bytes;
+  
+  private TypeName(String name, Class clazz, int bytes) {
+#ifndef CFG_JAVA15
+    ordinalnr = VALUES.size();
+#ifdef CFG_CLDC
+    VALUES.addElement(this);
+#else
+    VALUES.add(this);
+#endif
+#endif
+    this.typename = name;
+    this.clazz = clazz;
+    this.bytes = bytes;
+  }
+  
+  public String toString() {
+    return typename;
+  }
+  
+  /**
+  * Retrieves the name used in XSD for the type. The name is without the namespace prefix.
+  * 
+  *  @return the XSD name
+  */
+  public String xsdName() {
+    return typename;
+  }
+  
+  /**
+  * Retrieves the class this type stands for.
+  * 
+  * @return a Java class used in the type
+  */
+  public Class type() {
+    return clazz;
+  }
+  
+  /**
+   * Retrieves the size of the type in bytes. Classes that do not have
+   * a fixed size - i.e. all compound classes like String, Array, Map, Blob -
+   * return -1 for this method
+   */
+  public int sizeOf() {
+    return bytes;
+  }
+
+#ifndef CFG_JAVA15
+  // helper methods that are already part of Java 1.5
+  public static TypeName[] values() {
+#ifndef CFG_CLDC
+    return (TypeName[])VALUES.toArray(new TypeName[VALUES.size()]);
+#else
+    TypeName ret[] = new TypeName[VALUES.size()];
+    VALUES.copyInto(ret);
+    return ret;
+#endif
+  }
+
+  public int ordinal() {
+    return ordinalnr;
+  }
+#endif
+}

@@ -1,0 +1,287 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.rt;
+
+import java.io.InputStream;
+import java.io.IOException;
+#ifndef CFG_CLDC
+import java.util.Arrays;
+#endif
+
+/**
+ * A <code>Blob</code> implements a dynamic buffer for binary data.
+ *
+ * @author Erwin Aitenbichler
+ */
+
+// This class has to be final at least on CLDC, otherwise clone has to be changed
+public final class Blob implements Cloneable
+{
+  /**
+   * Initializes a newly created <code>Blob</code> object so that it
+   * represents an empty byte sequence.
+   */
+  public Blob()
+  {
+    max = INITIAL_SIZE;
+    buffer = new byte[max];
+    sz = 0;
+  }
+
+  public Blob(int s)
+  {
+    max = s;
+    buffer = new byte[max];
+    sz = 0;
+  }
+  
+  /**
+   * Creates and returns a copy of this object. The returned <code>Blob</code>
+   * object is a deep copy and does not share the buffer with the source
+   * object.
+   * @return   a clone of this instance.
+   */
+  public Object clone()
+  {
+    Blob blob = new Blob(sz);
+    blob.write(buffer, 0, sz);
+    return blob;
+  }
+  /**
+   * Returns <code>true</code> if this <code>Blob</code> is the same as the
+   * o argument.
+   * 
+   * @return <code>true</code> if this <code>Blob</code> is the same as the
+   *            o argument.
+   */
+  public boolean equals(Object o)
+  {
+    if (this==o)
+      return true;
+    if (o==null)
+      return false;
+    if (sz!=((Blob)o).size())
+      return false;
+    byte[] a1=getBuffer();
+    byte[] a2=((Blob)o).getBuffer();  
+#ifdef CFG_CLDC
+    for (int i=0; i<a1.length; i++)
+      if (a1[i]!=a2[i])
+        return false;
+    return true;
+#else
+    return Arrays.equals(a1, a2);
+#endif
+  }
+  /**
+   * Returns a hash code value for the object.
+   * @return  a hash code value for this object.
+   */
+  public int hashCode()
+  {
+    int i, v=0;
+    for (i=0; i<sz; i++)
+    {
+      v <<= 2;
+      v ^= buffer[i];
+    }
+    return v;
+  }
+  /**
+   * Writes a character to the buffer.
+   */
+  public void write(char c)
+  {
+    if (sz+1 > max)
+      grow(sz+1);
+    buffer[sz++] = (byte)c;
+  }
+  /**
+   * Writes a string to the buffer. The string characters are converted to
+   * bytes using the platform default charset.
+   */
+  public void write(String s)
+  {
+    int l = s.length();
+    if (sz+l > max)
+      grow(sz+l);
+    for (int i=0; i<l; i++)
+      buffer[sz++] = (byte)s.charAt(i);
+  }
+
+  /**
+   * Writes an array of bytes to the buffer. The specified byte array is
+   * appended at the end of the buffer.
+   * @param b       the source byte array.
+   */
+  public void write(byte[] b)
+  {
+    if (sz+b.length > max)
+      grow(sz+b.length);
+    System.arraycopy(b, 0, buffer, sz, b.length);
+    sz += b.length;
+  }
+
+  /**
+   * Writes a portion of a byte array to the buffer. The specified portion
+   * of the byte array is appended at the end of the buffer.
+   * @param b       the source byte array.
+   * @param offset  the beginning index in the source byte array.
+   * @param length  the number of bytes to copy from the source byte array.
+   */
+  public void write(byte[] b, int offset, int length)
+  {
+    if (sz+length > max)
+      grow(sz+length);
+    System.arraycopy(b, offset, buffer, sz, length);
+    sz += length;
+  }
+
+  /**
+   * Writes the specified blob to the buffer.
+   * @param b  the source blob.
+   */
+  public void write(Blob b)
+  {
+    int bsz = b.size();
+    if (sz+bsz > max)
+      grow(sz+bsz);
+    System.arraycopy(b.getBuffer(), 0, buffer, sz, bsz);
+    sz += bsz;
+  }
+
+  /**
+   * Reads from the specified stream into this blob.
+   * @param is  the input stream.
+   */
+  public void readFrom(InputStream is) throws IOException
+  {
+    byte[] rbuf = new byte[4096];
+    int l;
+    for(;;)
+    {
+      l=is.read(rbuf);
+      if (l<=0)
+        return;
+      write(rbuf, 0, l);
+    }
+  }
+
+  /**
+   * Returns a copy of the content of the buffer as a byte array.
+   * @return  the byte array representing the content of the
+   *          <code>Blob</code>.
+   */
+  public byte[] getBuffer()
+  {
+    byte[] rbuf = new byte[sz];
+    System.arraycopy(buffer, 0, rbuf, 0, sz);
+    return rbuf;
+  }
+
+  /**
+   * Returns a reference to the internal buffer. Note that modifying
+   * data in the returned array has side effects.
+   * @return  the byte array representing the content of the
+   *          <code>Blob</code>.
+   */
+  public byte[] getDirectBuffer()
+  {
+    return buffer;
+  }
+  
+  /**
+   * Returns the occupied size of the buffer.
+   * @return  the number of bytes stored in the buffer.
+   */
+  public int size()
+  {
+    return sz;
+  }
+
+  /**
+   * Sets the occupied size of the buffer.
+   * @param s  the number of bytes stored in the buffer.
+   */
+  public void setSize(int s)
+  {
+    sz = s;
+    if (sz>max)
+      grow(sz);
+  }
+
+  /**
+   * Returns the content of the buffer as a <code>String</code>. The
+   * <code>String</code> is constructed by decoding the sequence of bytes
+   * contained in the buffer using the platform default charset.
+   * @return  the <code>String</code> representing the content of the
+   *          <code>Blob</code>.
+   */
+  public String toString()
+  {
+    return new String(getBuffer());
+  }
+
+  /**
+   * Returns a string representation of the <code>Blob</code> object.
+   * The output is ASCII with all non-ASCII characters escaped.
+   * @return  a string representation of this object.
+   */
+  public String toASCIIString()
+  {
+    StringBuffer sb = new StringBuffer();
+    int i, c;
+    for (i=0; i<sz; i++)
+    {
+      c = buffer[i];
+      if (c>=32 && c<=127)
+        sb.append((char)c);
+      else
+      {
+        sb.append('\\');
+        sb.append(hexDigits[(c>>4)&0xf]);
+        sb.append(hexDigits[c&0xf]);
+      }
+    }
+    return sb.toString();
+  }
+  private static final char[] hexDigits = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
+
+  private void grow(int n)
+  {
+    if (n<=max)
+      return;
+    int newmax = max*3/2;
+    while (n>newmax)
+      newmax = newmax*3/2;
+    byte[] newbuffer = new byte[newmax];
+    System.arraycopy(buffer, 0, newbuffer, 0, sz);
+    buffer = newbuffer;
+    max = newmax;
+  }
+   
+  private int max;
+  private int sz;
+  private byte[] buffer;
+  private static final int INITIAL_SIZE = 256;
+}

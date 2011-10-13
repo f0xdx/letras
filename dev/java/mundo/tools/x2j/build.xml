@@ -1,0 +1,74 @@
+<project name="tools" default="jar" basedir=".">
+  <!-- allow the user to override setting in an own properties file. -->
+  <!-- use the sameproperties files as for the main project. -->
+  <property file="../config/build.properties"/>
+
+  <property name="src" value="src" />
+  <property name="prep" value="prep" />
+  <property name="build" value="classes" />
+
+  <property name="optimize" value="off" />
+  <property name="debug" value="on" />
+
+  <property name="version.major" value="1" />
+  <property name="version.minor" value="0" />
+
+  <path id="project.classpath">
+    <pathelement path="${mcroot}/lib/mundocore-noconfig.jar"/>
+  </path>
+	
+  <target name="init">
+    <mkdir dir="${build}" />
+    <mkdir dir="${prep}" />
+  </target>
+
+  <target name="preprocess" depends="init">
+    <apply executable="${mcc}" parallel="true">
+      <arg value="-I${src}" />
+      <arg value="-O${prep}" />
+      <arg value="-x" />
+      <arg value="-09" />
+      <fileset dir="${src}">
+        <include name="*.java" />
+      </fileset>
+    </apply>
+    <!-- copy file="prep/metaclasses.xml" todir="classes"/ -->
+  </target>
+
+  <target name="clean"
+          description="Remove all compiled and preprocessed files">
+    <delete dir="${build}" />
+    <delete dir="${prep}" />
+  </target>
+
+  <target name="compile" depends="preprocess"
+          description="Compile the JAVA sources">
+     <echo message="compiling with debug=${debug} and optimize=${optimize}" />
+     <javac destdir="${build}"
+            optimize="${optimize}" debug="${debug}" deprecation="on"
+            encoding="iso-8859-1">
+        <classpath refid="project.classpath" />
+        <src path="${src}" />
+        <src path="${prep}" />
+        <include name="*.java" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile"
+          description="Pack all compiled files into a single jar">
+    <jar jarfile="x2j.jar" compress="true">
+      <fileset dir="classes">
+        <include name="**/*.class" />
+      </fileset>
+      <zipfileset src="../lib/mundocore-noconfig.jar"/>
+      <manifest>
+        <attribute name="Main-Class" value="x2j"/>
+        <attribute name="Built-By" value="${user.name}"/>
+        <section name="common">
+          <attribute name="Implementation-Vendor" value="TU Darmstadt"/>
+          <attribute name="Implementation-Title" value="MundoCore XML to Java Tool"/>
+        </section>
+      </manifest>
+    </jar>
+  </target>
+</project>

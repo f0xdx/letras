@@ -1,0 +1,129 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.filter;
+
+import org.mundo.annotation.*;
+import org.mundo.rt.TypedContainer;
+
+/**
+ * <p><code>ObjectAttributeFilter</code> implements generic compare operations for
+ * objects.
+ * @author Erwin Aitenbichler
+ */
+@mcSerialize
+public class ObjectAttributeFilter extends AttributeFilter
+{
+  /**
+   * Creates an attribute filter suitable for objects.
+   * This constructor is solely for object deserialization.
+   */
+  public ObjectAttributeFilter()
+  {
+  }
+  /**
+   * Creates an attribute filter suitable for objects.
+   * @param op     the operator. Supported operators are <code>OP_EQUAL</code>,
+   *               <code>OP_NOT_EQUAL</code>, <code>OP_FILTER</code>,
+   *               and <code>OP_IGNORE</code>.
+   *               If the operator is <code>OP_FILTER</code>, then the value specifies
+   *               a filter object that implements <code>IFilter</code>.
+   * @param value  the compare value.
+   * @throws IllegalArgumentException  if an invalid operator was specified.
+   */
+  public ObjectAttributeFilter(int op, Object value)
+  {
+    int m = (op & MASK_OP);
+    if (m!=OP_IGNORE && m!=OP_EQUAL && m!=OP_FILTER)
+      throw new IllegalArgumentException("invalid operator");
+    if (m==OP_FILTER && !(value instanceof AttributeFilter))
+      throw new IllegalArgumentException("argument to OP_FILTER must be instanceof AttributeFilter");
+    cv = value;
+    this.op = op;
+  }
+  /**
+   * Tests if the specified attribute matches this attribute filter.
+   * @param o  the attribute to compare with.
+   * @return  <code>true</code> if the specified attribute matches this
+   *          attribute filter, <code>false</code> otherwise.
+   */
+  public boolean matches(Object o)
+  {
+    boolean b;
+    switch (op & MASK_OP)
+    {
+      case OP_EQUAL:
+        b=cv.equals(o);
+        break;
+      case OP_IGNORE:
+        b=true;
+        break;
+      case OP_FILTER:
+        b=((AttributeFilter)cv).matches(o);
+        break;
+      default:
+        throw new UnsupportedOperationException("invalid operator");
+    }
+    if ((op & OP_NOT)>0)
+      b=!b;
+    return b;
+  }
+  /**
+   * Returns the comparison value.
+   */
+  public Object getValue()
+  {
+    return cv;
+  }
+  /**
+   * Returns the filter object.
+   */
+  public IFilter getFilter()
+  {
+    return (IFilter)cv;
+  }
+  /**
+   * Returns a string representation of this filter.
+   */
+  public String toString()
+  {
+    if (op==OP_FILTER)
+      return cv.toString();
+    return opToString()+cv;
+  }
+
+  public boolean equals(Object o)
+  {
+    if (!(o instanceof ObjectAttributeFilter))
+      return false;
+    ObjectAttributeFilter f=(ObjectAttributeFilter)o;
+    return op==f.op && cv.equals(f.cv);
+  }
+
+  public int hashCode()
+  {
+    return (op<<16)^cv.hashCode();
+  }
+
+  @mcField(name="value")
+  private Object cv;
+}

@@ -1,0 +1,572 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.net.routing;
+
+#define LOG_MODULE
+
+import org.mundo.rt.Signal;
+import org.mundo.rt.Service;
+import org.mundo.rt.Message;
+import org.mundo.rt.GUID;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.TypedArray;
+import org.mundo.rt.Mundo;
+import org.mundo.rt.Queue;
+import org.mundo.rt.Semaphore;
+import org.mundo.rt.IMessageHandler;
+import org.mundo.rt.ProtocolStack;
+import org.mundo.net.ProtocolCoordinator;
+import org.mundo.net.transport.TransportLink;
+import org.mundo.net.transport.ITransportConnection;
+import org.mundo.net.transport.ITransportService;
+#ifdef LOG_MODULE
+import org.mundo.rt.Logger;
+#  define LOG log
+#else
+#  define LOG //
+#endif
+
+#ifdef CFG_CLDC
+import java.util.Hashtable;
+import org.mundo.rt.Iterator;
+#else
+import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+#endif
+
+/**
+ * <code>LeafRoutingService</code> is a simple routing service that only
+ * implements the functionality needed when being a leaf of the connection
+ * graph. It does not support message forwarding. This service is intended
+ * for use on resource-constrained devices, such as cellphones.
+ * On more powerful devices, the normal <code>RoutingService</code>
+ * should be used instead.
+ * 
+ * A routing service implements the following functionality:<ul>
+ * <li>Given the <em>receiver's node identifier</em>, it routes a message
+ *     to its destination. Thus, the service provides and end-to-end
+ *     transport of messages between nodes.</li>
+ * <li>The routing service keeps track of transport connections that
+ *     exist to neighbor nodes.</li>
+ * <li>If multiple connections to a node exist, the service always attempts
+ *     to use the connection with the lowest metric, i.e. cost.</li>
+ * <li>If connections break, they are automatically re-established,
+ *     if possible.</li>
+ * </ul>
+ *
+ * Typically, applications do not directly interface with a routing service.
+ * They use higher-level services like <code>P2PTopicBroker</code>, or
+ * higher-level concepts like remote method calls.
+ *
+ * @author Erwin Aitenbichler
+ */
+public final class LeafRoutingService extends Service
+       implements IMessageHandler
+       emits IRoutingService.IConn, IMessageHandler
+{
+  public void init()
+  {
+    setState(STATE_INITIALIZING);
+    routeTable=new RouteTable();
+    thread=new WorkerThread();
+    thread.start();
+
+    ProtocolCoordinator.register(mimeType, this);
+    setState(STATE_INITIALIZED);
+  }
+  public void shutdown()
+  {
+    setState(STATE_SHUTDOWN);
+    super.shutdown();
+
+    // send shutdown message to peers
+    LOG.finest("sending NodeShutdown to peers");
+    TypedMap map = new TypedMap();
+    map.put("request", "NodeShutdown");
+    map.put("nodeId", Mundo.getNodeId());
+    Message msg = new Message("rs", "passive", map);
+    msg.setType(mimeType);
+    msg.setStack(ProtocolCoordinator.getInstance().getDefaultStack(), RoutingService.class);
+    sendToOpen(msg);
+
+    setState(STATE_DOWN);
+    thread.interrupt();
+  }
+  public boolean down(Message msg)
+  {
+    TypedMap p=(TypedMap)msg.getMap("rs", "param");
+#ifdef CFG_CHECKED_BUILD
+    if (p==null)
+      throw new IllegalArgumentException("chunk rs.param missing");
+#endif
+    String destType=p.getString("destType");
+    if ("zone".equals(destType))
+    {
+      sendToZone(msg);
+      return true;
+    }
+    else if ("node".equals(destType))
+      return sendTo(p.getGUID("destId"), msg);
+    return false;
+  }
+  public boolean up(Message msg)
+  {
+    TypedMap m = msg.getMap("rs", "passive");
+    if (m!=null)
+    {
+      String req = m.getString("request", null);
+      if ("NodeShutdown".equals(req))
+      {
+        GUID nodeId = m.getGUID("nodeId");
+        LOG.fine("rcvd NodeShutdown from nodeId: "+nodeId.shortString());
+        if (routeTable.removeNode(nodeId))
+        {
+          LOG.fine("emit nodeRemoved: "+nodeId.shortString());
+          emit.nodeRemoved(nodeId);
+        }
+      }
+      else
+      {
+        LOG.fine("unknown request: "+req);
+      }
+    }
+    else
+    {
+      log.warning("rcvd unexpected msg: "+msg);
+    }
+    return true;
+  }
+  private boolean send(TransportLink link, Message msg)
+  {
+    msg=msg.copyFrame();
+    TypedMap amap=new TypedMap();
+    amap.put("link", link);
+    msg.put("ts", "param", amap);
+    return emit.down(msg);
+  }
+  private void openAsync(TransportLink link, Message msg)
+  {
+    TypedMap pmap=new TypedMap();
+    pmap.put("request", "openAsync");
+    pmap.put("link", link);
+    Message cmsg=new Message("ts", "param", pmap);
+    cmsg.copyStackFrom(msg);
+    emit.down(cmsg);
+  }
+  public void sendToZone(Message msg) /* IRoutingRequest */
+  {
+    synchronized(routeTable)
+    {
+      Iterator iter=routeTable.activeRoutes.valueIterator();
+      while (iter.hasNext())
+      {
+        TransportLink route=(TransportLink)iter.next();
+        LOG.finest("sendToZone > "+route);
+        try
+        {
+          if (!send(route, msg))
+          {
+            enqueueMessage(route.remoteId, msg);
+            openAsync(route, msg);
+          }
+        }
+        catch(IllegalStateException x)
+        {
+          // Happens when the connection is concurrently disconnected
+        }
+        catch(Exception x)
+        {
+          x.printStackTrace();
+        }
+      }
+    }
+  }
+  public void sendToOpen(Message msg) /* IRoutingRequest */
+  {
+    synchronized(routeTable)
+    {
+      Iterator iter=routeTable.activeRoutes.valueIterator();
+      while (iter.hasNext())
+      {
+        TransportLink route=(TransportLink)iter.next();
+        try
+        {
+          send(route, msg);
+        }
+        catch(IllegalStateException x)
+        {
+          // Happens when the connection is concurrently disconnected
+        }
+        catch(Exception x)
+        {
+          x.printStackTrace();
+        }
+      }
+    }
+  }
+  public boolean sendTo(GUID id, Message msg) /* IRoutingRequest */
+  {
+    TransportLink route=routeTable.get(id);
+    if (route==null)
+    {
+      // We don't know the receiver node, maybe because connection
+      // establishment is still in progress. Enqueue the message.
+      return enqueueMessage(id, msg);
+    }
+    synchronized(sendQueues)
+    {
+      // If a send queue for the specified id exists, then send enqueued
+      // messages first.
+      Queue q=(Queue)sendQueues.get(id);
+      if (q!=null)
+      {
+        for (Iterator i=q.iterator(); i.hasNext();)
+        {
+          if (!send(route, (Message)i.next()))
+          {
+            enqueueMessage(id, msg);
+            openAsync(route, msg);
+            return true;
+          }
+          i.remove();
+        }
+        sendQueues.remove(id);
+      }
+      if (!send(route, msg))
+      {
+        enqueueMessage(id, msg);
+        openAsync(route, msg);
+        return true;
+      }
+    }
+    return true;
+  }
+  private boolean enqueueMessage(GUID id, Message msg)
+  {
+    synchronized(sendQueues)
+    {
+#ifdef CFG_JAVA15
+      Queue<Message> q=sendQueues.get(id);
+#else
+      Queue q=(Queue)sendQueues.get(id);
+#endif
+      if (q==null)
+      {
+#ifdef CFG_JAVA15
+        q=new Queue<Message>();
+#else
+        q=new Queue();
+#endif
+        sendQueues.put(id, q);
+      }
+      q.enqueue(msg);
+    }
+    return true;
+  }
+  public void discontinued(ITransportConnection conn) /* ITransportConnection.ISignal */
+  {
+  }
+  /**
+   * Returns the connection table.
+   * @return  a list of <code>ITransportConnection</code> objects.
+   */
+  TypedArray getRoutes()
+  {
+    TypedArray routes=new TypedArray();
+    synchronized(routeTable)
+    {
+      routes.addAll(routeTable.routes);
+    }
+    return routes;
+  }
+
+  public TransportLink getActiveRoute(GUID destId)
+  {
+    synchronized(routeTable)
+    {
+      return (TransportLink)routeTable.activeRoutes.get(destId.toString());
+    }
+  }
+
+  private class RouteTable implements ITransportService.IConn
+  {
+    RouteTable()
+    {
+      try
+      {
+#ifdef CFG_CLDC
+        Signal.connect("rt", "org.mundo.net.ITransportService$IConn", this);
+#else
+        Signal.connect("rt", ITransportService.IConn.class, this);
+#endif        
+      }
+      catch(Exception x)
+      {
+        System.out.println(x);
+      }
+    }
+    public void linkAdded(TransportLink route)
+    {
+      boolean newNode=false;
+      synchronized(this)
+      {
+#ifndef CFG_CLDC
+        if (!announcedNodes.contains(route.remoteId))
+#else
+        if (!announcedNodes.containsKey(route.remoteId))
+#endif
+        {
+          newNode=true;
+          int i, s=routes.size();
+          for (i=0; i<s; i++)
+          {
+            TransportLink r=(TransportLink)routes.get(i);
+            if (route.remoteId.equals(r.remoteId))
+            {
+              newNode=false;
+              break;
+            }
+          }
+        }
+        routes.add(route);
+        promote(route);
+#ifdef LOG_MODULE
+        if (newNode)
+          log.info("node + "+route.remoteId.shortString());
+        log.info("route + "+route.remoteId.shortString());
+#endif
+        if (newNode)
+#ifndef CFG_CLDC        
+          announcedNodes.add(route.remoteId);
+#else
+          announcedNodes.put(route.remoteId, route.remoteId);
+#endif
+      }
+      if (newNode)
+        emit.nodeAdded(route.remoteId);
+    }
+    public void linkRemoved(TransportLink route)
+    {
+      synchronized(this)
+      {
+        if (!routes.remove(route))
+        {
+          LOG.severe("unknown route: "+route.toString());
+          return;
+        }
+      }
+      handleLinkRemoved(route);
+    }
+    private void handleLinkRemoved(TransportLink route)
+    {
+      GUID lostNodeId=null;
+      synchronized(this)
+      {
+        if (announcedNodes.contains(route.remoteId))
+        {
+          lostNodeId=route.remoteId;
+          int i, s=routes.size();
+          for (i=0; i<s; i++)
+          {
+            TransportLink r=(TransportLink)routes.get(i);
+            if (route.remoteId.equals(r.remoteId))
+            {
+              lostNodeId=null;
+              break;
+            }
+          }
+        }
+        findBest(route.remoteId);
+        LOG.info("route - "+route.remoteId.shortString());
+        if (lostNodeId!=null)
+          announcedNodes.remove(lostNodeId);
+      }
+      if (lostNodeId!=null)
+      {
+        LOG.fine("emit nodeRemoved: "+lostNodeId.shortString());
+        emit.nodeRemoved(lostNodeId);
+      }
+    }
+    
+    public synchronized void connectionOpened(TransportLink route)
+    {
+      GUID destId=route.remoteId;
+
+      // If a send queue for destId exists, then send enqueued messages.
+      synchronized(sendQueues)
+      {
+        Queue q=(Queue)sendQueues.get(destId);
+        if (q!=null)
+        {
+          for (Iterator i=q.iterator(); i.hasNext();)
+            send(route, (Message)i.next());
+          sendQueues.remove(destId);
+        }
+      }
+
+      promote(route);
+#ifdef LOG_MODULE
+      log.info("connection + "+route.remoteId.shortString());
+#endif
+    }
+    public synchronized void connectionClosed(TransportLink route)
+    {
+      findBest(route.remoteId);
+#ifdef LOG_MODULE
+      log.info("connection - "+route.remoteId.shortString());
+#endif
+    }
+    /**
+     * Set the specified route as active route if it has a lower metric.
+     */
+    private void promote(TransportLink route)
+    {
+      TransportLink current=(TransportLink)activeRoutes.get(route.remoteId.toString());
+      if (current!=null && current.getMetric()<=route.getMetric())
+        return;
+      activeRoutes.put(route.remoteId.toString(), route);
+    }
+    /**
+     * Sets the route with the lowest metric as active route for the specified destination.
+     */
+    private void findBest(GUID destId)
+    {
+      int minMetric=Integer.MAX_VALUE;
+      TransportLink minRoute=null;
+      for (Iterator iter=routes.iterator(); iter.hasNext();)
+      {
+        TransportLink route=(TransportLink)iter.next();
+        if (route.remoteId.equals(destId) && route.getMetric()<minMetric)
+        {
+          minRoute=route;
+          minMetric=route.getMetric();
+        }
+      }
+      if (minRoute!=null)
+        activeRoutes.put(destId.toString(), minRoute);
+      else
+        activeRoutes.remove(destId.toString());
+    }
+    /**
+     * Returns the active route for the specified destination.
+     */
+    private synchronized TransportLink get(GUID destId)
+    {
+      return (TransportLink)activeRoutes.get(destId.toString());
+    }
+    /**
+     *
+     */
+    synchronized void cleanup()
+    {
+      for (Iterator iter=routes.iterator(); iter.hasNext();)
+      {
+        TransportLink route=(TransportLink)iter.next();
+        if (route.lease.add(1)>10)
+        {
+          LOG.severe("lease expired for route "+route.toString());
+          iter.remove();
+          handleLinkRemoved(route);
+        }
+      }
+    }
+
+    synchronized boolean removeNode(GUID id)
+    {
+      // Timeout all routes to the peer which is shutting down
+      for (Iterator iter=routes.iterator(); iter.hasNext();)
+      {
+        TransportLink route = (TransportLink)iter.next();
+        if (id.equals(route.remoteId))
+          route.timeout = 0;
+      }
+#ifdef CFG_JAVA15
+      return announcedNodes.remove(id);
+#else
+      return announcedNodes.remove(id)!=null;
+#endif
+    }
+
+    private TypedArray routes = new TypedArray();
+    private Semaphore routesSem = new Semaphore(1);
+    private TypedMap activeRoutes = new TypedMap();
+#ifdef CFG_JAVA15
+    private HashSet<GUID> announcedNodes = new HashSet<GUID>();
+#else
+#ifndef CFG_CLDC
+    private HashSet announcedNodes = new HashSet();
+#else
+    private Hashtable announcedNodes = new Hashtable();
+#endif
+#endif
+  }
+
+  private class WorkerThread extends Thread
+  {
+    WorkerThread()
+    {
+    }
+    public void run()
+    {
+      try
+      {
+        for(;;)
+        {
+          Thread.sleep(1000);
+#ifdef LOG_MODULE
+          long startTime=System.currentTimeMillis();
+#endif    
+          routeTable.cleanup();
+#ifdef LOG_MODULE
+          long dt=System.currentTimeMillis()-startTime;
+          if (dt>100)
+            workerLog.fine("routeTable.cleanup took "+dt+" ms");
+#endif    
+        }
+      }
+      catch(InterruptedException x)
+      {
+      }
+    }
+  }
+  
+  private RouteTable routeTable;
+#ifdef CFG_CLDC
+  private Hashtable sendQueues = new Hashtable();
+#else
+#ifdef CFG_JAVA15
+  private HashMap<GUID,Queue<Message>> sendQueues = new HashMap<GUID,Queue<Message>>();
+#else
+  private HashMap sendQueues = new HashMap();
+#endif
+#endif
+#ifdef LOG_MODULE
+  private static Logger log = Logger.getLogger("rs");
+  private static Logger workerLog = Logger.getLogger("rs.worker");
+#endif
+  private WorkerThread thread;
+  private static final String mimeType = "message/mc-rs";
+}

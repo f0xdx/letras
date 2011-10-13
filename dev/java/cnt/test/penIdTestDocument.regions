@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="penIdTestDocument.regions">
+    <page>
+        <uri>main</uri>
+        <shape>
+            <rectangle height="952.75" width="659.625" top="8388623.375" left="1.85977823875E8"/>
+        </shape>
+        <channel>main</channel>
+        <hungry>false</hungry>
+    </page>
+    <region>
+        <uri>sub</uri>
+        <shape>
+            <rectangle height="639.0" width="503.375" top="8388733.625" left="1.85977914125E8"/>
+        </shape>
+        <channel>sub</channel>
+        <hungry>false</hungry>
+    </region>
+</regionDocument>

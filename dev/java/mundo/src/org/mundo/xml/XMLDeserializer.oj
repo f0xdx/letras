@@ -1,0 +1,488 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.xml;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.Reader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.Hashtable;
+import java.util.Iterator;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NamedNodeMap;
+import org.xml.sax.InputSource;
+
+import org.mundo.rt.Blob;
+import org.mundo.rt.TypedMap;
+import org.mundo.rt.TypedArray;
+import org.mundo.rt.Message;
+import org.mundo.rt.GUID;
+import org.mundo.rt.Logger;
+
+/**
+ * Transforms a SOAP message into a passive object tree.
+ * @author Erwin Aitenbichler
+ */
+public class XMLDeserializer
+{
+  public XMLDeserializer()
+  {
+    try
+    {
+      domBuilder=domFactory.newDocumentBuilder();
+    }
+    catch(Exception x)
+    {
+      x.printStackTrace();
+    }
+  }
+  public void deserialize(Message msg) throws IOException, org.xml.sax.SAXException
+  {
+    Blob blob=msg.getBlob("all", "xmlser");
+    if (blob==null)
+      throw new IllegalArgumentException("missing chunk all:xmlser");
+    Document doc=domBuilder.parse(new InputSource(new ByteArrayInputStream(blob.getBuffer())));
+    Node node=doc.getFirstChild();
+    if (!node.getNodeName().equals("message"))
+      throw new IOException("element 'message' expected");
+    node=node.getFirstChild();      
+
+    while (node!=null)
+    {
+      // Skip text nodes
+      int nodeType=node.getNodeType();
+      while (nodeType==Node.TEXT_NODE)
+      {
+        node=node.getNextSibling();
+        nodeType=node.getNodeType();
+      }
+      if (nodeType!=Node.ELEMENT_NODE)
+        break;
+      if (!node.getNodeName().equals("chunk"))
+        throw new IOException("element 'chunk' expected");
+      
+      // Read name and type attributes
+      NamedNodeMap attrMap=node.getAttributes();
+      if (attrMap==null)
+        throw new IOException("element 'chunk' has no attributes");
+      Node attr=node.getAttributes().getNamedItem("name");
+      if (attr==null)
+        throw new IOException("attribute 'name' missing while parsing 'chunk'");
+      String name=attr.getNodeValue();
+      attr=node.getAttributes().getNamedItem("type");
+      if (attr==null)
+        throw new IOException("attribute 'type' missing while parsing 'chunk'");
+      String type=attr.getNodeValue();
+
+      // Deserialize chunk
+      if (type.equals("passive"))
+      {
+        msg.put(name, type, (TypedMap)mapDeserializer.fromNode(this, node));
+      }
+      else if (type.equals("bin"))
+      {
+        msg.put(name, type, (Blob)blobDeserializer.fromNode(this, node));
+      }
+      else
+      {
+        System.out.println("unknown type "+type+"; aborting");
+        break;
+      }
+      node=node.getNextSibling();
+    }
+  }
+  
+  /**
+   * Sets the default type name for the root element. This type information is
+   * used to deserialize the first document element, if it does not specify a type.
+   */
+  public void setRootType(String type)
+  {
+    rootType=type;
+  }
+
+  public Object deserializeObject(String s)
+  {
+    return deserializeObject(new InputSource(new StringReader(s)));
+  }
+  public Object deserializeObject(Blob blob)
+  {
+    return deserializeObject(new InputSource(new ByteArrayInputStream(blob.getBuffer())));
+  }
+  public Object deserializeObject(Reader r)
+  {
+    return deserializeObject(new InputSource(r));
+  }
+  public Object deserializeObject(InputStream is)
+  {
+    return deserializeObject(new InputSource(is));
+  }
+  private Object deserializeObject(InputSource is)
+  {
+    request=null;
+    try
+    {
+      Document doc=domBuilder.parse(is);
+      return deserializePart((Node)doc);
+    }
+    catch(Exception x)
+    {
+      log.exception(x);
+    }
+    return null;
+  }
+  public TypedMap deserializeMap(Node node) throws IOException
+  {
+    return (TypedMap)mapDeserializer.fromNode(this, node);
+  }
+/*
+  private Object deserializeDocument(Node node) throws IOException
+  {
+    int nodeType=node.getNodeType();
+    if (nodeType!=Node.DOCUMENT_NODE)
+      throw new IOException("DOCUMENT_NODE expected as root node");
+
+    node=node.getFirstChild();
+    nodeType=node.getNodeType();
+    while (nodeType==Node.TEXT_NODE)
+    {
+      node=node.getNextSibling();
+      nodeType=node.getNodeType();
+    }
+    if (nodeType!=Node.ELEMENT_NODE)
+      throw new IOException("Body ELEMENT_NODE expected");
+    if (!node.getNodeName().endsWith(":Envelope"))
+      throw new IOException("Expected root element Envelope, not "+node.getNodeName());
+
+    node=node.getFirstChild();
+    nodeType=node.getNodeType();
+    while (nodeType==Node.TEXT_NODE)
+    {
+      node=node.getNextSibling();
+      nodeType=node.getNodeType();
+    }
+    if (nodeType!=Node.ELEMENT_NODE)
+      throw new IOException("Body ELEMENT_NODE expected");
+    if (!node.getNodeName().endsWith(":Body"))
+      throw new IOException("Expected Body element, not "+node.getNodeName());
+
+    node=node.getFirstChild();
+    nodeType=node.getNodeType();
+    while (nodeType==Node.TEXT_NODE)
+    {
+      node=node.getNextSibling();
+      nodeType=node.getNodeType();
+    }
+    if (nodeType!=Node.ELEMENT_NODE)
+      throw new IOException("Request ELEMENT_NODE expected");  
+    request=chopNameSpace(node.getNodeName());
+    return mapDeserializer.fromNode(this, node);
+  }
+*/  
+  private String chopNameSpace(String s)
+  {
+    int i=s.indexOf(':');
+    if (i>=0)
+      return s.substring(i+1);
+    return s;
+  }
+  
+  private Object deserializePart(Node node) throws IOException
+  {
+    int nodeType=node.getNodeType();
+    if (nodeType!=Node.DOCUMENT_NODE)
+      throw new IOException("DOCUMENT_NODE expected as root node");
+    return deserializeNode(node.getFirstChild());
+  }
+
+  private Object deserializeNode(Node node) throws IOException
+  {
+    int nodeType=node.getNodeType();
+    while (nodeType==Node.TEXT_NODE)
+    {
+      node=node.getNextSibling();
+      nodeType=node.getNodeType();
+    }
+    if (nodeType==Node.ELEMENT_NODE)
+    {
+      NamedNodeMap attrMap=node.getAttributes();
+      if (attrMap!=null)
+      {
+        Node attrNode=attrMap.getNamedItem("null");
+        if (attrNode!=null && attrNode.getNodeValue().equals("1"))
+          return null;
+        attrNode=attrMap.getNamedItem("xsi:type");
+        if (attrNode!=null)
+        {
+          rootType=null;
+          return forTypeName(attrNode.getNodeValue()).fromNode(this, node);
+        }
+      }
+      if (rootType!=null)
+      {
+        String rt=rootType;
+        rootType=null;
+        return forTypeName(rt).fromNode(this, node);
+      }
+      // Default to String if no type is specified
+      try
+      {
+        return stringDeserializer.fromNode(this, node);
+      }
+      catch(Exception x)
+      {
+        throw new IOException("(from "+x+")\n"+
+            "No XSI type specified in element '"+node.getNodeName()+
+            "' - defaulted to string, but it did not work out");
+      }
+    }
+    throw new IOException("Unexpected node type "+nodeType);
+  }
+
+  private ItemDeserializer forTypeName(String name) throws IOException
+  {
+    ItemDeserializer s=(ItemDeserializer)ht.get(chopNameSpace(name));
+    if (s==null)
+      throw new IOException("no ItemDeserializer for "+name);
+    return s;
+  }
+
+  private static abstract class ItemDeserializer
+  {
+    public abstract Object fromNode(XMLDeserializer d, Node node) throws IOException;
+  }
+
+  private static abstract class ScalarDeserializer extends ItemDeserializer
+  {
+    public Object fromNode(XMLDeserializer d, Node node) throws IOException
+    {
+      node.normalize();
+      Node n = node.getFirstChild();
+      if (n!=null && n.getNodeType()==Node.TEXT_NODE)
+        return valueOf(n.getNodeValue());
+      return valueOf("");
+      
+      // old Java 1.5 variant:
+      //
+      // Andreas Hartl: use getTextContent instead of a concatenation of text nodes via
+      // loop this ensures that also CDATA sections are parsed well.
+      // Possible downside: The text content of child elements is used as well
+      //
+      // Erwin Aitenbichler 21.02.09: getTextContent is not supported on the G1.
+      // Hence, replaced it with new implementation that uses normalize()
+      //
+      // String s=node.getTextContent();
+      // if (s==null)
+      //   s="";
+      // return valueOf(s);
+      //
+      // If we should discover platforms that don't have normalize(), the following
+      // old code could also be interesting:
+      // 
+      // Node n=node.getFirstChild();
+      // StringBuffer sb=new StringBuffer();
+      // while (n!=null)
+      // {
+      //   if (n.getNodeType()==Node.TEXT_NODE)
+      //     sb.append(n.getNodeValue());
+      //   n=n.getNextSibling();
+      // }
+      // return valueOf(sb.toString());
+    }
+
+    protected abstract Object valueOf(String s);
+  }
+
+  private static class MapDeserializer extends ItemDeserializer
+  {
+    public Object fromNode(XMLDeserializer d, Node node) throws IOException
+    {
+      TypedMap map=new TypedMap();
+      Node n=node.getAttributes().getNamedItem("activeClass");
+      if (n!=null)
+        map.setActiveClassName(n.getNodeValue());
+      n = node.getFirstChild();
+      Node l = node.getLastChild();
+      while (n!=null)
+      {
+        if (n.getNodeType()==Node.ELEMENT_NODE)
+          map.put(n.getNodeName(), d.deserializeNode(n));
+        // This is a workaround for the buggy org.apache.harmony parser (used in Android).
+        // getNextSibling should return null on the last element, but instead it causes an
+        // ArrayIndexOutOfBoundsException.
+        if (n==l)
+          break;
+        n = n.getNextSibling();
+      }
+      return map;
+    }
+  }
+
+  private static class ArrayDeserializer extends ItemDeserializer
+  {
+    public Object fromNode(XMLDeserializer d, Node node) throws IOException
+    {
+      TypedArray array=new TypedArray();
+      Node n=node.getAttributes().getNamedItem("activeClass");
+      if (n!=null)
+        array.setActiveClassName(n.getNodeValue());
+      n=node.getFirstChild();
+      while (n!=null)
+      {
+        if (n.getNodeType()==Node.ELEMENT_NODE)
+          array.add(d.deserializeNode(n));
+        n=n.getNextSibling();
+      }
+      return array;
+    }
+  }
+
+  private static class JavaXDRDeserializer extends ItemDeserializer
+  {
+    public Object fromNode(XMLDeserializer d, Node node) throws IOException
+    {
+      String nodeName=node.getNodeName();
+      Node n=node.getFirstChild();
+      if (n==null)
+        return new TypedMap.JavaXDR(null);
+      if (n.getNodeType()!=Node.TEXT_NODE)
+        throw new IOException("text node expected: parent="+nodeName);
+      return TypedMap.JavaXDR.valueOf(n.getNodeValue());
+    }
+  }
+
+  private static class BlobDeserializer extends ItemDeserializer
+  {
+    public Object fromNode(XMLDeserializer d, Node node) throws IOException
+    {
+      String nodeName=node.getNodeName();
+      Node n=node.getFirstChild();
+      if (n==null)
+        return new Blob();
+      if (n.getNodeType()!=Node.TEXT_NODE)
+        throw new IOException("text node expected: parent="+nodeName);
+      Blob blob=new Blob();
+      new Base64Codec().decode(blob, n.getNodeValue());
+      return blob;
+    }
+  }
+
+  private String request;  
+  private DocumentBuilder domBuilder;
+  private static DocumentBuilderFactory domFactory;
+  private static MapDeserializer mapDeserializer;
+  private static BlobDeserializer blobDeserializer;
+  private static ScalarDeserializer stringDeserializer;
+  private String rootType;
+#ifdef CFG_JAVA15
+  private static Hashtable<String,ItemDeserializer> ht=new Hashtable<String,ItemDeserializer>();
+#else
+  private static Hashtable ht=new Hashtable();
+#endif
+
+  static
+  {
+    domFactory=DocumentBuilderFactory.newInstance();
+    ht.put("byte", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return Byte.valueOf(s);
+      }
+    });
+    ht.put("unsignedByte", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return TypedMap.UnsignedByte.valueOf(s);
+      }
+    });
+    ht.put("short", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return Short.valueOf(s);
+      }
+    });
+    ht.put("unsignedShort", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return TypedMap.UnsignedShort.valueOf(s);
+      }
+    });
+    ht.put("int", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return Integer.valueOf(s);
+      }
+    });
+    ht.put("unsignedInt", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return TypedMap.UnsignedInteger.valueOf(s);
+      }
+    });
+    ht.put("long", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return Long.valueOf(s);
+      }
+    });
+    ht.put("unsignedLong", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return TypedMap.UnsignedLong.valueOf(s);
+      }
+    });
+    ht.put("float", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return Float.valueOf(s);
+      }
+    });
+    ht.put("double", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return Double.valueOf(s);
+      }
+    });
+    ht.put("boolean", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return Boolean.valueOf(s);
+      }
+    });
+    ht.put("char", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return new Character(s.charAt(0));
+      }
+    });
+    ht.put("string", stringDeserializer=new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return s;
+      }
+    });
+    ht.put("ID", new ScalarDeserializer() {
+      protected Object valueOf(String s) {
+        return GUID.parse(s);
+      }
+    });
+    ht.put("JavaXDR", new JavaXDRDeserializer());
+    ht.put("map", mapDeserializer=new MapDeserializer());
+    ht.put("array", new ArrayDeserializer());
+    ht.put("blob", blobDeserializer=new BlobDeserializer());
+  }
+  
+  private Logger log = Logger.getLogger("xmldeser");
+}

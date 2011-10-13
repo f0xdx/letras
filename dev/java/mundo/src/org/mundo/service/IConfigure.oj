@@ -1,0 +1,96 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.service;
+
+import org.mundo.annotation.*;
+import org.mundo.rt.TypedMap;
+
+/**
+ * <p>The <code>IConfigure</code> interface provides methods to get and set the
+ * configuration of a service. By implementing this interface, a service
+ * permits remote configuration. <code>IConfigure</code> is basically only a
+ * marker interface, since the methods are already present in <code>Service</code>.</p>
+ * 
+ * <p>The methods <code>setServiceConfig</code> and <code>getServiceConfig</code>
+ * take an object parameter and can be used when the service-specific configuration
+ * classes are known within the entire system. If the configurator is not aware
+ * of the concrete classes, it can use the <code>setServiceConfigMap</code> and
+ * <code>getServiceConfigMap</code> methods and operate based on passive object
+ * trees.</p>
+ *
+ * @author Erwin Aitenbichler
+ */
+@mcRemote
+public interface IConfigure
+{
+  /**
+   * Sets configuration options for this service. With regard to configuration,
+   * three different types of services can be distinguished:<ul>
+   * <li><b>No configuration:</b> Services that do not support custom
+   *     configuration options, throw an <code>UnsupportedOperationException</code>
+   *     on an attempt to call <code>setConfig</code>.</li>
+   * <li><b>Static configuration:</b> These services support one-time
+   *     configuration. <code>setConfig</code> must be called before
+   *     <code>init</code>/<code>registerService</code>. If <code>setConfig</code>
+   *     is called after initialization, an <code>IllegalStateException</code>
+   *     is thrown.</li>
+   * <li><b>Dynamic re-configuration:</b> These services permit changing
+   *     configuration options at any time.</li>
+   * </ul>
+   * @param cfg  a service specific object containing the configuration options.
+   * @throws UnsupportedOperationException  if the service does not support
+   *         setting configuration options. This is the default behaviour of
+   *         <code>Service.setConfig</code>.
+   * @throws IllegalStateException  if the service does not support re-configuration.
+   * @throws IllegalArgumentException  if the provided configuration object is not
+   *         of the expected class or the configuration data is invalid.
+   */
+  @mcMethod
+  public void setServiceConfig(Object cfg);
+  /**
+   * Returns the configuration options for this service.
+   * @return  the configuration options for this service; or <code>null</code>
+   *          if the operation is not supported.
+   */
+  @mcMethod
+  public Object getServiceConfig();
+  /**
+   * Sets configuration options for this service. 
+   * @param map  a map containing the configuration options.
+   * @throws UnsupportedOperationException  if the service does not support
+   *         setting configuration options. This is the default behaviour of
+   *         <code>Service.setConfig</code>.
+   * @throws IllegalStateException  if the service does not support re-configuration.
+   * @throws IllegalArgumentException  if the provided configuration object is not
+   *         of the expected class or the configuration data is invalid.
+   */
+  @mcMethod
+  public void setServiceConfigMap(TypedMap map);
+  /**
+   * Returns the configuration options for this service.
+   * @return  the configuration options for this service; or <code>null</code>
+   *          if the operation is not supported.
+   */
+  @mcMethod
+  public TypedMap getServiceConfigMap();
+}

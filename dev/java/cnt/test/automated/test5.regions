@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<regionDocument uri="test5.regions">
+    <page>
+        <uri>test5_main</uri>
+        <shape>
+            <rectangle height="276.875" width="319.5" top="7815.875" left="1.83993188875E8"/>
+        </shape>
+        <channel>test5_main</channel>
+        <hungry>false</hungry>
+    </page>
+    <region>
+        <uri>test5_sub1</uri>
+        <shape>
+            <rectangle height="120.75" width="132.0" top="7868.125" left="1.839932115E8"/>
+        </shape>
+        <channel>test5_sub1</channel>
+        <hungry>false</hungry>
+    </region>
+    <region>
+        <uri>test5_sub2</uri>
+        <shape>
+            <rectangle height="118.375" width="134.375" top="7968.625" left="1.8399335075E8"/>
+        </shape>
+        <channel>test5_sub2</channel>
+        <hungry>false</hungry>
+    </region>
+</regionDocument>

@@ -1,0 +1,94 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.service;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.mundo.net.routing.RoutingService;
+import org.mundo.net.transport.TransportLink;
+import org.mundo.rt.GUID;
+import org.mundo.rt.Mundo;
+import org.mundo.rt.Session;
+
+public class Node
+{
+  private Node(GUID id, String name)
+  {
+    nodeId = id;
+    nodeName = name;
+  }
+  public GUID getId()
+  {
+    return nodeId;
+  }
+  public String getName()
+  {
+    return nodeName;
+  }
+  public DoIServiceManager getServiceManager(Session session)
+  {
+    return new DoIServiceManager(session.getChannel("lan", nodeId+".ServiceManager"));
+  }
+  @Override
+  public String toString()
+  {
+    return "id="+nodeId+",name="+nodeName;
+  }
+  public static Node thisNode()
+  {
+    return new Node(Mundo.getNodeId(), Mundo.getNodeName());
+  }
+  public static Node getByName(String name)
+  {
+    RoutingService rs = (RoutingService)Mundo.getServiceByType(RoutingService.class);
+    for (Iterator i=rs.getLinks().iterator(); i.hasNext();)
+    {
+      TransportLink l = (TransportLink)i.next();
+//      System.out.println(l.remoteId + ", " + l.remoteName);
+      if (name.equals(l.remoteName))
+        return new Node(l.remoteId, l.remoteName);
+    }
+    return null;
+  }
+  public static Node[] getNeighbors()
+  {
+    HashMap<GUID,String> map = new HashMap<GUID,String>();
+    RoutingService rs = (RoutingService)Mundo.getServiceByType(RoutingService.class);
+    for (Iterator i=rs.getLinks().iterator(); i.hasNext();)
+    {
+      TransportLink l = (TransportLink)i.next();
+      map.put(l.remoteId, l.remoteName);
+    }
+    Node nodes[] = new Node[map.size()];
+    int i=0;
+    for (Map.Entry<GUID,String> e : map.entrySet())
+      nodes[i++] = new Node(e.getKey(), e.getValue());
+    return nodes;
+  }
+  
+  private GUID nodeId;
+  private String nodeName;
+}

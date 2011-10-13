@@ -1,0 +1,76 @@
+/*
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+ * for the specific language governing rights and limitations under the
+ * License.
+ *
+ * The Original Code is MundoCore Java.
+ *
+ * The Initial Developer of the Original Code is Telecooperation Group,
+ * Department of Computer Science, Darmstadt University of Technology.
+ * Portions created by the Initial Developer are
+ * Copyright (C) 2001-2008 the Initial Developer. All Rights Reserved.
+ *
+ * Contributor(s):
+ * Erwin Aitenbichler
+ */
+
+package org.mundo.net.transport.ip;
+
+import org.mundo.rt.IProtocolCondition;
+import org.mundo.rt.ProtocolStack;
+import org.mundo.rt.Message;
+import org.mundo.rt.Logger;
+import org.mundo.rt.TypedMap;
+import org.mundo.net.transport.TransportLink;
+import org.mundo.net.transport.ip.IPLink;
+
+#ifdef CFG_CHECKED_BUILD
+#define LOG log
+#else
+#define LOG //
+#endif
+
+/**
+ * A protocol condition testing whether a UDP-based transport is used.
+ */
+public class IfUDP implements IProtocolCondition
+{
+  public IfUDP()
+  {
+  }
+  public boolean test(ProtocolStack.BranchHandler handler, Message msg)
+  {
+    TypedMap tsmap = msg.getMap("ts", "param");
+    if (tsmap == null)
+    {
+      LOG.warning("missing parameters ts:param from transport service");
+      return false;
+    }
+    TransportLink route = (TransportLink)tsmap.getObject("link");
+    if (!(route instanceof IPLink))
+    {
+      LOG.warning("route not instanceof IPTSRoute");
+      return false;
+    }
+    IPLink ipr = (IPLink)route;
+    int proto = ipr.getProto();
+#ifdef CFG_CHECKED_BUILD
+    if (proto == ipr.PROTO_UDP)
+      log.finest("protocol is UDP (udp=true)");
+    else if (proto == ipr.PROTO_TCP)
+      log.finest("protocol is TCP (udp=false)");
+    else
+      log.finest("protocol is "+proto+" (udp=false)");
+#endif
+    return proto == ipr.PROTO_UDP;
+  }
+#ifdef CFG_CHECKED_BUILD
+  private Logger log = Logger.getLogger("ifudp");
+#endif
+}

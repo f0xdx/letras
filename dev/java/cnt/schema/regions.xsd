@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	targetNamespace="http://www.letras.org/regions" xmlns:rg="http://www.letras.org/regions">
+	<xsd:complexType abstract="true" name="Shape">
+	</xsd:complexType>
+	<xsd:complexType name="RectangularShape">
+		<xsd:complexContent>
+			<xsd:extension base="rg:Shape">
+				<xsd:attribute name="left" type="xsd:double" use="required" />
+				<xsd:attribute name="top" type="xsd:double" use="required" />
+				<xsd:attribute name="width" type="xsd:double" use="required" />
+				<xsd:attribute name="height" type="xsd:double" use="required" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="CircularShape">
+		<xsd:complexContent>
+			<xsd:extension base="rg:Shape">
+				<xsd:attribute name="centerx" type="xsd:double" use="required" />
+				<xsd:attribute name="centery" type="xsd:double" use="required" />
+				<xsd:attribute name="radius" type="xsd:double" use="required" />
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	<xsd:complexType name="ShapeChoice">
+		<xsd:choice>
+			<xsd:element name="rectangle" type="rg:RectangularShape" />
+			<xsd:element name="circle" type="rg:CircularShape" />
+		</xsd:choice>
+	</xsd:complexType>
+	<xsd:complexType name="Region">
+		<xsd:sequence>
+			<xsd:element name="uri" type="xsd:anyURI" />
+			<xsd:element name="shape" type="rg:ShapeChoice" />
+			<xsd:element name="channel" type="xsd:string" minOccurs="0"
+				maxOccurs="1" />
+			<xsd:element name="hungry" type="xsd:boolean" minOccurs="0"
+				maxOccurs="1" />
+		</xsd:sequence>
+		<xsd:attribute name="id" use="optional" type="xsd:ID" />
+	</xsd:complexType>
+	<xsd:complexType name="RegionDocument">
+		<xsd:sequence>
+			<xsd:element name="page" type="rg:Region" minOccurs="0" maxOccurs="1"/>
+			<xsd:element name="region" type="rg:Region" minOccurs="1"
+				maxOccurs="unbounded" />
+		</xsd:sequence>
+		<xsd:attribute name="uri" type="xsd:anyURI" use="optional"/>
+	</xsd:complexType>
+</xsd:schema>
