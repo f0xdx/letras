@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.rawdata.driver.logitech;
+package org.letras.ps.rawdata.driver.anoto.adp201;
 
 import java.io.IOException;
 import java.io.InputStream;

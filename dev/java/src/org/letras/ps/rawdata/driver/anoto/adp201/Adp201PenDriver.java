@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.rawdata.driver.logitech;
+package org.letras.ps.rawdata.driver.anoto.adp201;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,7 +40,7 @@ import org.mundo.service.IConfigure;
  * @author niklas
  * @version 0.0.2
  */
-public class LogitechPenDriver implements IPenDriver, IConfigure {
+public class Adp201PenDriver implements IPenDriver, IConfigure {
 
 	// logger
 	
@@ -68,7 +68,7 @@ public class LogitechPenDriver implements IPenDriver, IConfigure {
 	/**
 	 * Nullary constructor 
 	 */
-	public LogitechPenDriver() {
+	public Adp201PenDriver() {
 		bluetoothConnector = new BluetoothConnector(this);
 		bluetoothThread  = new Thread(bluetoothConnector);
 	}
@@ -123,9 +123,9 @@ public class LogitechPenDriver implements IPenDriver, IConfigure {
 	@Override
 	public void setServiceConfig(Object arg0) {
 		TypedMap map = (TypedMap) arg0;
-		IO2StreamConverter.xorigin = map.getInt("xorigin");
-		IO2StreamConverter.yorigin = map.getInt("yorigin");
-		logger.logp(Level.CONFIG, "LogitechPenDriver", "setServiceConfig", String.format("Successfully configured Logitech driver to use %d as xorigin and %d as yorigin", IO2StreamConverter.xorigin, IO2StreamConverter.yorigin));
+		Adp201StreamConverter.xorigin = map.getInt("xorigin");
+		Adp201StreamConverter.yorigin = map.getInt("yorigin");
+		logger.logp(Level.CONFIG, "LogitechPenDriver", "setServiceConfig", String.format("Successfully configured Logitech driver to use %d as xorigin and %d as yorigin", Adp201StreamConverter.xorigin, Adp201StreamConverter.yorigin));
 		
 	}
 

@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.rawdata.driver.logitech;
+package org.letras.ps.rawdata.driver.anoto.adp201;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -70,9 +70,9 @@ public class BluetoothConnector extends Thread{
 	//members
 	
 	/**
-	 * The LogitechPenDriver is used to retrieve IPenAdapters for connecting pens
+	 * The Adp201PenDriver is used to retrieve IPenAdapters for connecting pens
 	 */
-	private LogitechPenDriver logitechPenDriver;
+	private Adp201PenDriver logitechPenDriver;
 	
 	/**
 	 * representation of the SPP-Service
@@ -93,7 +93,7 @@ public class BluetoothConnector extends Thread{
 	 * Standard constructor
 	 * @param logitechPenDriver
 	 */
-	public BluetoothConnector(LogitechPenDriver logitechPenDriver) {
+	public BluetoothConnector(Adp201PenDriver logitechPenDriver) {
 		this.logitechPenDriver = logitechPenDriver;
 		
 		activeConnectionHandler = new LinkedList<BluetoothConnectionHandler>();	
@@ -128,7 +128,7 @@ public class BluetoothConnector extends Thread{
 					IPenAdapter penAdapter = logitechPenDriver.getPenAdapterForToken(bluetoothAdress);
 					
 					//create a ByteStreamConverter for the connected pen
-					ByteStreamConverter converter = new IO2StreamConverter(penAdapter);
+					ByteStreamConverter converter = new Adp201StreamConverter(penAdapter);
 					
 					// initialize a BluetoothConnectionHandler and run it
 					BluetoothConnectionHandler handler = new BluetoothConnectionHandler(connection, converter, this, bluetoothAdress);

@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.rawdata.driver.logitech;
+package org.letras.ps.rawdata.driver.anoto.adp201;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,7 +30,7 @@ import org.letras.ps.rawdata.IPenAdapter;
 import org.letras.psi.ipen.PenSample;
 
 /**
- * The IO2StreamConverter class converts the byte stream coming from 
+ * The Adp201StreamConverter class converts the byte stream coming from 
  * the Bluetooth Serial Port Profile into RawDataSamples by assuming that 
  * the source is a Logitech IO2 digital pen.
  * <p>
@@ -38,7 +38,7 @@ import org.letras.psi.ipen.PenSample;
  * @version 0.0.1
  *
  */
-class IO2StreamConverter extends ByteStreamConverter{
+class Adp201StreamConverter extends ByteStreamConverter{
 
 	//logger
 	private static Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
@@ -149,7 +149,7 @@ class IO2StreamConverter extends ByteStreamConverter{
 	 * Standard constructor
 	 * @param adapter to which the extracted RawDataSamples will be relayed
 	 */
-	public IO2StreamConverter(IPenAdapter adapter) {
+	public Adp201StreamConverter(IPenAdapter adapter) {
 		super(adapter);
 		currentProtocolState = StreamingState.HEADER;
 	}
