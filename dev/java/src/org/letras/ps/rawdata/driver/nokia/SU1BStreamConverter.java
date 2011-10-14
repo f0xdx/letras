@@ -24,16 +24,12 @@
 package org.letras.ps.rawdata.driver.nokia;
 
 import org.letras.ps.rawdata.IPenAdapter;
-import org.letras.ps.rawdata.driver.nokia.ByteStreamConverter;
 import org.letras.psi.ipen.PenSample;
 
 /**
  * The SU1BStreamConverter class converts the byte stream coming from 
  * the Bluetooth Serial Port Profile into RawDataSamples by assuming that 
  * the source is a Nokia SU-1B digital pen.
- * <p>
- * TODO: This class includes code from the PenStreamingConnection class 
- * included in the PaperToolkit from Stanford, license should be added!?
  * 
  * @author niklas
  * @version 0.0.1

@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.rawdata.driver.anoto.adp201;
+package org.letras.ps.rawdata.driver.logitech;
 
 import java.io.IOException;
 import java.util.LinkedList;
@@ -42,7 +42,7 @@ import org.letras.ps.rawdata.IPenAdapter;
  * thread responsible for reading data from the Bluetooth connection.
  * This allows for multiple nokia pens connecting to the driver.
  * <p>
- * Supported pens: <ul><li>"Nokia SU-1B" Streaming since version 0.0.1</li></ul>
+ * Supported pens: <ul><li>"Logitech IO2" Streaming since version 0.0.1</li></ul>
  *
  * @author niklas
  * @version 0.0.2
@@ -51,7 +51,7 @@ public class BluetoothConnector extends Thread{
 
 	//logger 
 	
-	private static final Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.nokia");
+	private static final Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
 	
 	//bluetooth constants
 	
@@ -60,7 +60,7 @@ public class BluetoothConnector extends Thread{
 	 * "ANOTO STREAMING" is the service name on which
 	 * the Nokia SU-1B connects to the SPP-Service
 	 */
-	private static final String SERVICE_NAME = "ANOTO STREAMING";
+	private static final String SERVICE_NAME = "ANOTOSTREAMING";
 	
 	/**
 	 * UUID 1101 is the Universally Unique IDentifier for the SPP (Serial Port Profile)
@@ -70,9 +70,9 @@ public class BluetoothConnector extends Thread{
 	//members
 	
 	/**
-	 * The NokiaPenDriver is used to retrieve IPenAdapters for connecting pens
+	 * The LogitechPenDriver is used to retrieve IPenAdapters for connecting pens
 	 */
-	private NokiaPenDriver nokiaPenDriver;
+	private LogitechPenDriver logitechPenDriver;
 	
 	/**
 	 * representation of the SPP-Service
@@ -91,10 +91,10 @@ public class BluetoothConnector extends Thread{
 	
 	/**
 	 * Standard constructor
-	 * @param nokiaPenDriver
+	 * @param logitechPenDriver
 	 */
-	public BluetoothConnector(NokiaPenDriver nokiaPenDriver) {
-		this.nokiaPenDriver = nokiaPenDriver;
+	public BluetoothConnector(LogitechPenDriver logitechPenDriver) {
+		this.logitechPenDriver = logitechPenDriver;
 		
 		activeConnectionHandler = new LinkedList<BluetoothConnectionHandler>();	
 	}
@@ -125,10 +125,10 @@ public class BluetoothConnector extends Thread{
 					String bluetoothAdress = device.getBluetoothAddress();
 					
 					// ask the nokia pen driver for a PenAdapter
-					IPenAdapter penAdapter = nokiaPenDriver.getPenAdapterForToken(bluetoothAdress);
+					IPenAdapter penAdapter = logitechPenDriver.getPenAdapterForToken(bluetoothAdress);
 					
 					//create a ByteStreamConverter for the connected pen
-					ByteStreamConverter converter = new SU1BStreamConverter(penAdapter);
+					ByteStreamConverter converter = new IO2StreamConverter(penAdapter);
 					
 					// initialize a BluetoothConnectionHandler and run it
 					BluetoothConnectionHandler handler = new BluetoothConnectionHandler(connection, converter, this, bluetoothAdress);

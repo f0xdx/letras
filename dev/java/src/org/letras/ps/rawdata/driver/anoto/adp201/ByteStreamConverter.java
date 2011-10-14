@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.rawdata.driver.anoto.adp201;
+package org.letras.ps.rawdata.driver.logitech;
 
 import org.letras.ps.rawdata.IPenAdapter;
 import org.letras.psi.ipen.IPenState;

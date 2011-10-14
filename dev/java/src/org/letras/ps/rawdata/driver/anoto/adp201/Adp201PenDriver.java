@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.rawdata.driver.anoto.adp201;
+package org.letras.ps.rawdata.driver.logitech;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,20 +29,22 @@ import java.util.logging.Logger;
 import org.letras.ps.rawdata.IPenAdapter;
 import org.letras.ps.rawdata.IPenAdapterFactory;
 import org.letras.ps.rawdata.IPenDriver;
+import org.mundo.rt.TypedMap;
+import org.mundo.service.IConfigure;
 
 /**
- * The Nokia Pen Driver is the top-level class of the nokia driver package.
+ * The Logitech Pen Driver is the top-level class of the logitechs driver package.
  * It implements entry points to allow for loading the driver at runtime
  * through the Mundo Generic Plugin interface.
  * @see IPenDriver
  * @author niklas
  * @version 0.0.2
  */
-public class NokiaPenDriver implements IPenDriver {
+public class LogitechPenDriver implements IPenDriver, IConfigure {
 
 	// logger
 	
-	Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.nokia");
+	Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
 	
 	// members
 	
@@ -66,7 +68,7 @@ public class NokiaPenDriver implements IPenDriver {
 	/**
 	 * Nullary constructor 
 	 */
-	public NokiaPenDriver() {
+	public LogitechPenDriver() {
 		bluetoothConnector = new BluetoothConnector(this);
 		bluetoothThread  = new Thread(bluetoothConnector);
 	}
@@ -80,13 +82,13 @@ public class NokiaPenDriver implements IPenDriver {
 	
 	@Override
 	public void shutdown() {
-		logger.logp(Level.INFO, "NokiaPenDriver", "shutdown",  "Shutting down Nokia Pen Driver");
+		logger.logp(Level.INFO, "LogitechPenDriver", "shutdown",  "Shutting down logitech Pen Driver");
 		
 		bluetoothConnector.shutdown();
 		try {
 			bluetoothThread.join();
 		} catch (InterruptedException e) {
-			logger.logp(Level.WARNING, "NokiaPenDriver", "shutdown",  String.format("thread interrupted while waiting for handler to shutdown: %s", e.getMessage()));
+			logger.logp(Level.WARNING, "LogitechPenDriver", "shutdown",  String.format("thread interrupted while waiting for handler to shutdown: %s", e.getMessage()));
 			e.printStackTrace();
 		}
 	}
@@ -94,7 +96,7 @@ public class NokiaPenDriver implements IPenDriver {
 	@Override
 	public void init() {
 		bluetoothThread.start();
-		logger.logp(Level.INFO, "NokiaPenDriver", "init", "Nokia Pen Driver up and running");
+		logger.logp(Level.INFO, "LogitechPenDriver", "init", "Logitech Pen Driver up and running");
 	}
 	
 	/**
@@ -104,6 +106,33 @@ public class NokiaPenDriver implements IPenDriver {
 	 */
 	IPenAdapter getPenAdapterForToken(String token) {	
 		return factory.create(this, token);
+	}
+
+	@Override
+	public Object getServiceConfig() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TypedMap getServiceConfigMap() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setServiceConfig(Object arg0) {
+		TypedMap map = (TypedMap) arg0;
+		IO2StreamConverter.xorigin = map.getInt("xorigin");
+		IO2StreamConverter.yorigin = map.getInt("yorigin");
+		logger.logp(Level.CONFIG, "LogitechPenDriver", "setServiceConfig", String.format("Successfully configured Logitech driver to use %d as xorigin and %d as yorigin", IO2StreamConverter.xorigin, IO2StreamConverter.yorigin));
+		
+	}
+
+	@Override
+	public void setServiceConfigMap(TypedMap arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

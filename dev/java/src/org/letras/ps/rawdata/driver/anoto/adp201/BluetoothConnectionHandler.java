@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.rawdata.driver.anoto.adp201;
+package org.letras.ps.rawdata.driver.logitech;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,7 +43,7 @@ class BluetoothConnectionHandler extends Thread {
 	
 	//logger
 	
-	private static final Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.nokia");
+	private static final Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
 	
 	//members
 	
@@ -97,7 +97,6 @@ class BluetoothConnectionHandler extends Thread {
 			int data;
 			
 			converter.penConnected();
-			
 			// now read until the end of the stream has been reached (i.e. the next value returned is -1)
 			while (running) {
 				data = stream.read();
