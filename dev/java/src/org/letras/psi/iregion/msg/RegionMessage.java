@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.iregion;
+package org.letras.psi.iregion.msg;
 
 /**
  * Interface for RegionMessages. Allows disambiguating {@link RegionEvent}s and 

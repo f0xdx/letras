@@ -21,7 +21,10 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.iregion;
+package org.letras.psi.iregion.msg;
+
+import org.letras.psi.iregion.RegionEvent;
+import org.letras.psi.iregion.RegionSample;
 
 /**
  * Visitor-style double-dispatch utility for {@link RegionMessage}s.

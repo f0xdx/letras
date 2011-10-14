@@ -165,7 +165,8 @@
                failonerror="true" 
                listfiles="false" 
                debug="${letras.debug}" 
-               debuglevel="${letras.debuglevel}">
+               debuglevel="${letras.debuglevel}"
+			   includeantruntime="false">
             <classpath refid="compile.tst.classpath" />
             <compilerarg value="-Xlint:unchecked" />
         </javac>

@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.letras.psi.iregion;
 
+import org.letras.psi.iregion.msg.RegionMessageProcessor;
+import org.letras.psi.iregion.msg.RegionMessage;
 import org.mundo.annotation.mcSerialize;
 import org.mundo.rt.GUID;
 
