@@ -25,7 +25,6 @@ public interface IVector2d {
 	 */
 	public double getY();
 
-
 	/**
 	 * Sets the x component of this vector.
 	 * @param x 
@@ -38,4 +37,5 @@ public interface IVector2d {
 	 * @param y 
 	 */
 	public void setY(double y);
+
 }
