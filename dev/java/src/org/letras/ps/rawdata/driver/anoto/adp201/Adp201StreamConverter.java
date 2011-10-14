@@ -9,7 +9,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  * 
- * The Original Code is MundoCore Java.
+ * The Original Code is Letras (Java).
  * 
  * The Initial Developer of the Original Code is Telecooperation Group,
  * Department of Computer Science, Technische Universität Darmstadt.
@@ -30,18 +30,19 @@ import org.letras.ps.rawdata.IPenAdapter;
 import org.letras.psi.ipen.PenSample;
 
 /**
- * The Adp201StreamConverter class converts the byte stream coming from 
+ * The <code>Adp201StreamConverter</code> class converts the byte stream coming from 
  * the Bluetooth Serial Port Profile into RawDataSamples by assuming that 
- * the source is a Logitech IO2 digital pen.
- * <p>
- * @author niklas
- * @version 0.0.1
+ * the source is an Anoto ADP-201 digital pen.
+ * 
+ * @author niklas, felix
+ * @version 0.2.2
  *
  */
 class Adp201StreamConverter extends ByteStreamConverter{
 
 	//logger
-	private static Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
+	private static Logger logger = 
+			Logger.getLogger(Adp201StreamConverter.class.getPackage().getName());
 	
 	//IO2 protocol specific values
 	
@@ -80,12 +81,12 @@ class Adp201StreamConverter extends ByteStreamConverter{
 	 * field to permanently store the reference time for calculation between the pen internal
 	 * time and pen external time
 	 */
-	private long timestampSessionBegin = 0;
+	private long timestampSessionBegin = 0l;
 	
 	/**
 	 * field to temporarily store the page address 
 	 */
-	private long pageAddressBuffer = 0L;
+	private long pageAddressBuffer = 0l;
 	
 	/**
 	 * field to temporarily store the relative x coordinate in 1/8 of anoto coordinates 

@@ -9,7 +9,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  * 
- * The Original Code is MundoCore Java.
+ * The Original Code is Letras (Java).
  * 
  * The Initial Developer of the Original Code is Telecooperation Group,
  * Department of Computer Science, Technische Universität Darmstadt.
@@ -40,27 +40,28 @@ import org.letras.ps.rawdata.IPenAdapter;
  * The Bluetooth Connector handles incoming Bluetooth SPP connections. 
  * On accepting a new connection it spawns a BluetoothConnectionHandler
  * thread responsible for reading data from the Bluetooth connection.
- * This allows for multiple nokia pens connecting to the driver.
+ * This allows for multiple ADP-201 pens connecting to the driver.
  * <p>
- * Supported pens: <ul><li>"Logitech IO2" Streaming since version 0.0.1</li></ul>
+ * <b>Supported pens</b>: <i>ADP-201</i> Streaming since version 0.0.1
  *
- * @author niklas
- * @version 0.0.2
+ * @author niklas, felix 
+ * @version 0.2.2
  */
 public class BluetoothConnector extends Thread{
 
 	//logger 
 	
-	private static final Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
+	private static final Logger logger = 
+			Logger.getLogger(BluetoothConnector.class.getPackage().getName());
 	
 	//bluetooth constants
 	
 	/**
 	 * Used to advertise the serial port to connecting nokia pens. 
-	 * "ANOTO STREAMING" is the service name on which
-	 * the Nokia SU-1B connects to the SPP-Service
+	 * "anotostreaming" is the service name on which
+	 * the Maxell/Anoto ADP-201 connects to the SPP-Service
 	 */
-	private static final String SERVICE_NAME = "ANOTOSTREAMING";
+	private static final String SERVICE_NAME = "anotostreaming";
 	
 	/**
 	 * UUID 1101 is the Universally Unique IDentifier for the SPP (Serial Port Profile)
@@ -72,7 +73,7 @@ public class BluetoothConnector extends Thread{
 	/**
 	 * The Adp201PenDriver is used to retrieve IPenAdapters for connecting pens
 	 */
-	private Adp201PenDriver logitechPenDriver;
+	private Adp201PenDriver adp201PenDriver;
 	
 	/**
 	 * representation of the SPP-Service
@@ -91,17 +92,17 @@ public class BluetoothConnector extends Thread{
 	
 	/**
 	 * Standard constructor
-	 * @param logitechPenDriver
+	 * @param adp201PenDriver
 	 */
 	public BluetoothConnector(Adp201PenDriver logitechPenDriver) {
-		this.logitechPenDriver = logitechPenDriver;
-		
+		this.adp201PenDriver = logitechPenDriver;
 		activeConnectionHandler = new LinkedList<BluetoothConnectionHandler>();	
 	}
 	
 	/**
 	 * The method called when starting the thread
 	 */
+	@Override
 	public void run() {
 
 		running = true;
@@ -113,7 +114,8 @@ public class BluetoothConnector extends Thread{
 
 			// open this server URL
 			connectionNotifier = (StreamConnectionNotifier) Connector.open(serverUrl);
-			logger.logp(Level.CONFIG, "BluetoothConnector", "run", String.format("Started local SPP service with name: \"%s\"", SERVICE_NAME));
+			logger.logp(Level.CONFIG, this.getClass().getSimpleName(), 
+					"run", String.format("Started local SPP service with name: \"%s\"", SERVICE_NAME));
 
 			while (running) {
 				try {
@@ -125,35 +127,46 @@ public class BluetoothConnector extends Thread{
 					String bluetoothAdress = device.getBluetoothAddress();
 					
 					// ask the nokia pen driver for a PenAdapter
-					IPenAdapter penAdapter = logitechPenDriver.getPenAdapterForToken(bluetoothAdress);
+					IPenAdapter penAdapter = 
+							adp201PenDriver.getPenAdapterForToken(bluetoothAdress);
 					
 					//create a ByteStreamConverter for the connected pen
-					ByteStreamConverter converter = new Adp201StreamConverter(penAdapter);
+					ByteStreamConverter converter = 
+							new Adp201StreamConverter(penAdapter);
 					
 					// initialize a BluetoothConnectionHandler and run it
-					BluetoothConnectionHandler handler = new BluetoothConnectionHandler(connection, converter, this, bluetoothAdress);
+					BluetoothConnectionHandler handler = 
+							new BluetoothConnectionHandler(
+									connection, 
+									converter, 
+									this, 
+									bluetoothAdress);
 
 					activeConnectionHandler.add(handler);
 
 					handler.start();
 
-					logger.logp(Level.FINE, "BluetoothConnector", "run", String.format("connection to %s established", device.getBluetoothAddress()));
+					logger.logp(Level.FINE, this.getClass().getSimpleName(), 
+							"run", String.format("connection to %s established", 
+							device.getBluetoothAddress()));
 					
 				} catch (IOException e) {
 					if (running) {
-						logger.logp(Level.WARNING, "BluetoothConnector", "run",  String.format("failed to open connection to %s: ", e.getMessage()));
-						e.printStackTrace();
+						logger.logp(Level.WARNING, this.getClass().getSimpleName(), 
+								"run",  String.format("failed to open connection to %s: ", e.getMessage()));
 					}
 				}
 			}
 			
 	
 		} catch (ClassCastException e){
-			logger.logp(Level.SEVERE, "BluetoothConnector", "run", String.format("could not cast to StreamConnectionNotifier: %s", e.getMessage()));
-			e.printStackTrace();
+			logger.logp(Level.SEVERE, this.getClass().getSimpleName(), 
+					"run", String.format("could not cast to StreamConnectionNotifier: %s", e.getMessage()));
 		} catch (IOException e) {
-			logger.logp(Level.SEVERE, "BluetoothConnector", "run", String.format("could not start local SPP service: %s", e.getMessage()));
-			logger.logp(Level.WARNING, "BluetoothConnector", "run", "Could not initialize Bluetooth. Maybe there is no Bluetooth-Dongle connected?");
+			logger.logp(Level.SEVERE, this.getClass().getSimpleName(), 
+					"run", String.format("could not start local SPP service: %s", e.getMessage()));
+			logger.logp(Level.WARNING, this.getClass().getSimpleName(), 
+					"run", "Could not initialize Bluetooth. Maybe there is no Bluetooth-Dongle connected?");
 		}
 	}
 
@@ -170,15 +183,13 @@ public class BluetoothConnector extends Thread{
 			try {
 				connectionNotifier.close();
 			} catch (IOException e) {
-				logger.logp(Level.SEVERE, "BluetoothConnector", "stopSPPService", String.format("could not stop local SPP service: %s", e.getMessage()));
-				e.printStackTrace();
+				logger.logp(Level.SEVERE, this.getClass().getSimpleName(), 
+						"stopSPPService", String.format("could not stop local SPP service: %s", e.getMessage()));
 			}
 		}
 		
 	}
 	
-	
-
 	/**
 	 * shutdown the BluetoothConnector thread and terminate all Bluetooth connections
 	 */
@@ -205,8 +216,8 @@ public class BluetoothConnector extends Thread{
 			//make sure the handler really terminated before going on
 			handler.join();
 		} catch (InterruptedException e) {
-			logger.logp(Level.WARNING, "BluetoothConnector", "shutdown",  String.format("thread interrupted while waiting for handler to shutdown: %s", e.getMessage()));
-			e.printStackTrace();
+			logger.logp(Level.WARNING, "BluetoothConnector", "shutdown",  
+					String.format("thread interrupted while waiting for handler to shutdown: %s", e.getMessage()));
 		}
 	}
 }

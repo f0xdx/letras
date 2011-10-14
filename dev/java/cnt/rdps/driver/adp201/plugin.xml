@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plug-in xmlns="http://mundo.org/2004/plugin/">
+   <pendriver xmlns="http://letras.org/2009/driver/pendriver" xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance">
+      <main-class>org.letras.ps.rawdata.driver.anoto.adp201.Adp201PenDriver</main-class>
+      <config xsi:type="map">
+      		<xorigin xsi:type="int">185977815</xorigin>
+      		<yorigin xsi:type="int">8388608</yorigin>
+      </config>
+   </pendriver>
+</plug-in>

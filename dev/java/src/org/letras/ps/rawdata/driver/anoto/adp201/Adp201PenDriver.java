@@ -9,7 +9,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  * 
- * The Original Code is MundoCore Java.
+ * The Original Code is Letras (Java).
  * 
  * The Initial Developer of the Original Code is Telecooperation Group,
  * Department of Computer Science, Technische Universität Darmstadt.
@@ -33,18 +33,21 @@ import org.mundo.rt.TypedMap;
 import org.mundo.service.IConfigure;
 
 /**
- * The Logitech Pen Driver is the top-level class of the logitechs driver package.
+ * The ADP-201 pen driver is the main class of the ADP-201 driver package.
  * It implements entry points to allow for loading the driver at runtime
- * through the Mundo Generic Plugin interface.
+ * through the driver plugin interface. This driver is able to connect to 
+ * Anoto ADP-201 digital pens (and probably, as these are the same hardware, to
+ * Maxell digital pens).
+ * 
  * @see IPenDriver
- * @author niklas
- * @version 0.0.2
+ * @author felix 
+ * @version 0.2.2
  */
 public class Adp201PenDriver implements IPenDriver, IConfigure {
 
 	// logger
 	
-	Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
+	Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.anoto.adp201");
 	
 	// members
 	
@@ -66,7 +69,7 @@ public class Adp201PenDriver implements IPenDriver, IConfigure {
 	// constructor
 	
 	/**
-	 * Nullary constructor 
+	 * Nullary constructor. 
 	 */
 	public Adp201PenDriver() {
 		bluetoothConnector = new BluetoothConnector(this);
@@ -75,34 +78,50 @@ public class Adp201PenDriver implements IPenDriver, IConfigure {
 	
 	// methods
 	
+	/**
+	 * Interface method from {@link IPenDriver}.
+	 */
 	@Override
 	public void inject(IPenAdapterFactory factory) {
 		this.factory = factory;
 	}
 	
+	/**
+	 * Interface method from {@link IPenDriver}.
+	 */
 	@Override
 	public void shutdown() {
-		logger.logp(Level.INFO, "LogitechPenDriver", "shutdown",  "Shutting down logitech Pen Driver");
+		logger.logp(Level.INFO, this.getClass().getSimpleName(), 
+				"shutdown",  "Shutting down ADP-201 pen driver");
 		
 		bluetoothConnector.shutdown();
 		try {
 			bluetoothThread.join();
 		} catch (InterruptedException e) {
-			logger.logp(Level.WARNING, "LogitechPenDriver", "shutdown",  String.format("thread interrupted while waiting for handler to shutdown: %s", e.getMessage()));
+			logger.logp(Level.WARNING, this.getClass().getSimpleName(), 
+					"shutdown",  
+					String.format("thread interrupted while waiting for handler to shutdown: %s", 
+						e.getMessage()));
 			e.printStackTrace();
 		}
 	}
 	
+	/**
+	 * Interface method from {@link IPenDriver}.
+	 */
 	@Override
 	public void init() {
 		bluetoothThread.start();
-		logger.logp(Level.INFO, "LogitechPenDriver", "init", "Logitech Pen Driver up and running");
+		logger.logp(Level.INFO, this.getClass().getSimpleName(), 
+				"init", "ADP-201 pen driver up and running");
 	}
 	
 	/**
-	 * Callback method for the BluetoothConnector to get the appropriate IPenAdapter for the token
+	 * Callback method for the BluetoothConnector to get the appropriate 
+	 * IPenAdapter for a token.
+	 * 
 	 * @param token to forward to the adapter factory (e.g. the bluetooth address)
-	 * @return IPenAdapter to be used by the handler
+	 * @return {@link IPenAdapter} to be used by the handler
 	 */
 	IPenAdapter getPenAdapterForToken(String token) {	
 		return factory.create(this, token);
@@ -110,13 +129,11 @@ public class Adp201PenDriver implements IPenDriver, IConfigure {
 
 	@Override
 	public Object getServiceConfig() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public TypedMap getServiceConfigMap() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -125,7 +142,9 @@ public class Adp201PenDriver implements IPenDriver, IConfigure {
 		TypedMap map = (TypedMap) arg0;
 		Adp201StreamConverter.xorigin = map.getInt("xorigin");
 		Adp201StreamConverter.yorigin = map.getInt("yorigin");
-		logger.logp(Level.CONFIG, "LogitechPenDriver", "setServiceConfig", String.format("Successfully configured Logitech driver to use %d as xorigin and %d as yorigin", Adp201StreamConverter.xorigin, Adp201StreamConverter.yorigin));
+		logger.logp(Level.CONFIG, this.getClass().getSimpleName(), "setServiceConfig", 
+				String.format("Successfully configured ADP-201 driver to use %d as xorigin and %d as yorigin", 
+				Adp201StreamConverter.xorigin, Adp201StreamConverter.yorigin));
 		
 	}
 

@@ -9,7 +9,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  * 
- * The Original Code is MundoCore Java.
+ * The Original Code is Letras (Java).
  * 
  * The Initial Developer of the Original Code is Telecooperation Group,
  * Department of Computer Science, Technische Universität Darmstadt.
@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.letras.ps.rawdata.driver.anoto.adp201;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -36,14 +37,23 @@ import javax.microedition.io.StreamConnection;
  * <p>
  * If a connection gets interrupted or terminated the connection handler will notice
  * and notifies the stream converter.  
- * @author niklas
- * @version 0.0.1
+ * <p>
+ * NOTE: this class is currently in a test state - data will be dumped to a file
+ * named "adp201-xxxx.data", where xxxx corresponds to the BT address of the used
+ * pen
+ * 
+ * @author niklas, felix
+ * @version 0.2.2
  */
 class BluetoothConnectionHandler extends Thread {
 	
 	//logger
 	
-	private static final Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
+	private static final Logger logger = 
+			Logger.getLogger(BluetoothConnectionHandler.class.getPackage().getName());
+
+	// TODO: remove this after test phase
+	private static final String dumpFile = "adp201-%s.data";
 	
 	//members
 	
@@ -60,8 +70,8 @@ class BluetoothConnectionHandler extends Thread {
 	private BluetoothConnector connector;
 	
 	/**
-	 * The String which has been given to the IPenAdapterFactory on creating a new instance of IPenAdapter
-	 * For debugging purposes only.
+	 * The String which has been given to the IPenAdapterFactory on creating a 
+	 * new instance of IPenAdapter.
 	 */
 	private String token;
 	
@@ -70,22 +80,32 @@ class BluetoothConnectionHandler extends Thread {
 	private boolean running;
 
 	private InputStream stream;
+
+	// TODO: remove this after test phase
+	private java.io.BufferedOutputStream bos;
 	
 	//constructor
 	
 	/**
+	 * Standard constructor taking the relevant configuration.
 	 * 
 	 * @param connection
 	 * @param converter
 	 * @param connector
 	 * @param token
 	 */
-	public BluetoothConnectionHandler(StreamConnection connection, ByteStreamConverter converter, BluetoothConnector connector, String token) {
+	public BluetoothConnectionHandler(StreamConnection connection, 
+			ByteStreamConverter converter, 
+			BluetoothConnector connector, 
+			String token) {
 		this.connection = connection;
 		this.converter = converter;
 		this.connector = connector;
 		this.token = token;
 		this.streaming = true;
+		// TODO: remove this after test phase
+		try { this.bos = new java.io.BufferedOutputStream(new java.io.FileOutputStream(String.format(dumpFile, token))); } 
+		catch (FileNotFoundException ex) { logger.log(Level.WARNING, "could not open dump file", ex); }
 	}
 	
 	@Override
@@ -97,25 +117,27 @@ class BluetoothConnectionHandler extends Thread {
 			int data;
 			
 			converter.penConnected();
-			// now read until the end of the stream has been reached (i.e. the next value returned is -1)
+			// now read until the end of the stream has been reached (i.e. the 
+			// next value returned is -1)
 			while (running) {
 				data = stream.read();
 				if (data == -1) {
 					if (streaming) {
 						streaming = false;
 						shutdown();
-						logger.logp(Level.FINE, "BluetoothConnectionHandler", "run", String.format("pen has been disconnected: %s", token) );
+						logger.logp(Level.FINE, this.getClass().getSimpleName(), 
+								"run", String.format("pen has been disconnected: %s", token) );
 					}
 				} else {
 					streaming = true;
 					converter.handleByte(data);
+					// TODO: remove after test phase
+					if (bos!=null) bos.write(data);
 				}
 			}
-			
-			
-				
 		} catch (IOException e) {
-			logger.logp(Level.WARNING, "BluetoothConnectionHandler", "run", String.format("could not read from stream. I will try to shutdown: %s", e.getMessage()));
+			logger.logp(Level.WARNING, this.getClass().getSimpleName(), 
+					"run", String.format("could not read from stream, trying to shutdown: %s", e.getMessage()));
 			e.printStackTrace();
 			connector.disconnectHandler(this);
 		}
@@ -128,7 +150,8 @@ class BluetoothConnectionHandler extends Thread {
 	 */
 	void shutdown() {
 		running = false;
-		logger.logp(Level.FINE, "BluetoothConnectionHandler", "shutdown", String.format("Shutting down bluetooth connection to: %s", this.token));
+		logger.logp(Level.FINE, this.getClass().getSimpleName(), 
+				"shutdown", String.format("Shutting down bluetooth connection to: %s", this.token));
 		
 		if (streaming) {
 			converter.penError();
@@ -140,8 +163,11 @@ class BluetoothConnectionHandler extends Thread {
 		try {
 			this.connection.close();
 			this.stream.close();
+			// TODO: remove this after test phase
+			if (bos!=null) bos.close();
 		} catch (IOException e) {
-			logger.logp(Level.WARNING, "BluetoothConnectionHandler", "shutdown", String.format("could not close connection: %s", e.getMessage()));
+			logger.logp(Level.WARNING, this.getClass().getSimpleName(), 
+					"shutdown", String.format("could not close connection: %s", e.getMessage()));
 			e.printStackTrace();
 		}
 	}

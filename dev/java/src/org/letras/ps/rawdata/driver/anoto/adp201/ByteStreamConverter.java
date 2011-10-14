@@ -9,7 +9,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  * 
- * The Original Code is MundoCore Java.
+ * The Original Code is Letras (Java).
  * 
  * The Initial Developer of the Original Code is Telecooperation Group,
  * Department of Computer Science, Technische Universität Darmstadt.
@@ -26,6 +26,7 @@ package org.letras.ps.rawdata.driver.anoto.adp201;
 import org.letras.ps.rawdata.IPenAdapter;
 import org.letras.psi.ipen.IPenState;
 import org.letras.psi.ipen.PenSample;
+
 /**
  * The byte stream converter defines the interface for the pen model specific
  * stream converters and provides basic functions and functionality that every
@@ -34,7 +35,7 @@ import org.letras.psi.ipen.PenSample;
  * All stream converters should extend this class.
  * 
  * @author niklas
- * @version 0.0.1
+ * @version 0.2.2
  */
 abstract class ByteStreamConverter {
 
