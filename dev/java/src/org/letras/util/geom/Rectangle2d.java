@@ -117,14 +117,26 @@ public class Rectangle2d {
 	}
 
 	/**
-	 * This computes the center point of the rectangle 2d.
+	 * This computes the center point of the rectangle 2d. The result will
+	 * be stored in a new {@link Vector2d}.
 	 *
 	 * @return a {@link Vector2d} describing the center point
 	 */
-	public Vector2d center() {
+	public Vector2d ncenter() {
 		return new Vector2d(this.x + (this.w / 2.0), this.y + (this.h / 2.0));
 	}
 
+	/**
+	 * This computes the center point of the rectangle 2d. The result will
+	 * be stored in the provided {@link Vector2d}.
+	 *
+	 * @return a {@link Vector2d} describing the center point
+	 */
+	public Vector2d center(Vector2d v) {
+		v.init(this.x + (this.w / 2.0), this.y + (this.h / 2.0));
+		return v;
+	}
+	
 	/**
 	 * Inserts a new point into this rectangle, such that the resulting
 	 * rectangle will provide the smallest axis aligned bounding box enclosing
