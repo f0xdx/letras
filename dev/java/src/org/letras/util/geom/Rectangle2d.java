@@ -111,9 +111,9 @@ public class Rectangle2d {
 	 * @param v
 	 * @return
 	 */
-	public boolean contains(Vector2d v) {
+	public boolean contains(IVector2d v) {
 		assert (v!=null);
-		return contains(v.x, v.y);
+		return contains(v.getX(), v.getY());
 	}
 
 	/**
@@ -132,8 +132,9 @@ public class Rectangle2d {
 	 *
 	 * @return a {@link Vector2d} describing the center point
 	 */
-	public Vector2d center(Vector2d v) {
-		v.init(this.x + (this.w / 2.0), this.y + (this.h / 2.0));
+	public IVector2d center(IVector2d v) {
+		v.setX(this.x + (this.w / 2.0));
+		v.setY(this.y + (this.h / 2.0));
 		return v;
 	}
 	
@@ -183,8 +184,8 @@ public class Rectangle2d {
 	 * @param v
 	 * @return
 	 */
-	public Rectangle2d insert(Vector2d v) {
-		return this.insert(v.x, v.y);
+	public Rectangle2d insert(IVector2d v) {
+		return this.insert(v.getX(), v.getY());
 	}
 
 	/**
@@ -195,8 +196,8 @@ public class Rectangle2d {
 	 * @param v
 	 * @return
 	 */
-	public Rectangle2d ninsert(Vector2d v) {
-		return this.ninsert(v.x, v.y);
+	public Rectangle2d ninsert(IVector2d v) {
+		return this.ninsert(v.getX(), v.getY());
 	}
 
 	/**

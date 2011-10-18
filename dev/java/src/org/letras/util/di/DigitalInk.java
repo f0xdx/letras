@@ -50,4 +50,11 @@ public abstract class DigitalInk {
 	 * @return bounding box of the digital ink structure
 	 */
 	public abstract Rectangle2d boundingBox();
+
+	/**
+	 * Returns the combined length of the path of this structure.
+	 * 
+	 * @return combined length of the path(s) forming this structure
+	 */
+	public abstract double pathLength();
 }
