@@ -8,14 +8,14 @@ import java.util.Iterator;
 import org.letras.util.geom.Rectangle2d;
 
 /**
- * Composite of the tree-like digital ink data structure. The {@link DiStructure}
+ * Composite of the tree-like digital ink data structure. The {@link DigitalInkStructure}
  * consists of several digital ink sub structures. It represents the composite
  * in the employed composite pattern.
  * 
  * @author Felix Heinrichs <felix.heinrichs@cs.tu-darmstadt.de>
  * @version 0.3.0
  */
-public class DiStructure extends DigitalInk {
+public class DigitalInkStructure extends DigitalInk {
 
 	// DEFAULTS
 
@@ -55,7 +55,7 @@ public class DiStructure extends DigitalInk {
 
 	// CONSTRUCTORS
 
-	public DiStructure() {
+	public DigitalInkStructure() {
 		this.children = new ArrayList<DigitalInk>(CHILD_CAPACITY);
 		this.bb = new Rectangle2d();
 		this.tf = new long[2];
