@@ -168,9 +168,10 @@ public class Trace extends DigitalInk {
 				this.pathLength = 0.0;
 			}
 			else {
+				this.pathLength = 0.0;
+
 				// NOTE for syntax here is optimized to relieve the garbage
 				// collector on some virtual machines (e.g. Android / Dalvik)
-
 				int size = this.samples.size() - 1;
 				for (int i = 0; i < size; i++) {
 					Sample s = this.samples.get(i);
