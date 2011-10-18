@@ -257,4 +257,11 @@ public class Rectangle2d {
 		hash = 73 * hash + (int) (Double.doubleToLongBits(this.h) ^ (Double.doubleToLongBits(this.h) >>> 32));
 		return hash;
 	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Rectangle2d clone = new Rectangle2d();
+		clone.init(this);
+		return clone;
+	}
 }
