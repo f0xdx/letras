@@ -12,7 +12,7 @@ import java.util.HashMap;
  * this class is not designed as a singelton. However, your application typically
  * will have only one central digital ink data model, i.e. an instance of this
  * class. In order to fill the model, use the {@link DigitalInkProcessor} and
- * obtain an adequate {@link DigitalInkConnector} for the processing stage 
+ * obtain an adequate {@link DigitalInkSourceConnector} for the processing stage 
  * interface you want to collect digital ink at.
  * 
  * @author Felix Heinrichs <felix.heinrichs@cs.tu-darmstadt.de>

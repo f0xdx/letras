@@ -4,7 +4,6 @@
 package org.letras.util.di;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import org.letras.util.geom.Rectangle2d;
 
 /**

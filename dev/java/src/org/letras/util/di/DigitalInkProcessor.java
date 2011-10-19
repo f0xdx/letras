@@ -3,16 +3,15 @@
  */
 package org.letras.util.di;
 
-import java.util.HashMap;
+import org.letras.psi.ipen.PenSample;
+import org.letras.psi.iregion.RegionSample;
 import org.mundo.rt.IReceiver;
-import org.mundo.rt.Subscriber;
-import org.mundo.service.ServiceManager;
 
 /**
- * Base class for digital ink processing. Concrete implementations will
- * interface one of the several types of digital ink that is provided by the
- * letras pipeline. In order to use a digital ink processor, one should obtain
- * the concrete digital ink processor using the {@link DigitalInkProcessorFactory}.
+ * Base class for digital ink processing. The {@link DigitalInkProcessor} will
+ * provide appropriate {@link DigitalInkSourceConnector source connectors} for
+ * a given digtial ink source. In order to obtain digital ink, simply call the
+ * {@link DigitalInkProcessor# } method and provide your {@link DigitalInkModel}.
  * 
  * @author Felix Heinrichs <felix.heinrichs@cs.tu-darmstadt.de>
  * @version 0.3.0
@@ -22,56 +21,57 @@ public abstract class DigitalInkProcessor implements IReceiver {
 	// DEFAULTS
 
 	public static final String DEFAULT_ZONE = "lan";
+	public static final String PSI_IPEN = PenSample.class.getPackage().getName();
+	public static final String PSI_IREGION = RegionSample.class.getPackage().getName();
 
 	// MEMBERS
 
-	private HashMap<String, Subscriber> subscriptions;
+	private DigitalInkModel model;
+
+	public DigitalInkModel getModel() {
+		return model;
+	}
+
+	public void setModel(DigitalInkModel model) {
+		this.model = model;
+	}
 
 	// CONSTRUCTORS
+
+	public DigitalInkProcessor(DigitalInkModel model) {
+		this.model = model;
+	}
 
 	// METHODS
 
 	/**
-	 * Called to connect this processor to a channel where digtial ink is 
-	 * published.
+	 * Called to connect this processor to a source where digtial ink is 
+	 * published. This requires specifying the used processing stage interface,
+	 * e.g. <i>ipen</i> or <i>iregion</i>. The provided value must match the
+	 * fully qualified package name of one of the processing stage interfaces.
+	 * For convenience you can use {@link DigitalInkProcessor#PSI_IPEN} or
+	 * {@link DigitalInkProcessor#PSI_IREGION}.
 	 * 
-	 * @param channel 
+	 * @param psi the processing stage interface this source belongs to
+	 * @param source the source channnel of the digital ink
 	 */
-	public void connect(String channel) {
-		this.connect(DEFAULT_ZONE, channel);
+	public void connect(String psi, String source) {
+		this.connect(psi, DEFAULT_ZONE, source);
 	}
 
 	/**
-	 * Called to connect this processor to a channel in a given zone where digital
-	 * ink is published.
-	 * 
-	 * @param channel
-	 * @param zone 
-	 * @return <code>true</code> iff this processor could connect to the given
-	 * channel, <code>false</code> if it was already subscribed
+	 * Called to connect this processor to a source where digital ink is published
+	 * in a given zone. This requires specifying the used processing stage interface,
+	 * e.g. <i>ipen</i> or <i>iregion</i>. The provided value must match the
+	 * fully qualified package name of one of the processing stage interfaces.
+	 * For convenience you can use {@link DigitalInkProcessor#PSI_IPEN} or
+	 * {@link DigitalInkProcessor#PSI_IREGION}.
+	 *
+	 * @param psi
+	 * @param zone
+	 * @param source 
 	 */
-	public boolean connect(String zone, String channel) {
-		if (this.subscriptions.containsKey(channel)) return false;
-		else {
-			this.subscriptions.put(channel, ServiceManager.getInstance().
-					getSession().subscribe(zone, channel, this));
-			return true;
-		}
+	public void connect(String psi, String zone, String source) {
+		// TODO delegate to the appropriate DigitalInkSourceConnector
 	}
-
-	/**
-	 * Called to disconnect this processor from a channel.
-	 * 
-	 * @param channel
-	 * @return <code>true</code> iff this processor could disconnect from the given
-	 * channel, <code>false</code> if it was not subscribed
-	 */
-	public boolean disconnect(String channel) {
-		if (this.subscriptions.containsKey(channel)) {
-			this.subscriptions.remove(channel).unsubscribe();
-			return true;
-		}
-		else return false;
-	}
-	
 }
