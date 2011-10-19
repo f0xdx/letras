@@ -3,12 +3,13 @@
  */
 package org.letras.util.di;
 
+import java.util.HashMap;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Subscriber;
 import org.mundo.service.ServiceManager;
 
 /**
- * Abstract base class for digital ink processors. Concrete implementations will
+ * Base class for digital ink processing. Concrete implementations will
  * interface one of the several types of digital ink that is provided by the
  * letras pipeline. In order to use a digital ink processor, one should obtain
  * the concrete digital ink processor using the {@link DigitalInkProcessorFactory}.
@@ -24,7 +25,7 @@ public abstract class DigitalInkProcessor implements IReceiver {
 
 	// MEMBERS
 
-	private Subscriber sub;
+	private HashMap<String, Subscriber> subscriptions;
 
 	// CONSTRUCTORS
 
@@ -46,10 +47,31 @@ public abstract class DigitalInkProcessor implements IReceiver {
 	 * 
 	 * @param channel
 	 * @param zone 
+	 * @return <code>true</code> iff this processor could connect to the given
+	 * channel, <code>false</code> if it was already subscribed
 	 */
-	public void connect(String zone, String channel) {
-		this.sub = ServiceManager.getInstance().getSession().subscribe(zone, channel, this);
+	public boolean connect(String zone, String channel) {
+		if (this.subscriptions.containsKey(channel)) return false;
+		else {
+			this.subscriptions.put(channel, ServiceManager.getInstance().
+					getSession().subscribe(zone, channel, this));
+			return true;
+		}
+	}
+
+	/**
+	 * Called to disconnect this processor from a channel.
+	 * 
+	 * @param channel
+	 * @return <code>true</code> iff this processor could disconnect from the given
+	 * channel, <code>false</code> if it was not subscribed
+	 */
+	public boolean disconnect(String channel) {
+		if (this.subscriptions.containsKey(channel)) {
+			this.subscriptions.remove(channel).unsubscribe();
+			return true;
+		}
+		else return false;
 	}
 	
-	protected 
 }
