@@ -27,7 +27,7 @@ public class DigitalInkModel {
 	// MEMBERS
 
 	private HashMap<String, DigitalInkStructure> penData;
-	private IDigitalInkModelCallback callback;
+	private IDigitalInkModelObserver observer;
 
 	// CONSTRUCTORS
 
@@ -38,12 +38,21 @@ public class DigitalInkModel {
 	// METHODS
 
 	/**
-	 * Sets a call back to be notified when the model changes (at the top level).
+	 * Sets the observer to be notified when the model changes (at the top level).
 	 * 
 	 * @param callback 
 	 */
-	public void setCallback(IDigitalInkModelCallback callback) {
-		this.callback = callback;
+	public void setObserver(IDigitalInkModelObserver observer) {
+		this.observer = observer;
+	}
+
+	/**
+	 * Get the current observer that is notified when the model changes.
+	 * 
+	 * @return the currently set observer
+	 */
+	public IDigitalInkModelObserver getObserver() {
+		return this.observer;
 	}
 
 	/**
@@ -65,7 +74,7 @@ public class DigitalInkModel {
 	 */
 	public void storePenData(String pen, DigitalInkStructure data) {
 		penData.put(pen, data);
-		if (this.callback != null) this.callback.penDataStored(pen, data);
+		if (this.observer != null) this.observer.penDataStored(pen, data);
 	}
 
 	/**
@@ -89,7 +98,7 @@ public class DigitalInkModel {
 	public boolean removePenData(String pen) {
 		if (this.penData.containsKey(pen)) {
 			this.penData.remove(pen);
-			if (this.callback != null) this.callback.penDataRemoved(pen);
+			if (this.observer != null) this.observer.penDataRemoved(pen);
 			return true;
 		}
 		else return false;
@@ -100,7 +109,7 @@ public class DigitalInkModel {
 	/**
 	 * Inner type for callbacks. 
 	 */
-	public static interface IDigitalInkModelCallback {
+	public static interface IDigitalInkModelObserver {
 		/**
 		 * Called when data is stored for a particular pen.
 		 * 

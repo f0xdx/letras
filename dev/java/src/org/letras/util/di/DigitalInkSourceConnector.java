@@ -23,12 +23,33 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 
 	// MEMBERS
 
+	private ISourceObserver observer;
+
 	private Subscriber sub;
 	private DigitalInkModel model;
 	private DoObject source;
 
 
 	// GETTERS & SETTERS
+
+	/**
+	 * Get the current observer that is notified of any source events.
+	 * 
+	 * @return 
+	 */
+	public ISourceObserver getObserver() {
+		return observer;
+	}
+
+	/**
+	 * Set the observer that will be notified of any source events, such as
+	 * trace start, trace end and added samples.
+	 * 
+	 * @param observer 
+	 */
+	public void setObserver(ISourceObserver observer) {
+		this.observer = observer;
+	}
 	
 	public DoObject getSource() {
 		return source;
@@ -85,9 +106,55 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 		if (this.sub != null) this.sub.unsubscribe();
 	}
 
+	/**
+	 * Notify the current observer of a trace start.
+	 * 
+	 * @param trace 
+	 */
+	protected void notifyTraceStarted(Trace trace) {
+		if (this.observer != null) this.observer.traceStarted(trace);
+	}
+
+	/**
+	 * Notify the current observer of a trace end.
+	 * 
+	 * @param trace 
+	 */
+	protected void notifyTraceEnded(Trace trace) {
+		if (this.observer != null) this.observer.traceEnded(trace);
+	}
+
+	/**
+	 * Notify the current observer of an added sample.
+	 * 
+	 * @param sample
+	 * @param trace 
+	 */
+	protected void notifySampleAdded(Sample sample, Trace trace) {
+		if (this.observer != null) this.observer.sampleAdded(sample, trace);
+	}
 
 	// ABSTRACT METHODS
 
 	public abstract String sourceChannel();
+
+
+	// INNER TYPES
+
+	/**
+	 * Interface that has to be implemented by any observer that is interested
+	 * in source events, such as starting traces and adding samples to a trace.
+	 * 
+	 * @author Felix Heinrichs <felix.heinrichs@cs.tu-darmstadt.de>
+	 * @version 0.3.0
+	 */
+	public static interface ISourceObserver {
+
+		public void traceStarted(Trace trace);
+
+		public void traceEnded(Trace trace);
+
+		public void sampleAdded(Sample sample, Trace trace);
 		
+	}
 }

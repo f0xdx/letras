@@ -6,22 +6,28 @@ package org.letras.util.di;
 import java.util.HashMap;
 import org.letras.psi.ipen.DoIPen;
 import org.letras.psi.ipen.IPen;
-import org.letras.psi.ipen.PenSample;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionSample;
 import org.mundo.rt.DoObject;
-import org.mundo.rt.IReceiver;
 
 /**
  * Base class for digital ink processing. The {@link DigitalInkProcessor} will
  * provide appropriate {@link DigitalInkSourceConnector source connectors} for
  * a given digtial ink source. In order to obtain digital ink, simply call the
  * {@link DigitalInkProcessor# } method and provide your {@link DigitalInkModel}.
+ * <p>
+ * Note that the digital ink processor will add any digital ink observed at any
+ * of its sources to the provided {@link DigitalInkModel}. Only completed
+ * structures are added, i.e. {@link Trace Traces} will only be added after all
+ * of their samples have been received and the trace is finished. If your 
+ * application needs the digtial ink before that, e.g. for continous gesture
+ * recognition or on-line stroke rendering, you should add an appropriate
+ * {@link DigitalInkSourceConnector.ISourceObserver source observer} to the
+ * particular connector associated with that source.
  * 
  * @author Felix Heinrichs <felix.heinrichs@cs.tu-darmstadt.de>
  * @version 0.3.0
  */
-public abstract class DigitalInkProcessor implements IReceiver {
+public class DigitalInkProcessor {
 
 	// DEFAULTS
 
