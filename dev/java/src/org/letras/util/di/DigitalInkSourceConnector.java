@@ -110,18 +110,20 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 	 * Notify the current observer of a trace start.
 	 * 
 	 * @param trace 
+	 * @param pen
 	 */
-	protected void notifyTraceStarted(Trace trace) {
-		if (this.observer != null) this.observer.traceStarted(trace);
+	protected void notifyTraceStarted(String pen, Trace trace) {
+		if (this.observer != null) this.observer.traceStarted(pen, trace);
 	}
 
 	/**
 	 * Notify the current observer of a trace end.
 	 * 
 	 * @param trace 
+	 * @param pen
 	 */
-	protected void notifyTraceEnded(Trace trace) {
-		if (this.observer != null) this.observer.traceEnded(trace);
+	protected void notifyTraceEnded(String pen, Trace trace) {
+		if (this.observer != null) this.observer.traceEnded(pen, trace);
 	}
 
 	/**
@@ -129,9 +131,10 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 	 * 
 	 * @param sample
 	 * @param trace 
+	 * @param pen
 	 */
-	protected void notifySampleAdded(Sample sample, Trace trace) {
-		if (this.observer != null) this.observer.sampleAdded(sample, trace);
+	protected void notifySampleAdded(String pen, Sample sample, Trace trace) {
+		if (this.observer != null) this.observer.sampleAdded(pen, sample, trace);
 	}
 
 	// ABSTRACT METHODS
@@ -150,11 +153,11 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 	 */
 	public static interface ISourceObserver {
 
-		public void traceStarted(Trace trace);
+		public void traceStarted(String pen, Trace trace);
 
-		public void traceEnded(Trace trace);
+		public void traceEnded(String pen, Trace trace);
 
-		public void sampleAdded(Sample sample, Trace trace);
+		public void sampleAdded(String pen, Sample sample, Trace trace);
 		
 	}
 }

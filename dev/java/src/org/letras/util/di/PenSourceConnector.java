@@ -74,12 +74,12 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 			if (((PenEvent) obj).state() == IPenState.DOWN) {
 				// Trace started
 				this.currentTrace = new Trace();
-				this.notifyTraceStarted(this.currentTrace);
+				this.notifyTraceStarted(this.penId, this.currentTrace);
 			}
 			else {
 				// Trace somehow ended
 				di.add(this.currentTrace);
-				this.notifyTraceEnded(this.currentTrace);
+				this.notifyTraceEnded(this.penId, this.currentTrace);
 			}
 		}
 		else {
@@ -87,7 +87,7 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 			if (this.currentTrace == null) return;
 			Sample s = SampleFactory.createSample(obj);
 			currentTrace.add(s);
-			this.notifySampleAdded(s, this.currentTrace);
+			this.notifySampleAdded(this.penId, s, this.currentTrace);
 		}
 	}
 }
