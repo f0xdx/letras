@@ -54,6 +54,9 @@
                     <target>clean</target>
                     <target>compile</target>
                 </action>
+				<action name="jar">
+					<target>package</target>
+				</action>
             </ide-actions>
             <export>
                 <type>folder</type>
@@ -90,6 +93,10 @@
                     <ide-action name="javadoc"/>
                     <ide-action name="run"/>
                     <ide-action name="test"/>
+                    <action>
+                        <label>create drivers</label>
+                        <target>create_drivers</target>
+                    </action>
                 </context-menu>
             </view>
             <subprojects/>
