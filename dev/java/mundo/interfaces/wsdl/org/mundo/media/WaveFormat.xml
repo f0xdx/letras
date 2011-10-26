@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions">
+  <wsdl:types>
+    <xs:schema>
+      <xs:element name="WaveFormat" type="type_WaveFormat"></xs:element>
+      <xs:complexType name="type_WaveFormat">
+        <mc:constant name="LINEAR" type="xsd:int" value="0"></mc:constant>
+        <mc:constant name="ALAW" type="xsd:int" value="1"></mc:constant>
+        <xs:element name="samplesPerSec" type="xsd:int"></xs:element>
+        <xs:element name="bitsPerSample" type="xsd:int"></xs:element>
+        <xs:element name="channels" type="xsd:int"></xs:element>
+        <xs:element name="signedSamples" type="xsd:boolean"></xs:element>
+        <xs:element name="encoding" type="xsd:int"></xs:element>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <mc:serialization name="org.mundo.media.WaveFormat" element="WaveFormat">
+  </mc:serialization>
+</wsdl:description>

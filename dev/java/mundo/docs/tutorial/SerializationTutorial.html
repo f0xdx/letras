@@ -1,0 +1,246 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+<title> SerializationTutorial &lt; Mundo &lt; Foswiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="alternate" href="http://127.0.0.1/foswiki/bin/edit/Mundo/SerializationTutorial?t=1295995543" type="application/x-wiki" title="edit SerializationTutorial" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<meta name="robots" content="noindex" /><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/foswiki/bin/view/Mundo/WebRss" />
+<style type="text/css" media="all">
+@import url('style/base.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/layout.css');
+@import url('style/style.css');
+@import url('style/colors.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/column_left.css');
+@import url('style/variant_foswiki_noframe.css');
+</style><style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .foswikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#efefef;
+	}
+	#patternTopBarContents { background-image:url(/foswiki/pub/System/PatternSkin/header5.gif); background-repeat:repeat-x;}
+#patternTopBarContents { background-color:#ffffff;}
+.patternBookView {
+	border-color:#efefef;
+}
+.patternPreviewPage #patternMain {
+	/* uncomment to set the preview image */
+	/*background-image:url("/foswiki/pub/System/PreviewBackground/preview2bg.gif");*/
+}
+</style>
+<style type="text/css" media="all">
+@import url('style/print.css');
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	height:1%;
+	overflow-x:auto;
+}
+.foswikiAttachments,
+.foswikiForm,
+.foswikiHelp,
+.foswikiPreviewArea,
+.patternPreviewPage .foswikiForm,
+.patternSigLine,
+.patternToolBar,
+.patternTop,
+.patternTopicAction,
+#patternSideBarContents .patternLeftBarPersonal,
+#patternSideBarContents h2,
+#patternSideBarContents li,
+#patternTopBarButtons ul {
+	height:1%;
+}
+#patternSideBarContents .patternLeftBarPersonal {
+	width:100%;
+}
+.foswikiFormStep {
+	height:100%;
+}
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border:2px solid #ccc;
+}
+</style><![endif]-->
+<!--[if gt IE 8 ]><style type="text/css" media="screen">
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	box-shadow: 0 0 10px #ccc;
+}
+</style><![endif]-->
+<meta name="foswiki.TWISTYANIMATIONSPEED" content="fast" /><!--TWISTYPLUGIN::META-->
+<style type="text/css" media="all">
+.foswikiTable {border-width:1px}
+.foswikiTable .tableSortIcon img {padding-left:.3em; vertical-align:text-bottom}
+.foswikiTable td {border-style:solid none; vertical-align:top}
+.foswikiTable th {border-style:none solid; vertical-align:top; background-color:#d6d3cf; color:#000000}
+.foswikiTable th a:link {color:#000000}
+.foswikiTable th a:visited {color:#000000}
+.foswikiTable th a:hover {color:#000000; background-color:#d6d3cf}
+.foswikiTable th.foswikiSortedCol {background-color:#c4c1ba}
+.foswikiTable tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td.foswikiSortedCol {background-color:#f0f0ee}
+</style><!--TABLEPLUGIN_default-->
+<meta name="foswiki.PUBURL" content="http://127.0.0.1/foswiki/pub" /> <!-- PUBURL -->
+<meta name="foswiki.PUBURLPATH" content="/foswiki/pub" /> <!-- PUBURLPATH -->
+<meta name="foswiki.SCRIPTSUFFIX" content="" /> <!-- SCRIPTSUFFIX -->
+<meta name="foswiki.SCRIPTURL" content="http://127.0.0.1/foswiki/bin" /> <!-- SCRIPTURL -->
+<meta name="foswiki.SCRIPTURLPATH" content="/foswiki/bin" /> <!-- SCRIPTURLPATH -->
+<meta name="foswiki.SERVERTIME" content="25%20Jan%202011%20-%2023:45" /> <!-- SERVERTIME -->
+<meta name="foswiki.SKIN" content="pattern" /> <!-- SKIN -->
+<meta name="foswiki.SYSTEMWEB" content="System" /> <!-- SYSTEMWEB -->
+<meta name="foswiki.TOPIC" content="SerializationTutorial" /> <!-- TOPIC -->
+<meta name="foswiki.USERNAME" content="guest" /> <!-- USERNAME -->
+<meta name="foswiki.USERSWEB" content="Main" /> <!-- USERSWEB -->
+<meta name="foswiki.WEB" content="Mundo" /> <!-- WEB -->
+<meta name="foswiki.WIKINAME" content="WikiGuest" /> <!-- WIKINAME -->
+<meta name="foswiki.WIKIUSERNAME" content="Main.WikiGuest" /> <!-- WIKIUSERNAME -->
+<meta name="foswiki.NAMEFILTER" content="%5b%5cs%5c*%3f~%5e%5c%24%40%25%60%22'%26%3b%7c%3c%3e%5c%5b%5c%5d%23%5cx00-%5cx1f%5d" /> <!-- NAMEFILTER --><!--JQUERYPLUGIN::FOSWIKI::META-->
+</head>
+<body class="patternViewPage patternPrintPage">
+<a name="PageTop"></a><div class="foswikiPage"><div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain">
+<div id="patternMainContents">
+<div class="patternContent"><div class="foswikiTopic"> <h1><a name="Object_Serialization"></a>  Object Serialization </h1>
+<p />
+With <em>serialization</em> it is possible to send Java objects to remote peers or write objects to files. For example, objects can be transformed into XML documents and vice versa, usually without the need to write any additional code. The methods that perform the actual data conversions are automatically generated by <code>mcc</code>.
+<p />
+In contrast to several other frameworks, this conversion is a two-step process:
+<p /> <ol>
+<li> First, the <em>active object graph</em> to be serialized is converted to a <em>passive data structure</em>. The passive structure can only contain base types, arrays, and maps. Consequently, this representation is programming language-independent. The conversion from active to passive objects is performed by the method <em>passivate</em>, while the conversion from passive to active objects is performed by the method <em>activate</em>. The implementations of these methods are automatically generated by the precompiler <em>mcc</em>. The process of converting from the active to the passive representation is also referred to as <em>externalization</em>.
+</li> <li> The passive structure is then serialized to XML, JSON, or binary formats.
+</li></ol> 
+This two-step process for serialization provides better modularization and allows to employ additional transformation and filtering steps on the passive objects, like used by content-based publish/subscribe.
+<p />
+<h2><a name="Using_Annotations_and_61mcc_61_for_Serialization"></a>  Using Annotations and <code>mcc</code> for Serialization </h2>
+<p />
+The following example uses a custom class to encapsulate the message and shows how to generate externalizers. The source code of <code>ChatMessage.java</code> looks as follows:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.annotation.*;
+
+@mcSerialize
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> ChatMessage {
+  <B><FONT COLOR="#A020F0">public</FONT></B> String text;
+  
+  <B><FONT COLOR="#A020F0">public</FONT></B> ChatMessage() {
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> ChatMessage(String t) {
+    text=t;
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Note:
+<p /> <ul>
+<li> Fields declared as <code>transient</code> are not serialized.
+</li> <li> The visibility of fields to serialize must be more than <code>private</code>. Fields do not have to be declared <code>public</code> or <code>protected</code>, though, it is sufficient to use <em>package private</em> visiblity by not specifying any visibility modifier at all.
+</li> <li> Any class with <code>@mcSerialize</code> must have a <code>public</code> nullary (empty) constructor (Here: <code>public <span class="foswikiNewLink">ChatMessage<a href="/foswiki/bin/edit/Mundo/ChatMessage?topicparent=Mundo.SerializationTutorial" rel="nofollow" title="Create this topic">?</a></span>()</code>). Otherwise the framework will not be able to create instances of the class during deserialization.
+</li></ul> 
+MundoCore uses metaclasses for externalization, which are generated by the preprocessor <code>mcc</code>. <code>mcc</code> is usually invoked from the buildfile, such as:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;target name=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;preprocess&quot;</FONT></B><B><FONT COLOR="#A020F0"> depends=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;init&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;apply executable=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;${mcc}&quot;</FONT></B><B><FONT COLOR="#A020F0"> parallel=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;true&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;arg value=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;-O${prep}&quot;</FONT></B><B><FONT COLOR="#A020F0"> /&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;arg value=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;-x&quot;</FONT></B><B><FONT COLOR="#A020F0"> /&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;fileset dir=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;${src}&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;include name=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;*.java&quot;</FONT></B><B><FONT COLOR="#A020F0"> /&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;/fileset&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/apply&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;copy file=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;${prep}/metaclasses.xml&quot;</FONT></B><B><FONT COLOR="#A020F0"> todir=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;${build}&quot;</FONT></B><B><FONT COLOR="#A020F0"> failonerror=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;false&quot;</FONT></B><B><FONT COLOR="#A020F0">/&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/target&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The complete buildfile can be found in the directory of this example: <code>samples/chat/serialization/build.xml</code>.
+<p />
+<h2><a name="The_61SerChat_61_Program"></a>  The <code>SerChat</code> Program </h2>
+<p />
+The <code>SerChat</code> program is very similar to the <code>SimpleChat</code> program. Sending messages changes to:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>ChatMessage cm = <B><FONT COLOR="#A020F0">new</FONT></B> ChatMessage(text);
+publisher.send(Message.fromObject(cm));</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+and the method for receiving messages changes to:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> received(Message msg, MessageContext ctx) {
+  ChatMessage cm = (ChatMessage)msg.getObject();
+  System.out.println(cm.text);
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="The_Full_61SerChat_61_Program"></a>  The Full <code>SerChat</code> Program </h2>
+<p />
+<code><b>samples/chat/serialization/src/SerChat.java</b></code>
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> java.io.BufferedReader;
+<B><FONT COLOR="#A020F0">import</FONT></B> java.io.InputStreamReader;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.IReceiver;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Message;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.MessageContext;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Mundo;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Publisher;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+
+<B><FONT COLOR="#A020F0">class</FONT></B> ChatService <B><FONT COLOR="#A020F0">extends</FONT></B> Service <B><FONT COLOR="#A020F0">implements</FONT></B> IReceiver {
+  <B><FONT COLOR="#A020F0">private</FONT></B> Publisher publisher;
+
+  ChatService() {
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> init() {
+    publisher = getSession().publish(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;serchattest&quot;</FONT></B>);
+    getSession().subscribe(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;serchattest&quot;</FONT></B>, <B><FONT COLOR="#A020F0">this</FONT></B>);
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> run() {
+    <B><FONT COLOR="#A020F0">try</FONT></B> {
+      BufferedReader r=<B><FONT COLOR="#A020F0">new</FONT></B> BufferedReader(<B><FONT COLOR="#A020F0">new</FONT></B> InputStreamReader(System.in));
+      String ln;
+      <B><FONT COLOR="#A020F0">while</FONT></B> ( (ln=r.readLine())!=<B><FONT COLOR="#A020F0">null</FONT></B> &amp;&amp; !ln.equals(<B><FONT COLOR="#BC8F8F">&quot;.&quot;</FONT></B>) )
+        publisher.send(Message.fromObject(<B><FONT COLOR="#A020F0">new</FONT></B> ChatMessage(ln)));
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x) {
+      x.printStackTrace();
+    }
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> received(Message msg, MessageContext ctx) {
+    <B><FONT COLOR="#A020F0">try</FONT></B> {
+      System.out.println(((ChatMessage)msg.getObject()).text);
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x) {
+      x.printStackTrace();
+    }
+  }
+}
+
+<B><FONT COLOR="#A020F0">class</FONT></B> SerChat {
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> main(String args[]) <B><FONT COLOR="#A020F0">throws</FONT></B> Exception {
+    Mundo.init();
+    ChatService cs = <B><FONT COLOR="#A020F0">new</FONT></B> ChatService();
+    Mundo.registerService(cs);
+    cs.run();
+    Mundo.shutdown();
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+</div></div><!-- /patternContent-->
+</div></div></div></div></div></div></div></div>
+</body></html>

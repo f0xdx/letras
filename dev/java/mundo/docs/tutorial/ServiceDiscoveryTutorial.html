@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+<title> ServiceDiscoveryTutorial &lt; Mundo &lt; Foswiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="alternate" href="http://127.0.0.1/foswiki/bin/edit/Mundo/ServiceDiscoveryTutorial?t=1295995545" type="application/x-wiki" title="edit ServiceDiscoveryTutorial" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<meta name="robots" content="noindex" /><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/foswiki/bin/view/Mundo/WebRss" />
+<style type="text/css" media="all">
+@import url('style/base.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/layout.css');
+@import url('style/style.css');
+@import url('style/colors.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/column_left.css');
+@import url('style/variant_foswiki_noframe.css');
+</style><style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .foswikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#efefef;
+	}
+	#patternTopBarContents { background-image:url(/foswiki/pub/System/PatternSkin/header5.gif); background-repeat:repeat-x;}
+#patternTopBarContents { background-color:#ffffff;}
+.patternBookView {
+	border-color:#efefef;
+}
+.patternPreviewPage #patternMain {
+	/* uncomment to set the preview image */
+	/*background-image:url("/foswiki/pub/System/PreviewBackground/preview2bg.gif");*/
+}
+</style>
+<style type="text/css" media="all">
+@import url('style/print.css');
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	height:1%;
+	overflow-x:auto;
+}
+.foswikiAttachments,
+.foswikiForm,
+.foswikiHelp,
+.foswikiPreviewArea,
+.patternPreviewPage .foswikiForm,
+.patternSigLine,
+.patternToolBar,
+.patternTop,
+.patternTopicAction,
+#patternSideBarContents .patternLeftBarPersonal,
+#patternSideBarContents h2,
+#patternSideBarContents li,
+#patternTopBarButtons ul {
+	height:1%;
+}
+#patternSideBarContents .patternLeftBarPersonal {
+	width:100%;
+}
+.foswikiFormStep {
+	height:100%;
+}
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border:2px solid #ccc;
+}
+</style><![endif]-->
+<!--[if gt IE 8 ]><style type="text/css" media="screen">
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	box-shadow: 0 0 10px #ccc;
+}
+</style><![endif]-->
+<meta name="foswiki.TWISTYANIMATIONSPEED" content="fast" /><!--TWISTYPLUGIN::META-->
+<style type="text/css" media="all">
+.foswikiTable {border-width:1px}
+.foswikiTable .tableSortIcon img {padding-left:.3em; vertical-align:text-bottom}
+.foswikiTable td {border-style:solid none; vertical-align:top}
+.foswikiTable th {border-style:none solid; vertical-align:top; background-color:#d6d3cf; color:#000000}
+.foswikiTable th a:link {color:#000000}
+.foswikiTable th a:visited {color:#000000}
+.foswikiTable th a:hover {color:#000000; background-color:#d6d3cf}
+.foswikiTable th.foswikiSortedCol {background-color:#c4c1ba}
+.foswikiTable tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td.foswikiSortedCol {background-color:#f0f0ee}
+</style><!--TABLEPLUGIN_default-->
+<meta name="foswiki.PUBURL" content="http://127.0.0.1/foswiki/pub" /> <!-- PUBURL -->
+<meta name="foswiki.PUBURLPATH" content="/foswiki/pub" /> <!-- PUBURLPATH -->
+<meta name="foswiki.SCRIPTSUFFIX" content="" /> <!-- SCRIPTSUFFIX -->
+<meta name="foswiki.SCRIPTURL" content="http://127.0.0.1/foswiki/bin" /> <!-- SCRIPTURL -->
+<meta name="foswiki.SCRIPTURLPATH" content="/foswiki/bin" /> <!-- SCRIPTURLPATH -->
+<meta name="foswiki.SERVERTIME" content="25%20Jan%202011%20-%2023:45" /> <!-- SERVERTIME -->
+<meta name="foswiki.SKIN" content="pattern" /> <!-- SKIN -->
+<meta name="foswiki.SYSTEMWEB" content="System" /> <!-- SYSTEMWEB -->
+<meta name="foswiki.TOPIC" content="ServiceDiscoveryTutorial" /> <!-- TOPIC -->
+<meta name="foswiki.USERNAME" content="guest" /> <!-- USERNAME -->
+<meta name="foswiki.USERSWEB" content="Main" /> <!-- USERSWEB -->
+<meta name="foswiki.WEB" content="Mundo" /> <!-- WEB -->
+<meta name="foswiki.WIKINAME" content="WikiGuest" /> <!-- WIKINAME -->
+<meta name="foswiki.WIKIUSERNAME" content="Main.WikiGuest" /> <!-- WIKIUSERNAME -->
+<meta name="foswiki.NAMEFILTER" content="%5b%5cs%5c*%3f~%5e%5c%24%40%25%60%22'%26%3b%7c%3c%3e%5c%5b%5c%5d%23%5cx00-%5cx1f%5d" /> <!-- NAMEFILTER --><!--JQUERYPLUGIN::FOSWIKI::META-->
+</head>
+<body class="patternViewPage patternPrintPage">
+<a name="PageTop"></a><div class="foswikiPage"><div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain">
+<div id="patternMainContents">
+<div class="patternContent"><div class="foswikiTopic"> <h1><a name="Service_Discovery"></a>  Service Discovery </h1>
+<p />
+<h2><a name="Offering_a_Service"></a>  Offering a Service </h2>
+<p />
+By default, services are not immediately visible for service discovery. The visibility of a service is controlled by its <em>zone</em> property. Hence, to make a service visible in the network, its zone property must be defined and the zone must be set to a value other than <code>"rt"</code>. The zone name <code>"rt"</code> stands for runtime and expresses that a service or channel is only visible within the same runtime, i.e. node.
+<p />
+The service of the <a href="RMCTutorial.html">RMC Chat Example</a> can be made visible for service discovery by adding the following line of code with the <code>setServiceZone</code> statement:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> init() {
+  <B><FONT COLOR="#A020F0">try</FONT></B> {
+    <I><FONT COLOR="#B22222">// make this service visible for Service Discovery
+</FONT></I>    setServiceZone(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>);</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Service_Query_by_Interface"></a>  Service Query by Interface </h2>
+<p />
+The following program shows how to find all services implementing <code>IChat</code>:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.util.DefaultApplication;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.ServiceManager;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.ServiceInfoFilter;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.ResultSet;
+
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> Discovery1 <B><FONT COLOR="#A020F0">extends</FONT></B> DefaultApplication {
+  <B><FONT COLOR="#A020F0">public</FONT></B> Discovery1() {
+  }
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> run() {
+    <B><FONT COLOR="#A020F0">try</FONT></B> {
+      ServiceInfoFilter filter = <B><FONT COLOR="#A020F0">new</FONT></B> ServiceInfoFilter();
+      filter.filterInterface(<B><FONT COLOR="#BC8F8F">&quot;IChat&quot;</FONT></B>);
+      ResultSet rs = ServiceManager.getInstance().query(filter);
+      Thread.sleep(1000);
+      System.out.println(rs);
+    } <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x) {
+      x.printStackTrace();
+    }
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> main(String args[]) {
+    start(<B><FONT COLOR="#A020F0">new</FONT></B> Discovery1());
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Service Discovery in <a href="/foswiki/bin/view/Mundo/MundoCore">MundoCore</a> is based on <a href="ContentBasedPSTutorial.html">content-based publish/subscribe</a>, which was described already in an earlier tutorial. The general ideas behind mapping the service discovery problem to content-based pub/sub are the following:
+<p /> <ul>
+<li> Advertising a service corresponds to publishing a notification, containing the service description.
+</li> <li> A service query defines a filter and only matching service descriptions are delivered to the requesting application. Consequently, the concepts to formulate service queries are very similar to defining content-based filters.
+</li></ul> 
+The class <code>ServiceInfoFilter</code> encapsulates the query. In the program above, the method <code>filterInterface</code> is used to define a filter for interface <code>IChat</code>. Hence, only services that implement the interface <code>IChat</code> will be discovered. Next, the method <code>query</code> is called on the <code>ServiceManager</code> singleton. It will send the query message to the network, and all matching services respond back. The call returns a <code>ResultSet</code> containing a list of all matching services, which is printed to the console.
+<p />
+After the query, the program waits for 1 second before printing the discovery result. Hence, it allows peers in the network 1 second to respond at maximum. Note that it is generally only possible to discover all matching services, if the upper bound for the network latency is predictable.
+<p />
+<h2><a name="Continuous_Queries"></a>  Continuous Queries </h2>
+<p />
+The concept of continuous queries aims to overcome the waiting problem discussed above. It allows an application to receive notifications when new services appear, disappear, or change their properties.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.util.DefaultApplication;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.ServiceManager;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.ServiceInfoFilter;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.ResultSet;
+
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> ContQuery1 <B><FONT COLOR="#A020F0">extends</FONT></B> DefaultApplication {
+  <B><FONT COLOR="#A020F0">public</FONT></B> ContQuery1() {
+  }
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> run() {
+    <B><FONT COLOR="#A020F0">try</FONT></B> {
+      ServiceInfoFilter filter = <B><FONT COLOR="#A020F0">new</FONT></B> ServiceInfoFilter();
+      filter.filterInterface(<B><FONT COLOR="#BC8F8F">&quot;IChat&quot;</FONT></B>);
+      ServiceManager.getInstance().contQuery(filter, getSession(), UPDATE_HANDLER);
+      pause();
+    } <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x) {
+      x.printStackTrace();
+    }
+  }
+  <B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> ResultSet.ISignal UPDATE_HANDLER = <B><FONT COLOR="#A020F0">new</FONT></B> ResultSet.SignalAdapter() {
+    @Override
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> inserted(ResultSet rs, <B><FONT COLOR="#A020F0">int</FONT></B> i, <B><FONT COLOR="#A020F0">int</FONT></B> n) {
+      System.out.println(<B><FONT COLOR="#BC8F8F">&quot;inserted: &quot;</FONT></B> + rs.getList().subList(i, i+n));
+    }
+    @Override
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> removing(ResultSet rs, <B><FONT COLOR="#A020F0">int</FONT></B> i, <B><FONT COLOR="#A020F0">int</FONT></B> n) {
+      System.out.println(<B><FONT COLOR="#BC8F8F">&quot;removing: &quot;</FONT></B> + rs.getList().subList(i, i+n));
+    }
+  };
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> main(String args[]) {
+    start(<B><FONT COLOR="#A020F0">new</FONT></B> ContQuery1());
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The <code>contQuery</code> method takes the following parameters:
+<p /> <ol>
+<li> The first argument is the filter. Only when services matching this filter join, leave, or change their properties, then the callback functions will be called.
+</li> <li> The second argument specifies the client's session.
+</li> <li> The third argument specifies the event receiver.
+</li></ol> 
+<code>ResultSet.ISignal</code> notifies the receiver about the following events:
+<p />
+<table class="foswikiTable" rules="none" border="1">
+	<tbody>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> inserted </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> Raised after one or more elements were inserted into the result set </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> removing </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> Raised before one or more elements are removed from the result set </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> removed </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> Raised after one or more elements were removed from the result set </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> propChanging </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> Raised before the properties of an element are changed </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol foswikiLast"> propChanged </td>
+			<td class="foswikiTableCol1 foswikiLastCol foswikiLast"> Raised after the properties of an element were changed </td>
+		</tr>
+	</tbody></table>
+<p />
+<h2><a name="Custom_Service_Descriptions"></a>  Custom Service Descriptions </h2>
+<p />
+The advertisement of a service is expressed by the <code>ServiceInfo</code> data structure. It contains the following fields:
+<p />
+<table class="foswikiTable" rules="none" border="1">
+	<tbody>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> guid </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> the unique ID of the service </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> doService </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> a remote object reference to the service </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> instanceName </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> the friendly name of the service </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> className </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> the name of the service class </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> superClasses </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> the ancestors of the service class </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> interfaces </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> the interfaces the service implements </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> zone </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> the visibility of the service </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> nodeId </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> the ID of the node hosting the service </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> pluginName </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> if the service is part of a component, the name of the plug-in component </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol foswikiLast"> userData </td>
+			<td class="foswikiTableCol1 foswikiLastCol foswikiLast"> a description object provided by the user </td>
+		</tr>
+	</tbody></table>
+<p />
+The <code>userData</code> entry allows service developers to add arbitrary descriptions of functional or non-functional properties to services. Description objects are provided by overriding the method <code>Service.getServiceInfoUserData</code>. <code>ServiceInfoFilter</code> already provides the functionality to define filters on such user-defined attributes as well.
+<p />
+</div></div><!-- /patternContent-->
+</div></div></div></div></div></div></div></div>
+</body></html>

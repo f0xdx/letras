@@ -1,0 +1,474 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+<title> AndroidTutorial &lt; Mundo &lt; Foswiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="alternate" href="http://127.0.0.1/foswiki/bin/edit/Mundo/AndroidTutorial?t=1295995548" type="application/x-wiki" title="edit AndroidTutorial" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<meta name="robots" content="noindex" /><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/foswiki/bin/view/Mundo/WebRss" />
+<style type="text/css" media="all">
+@import url('style/base.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/layout.css');
+@import url('style/style.css');
+@import url('style/colors.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/column_left.css');
+@import url('style/variant_foswiki_noframe.css');
+</style><style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .foswikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#efefef;
+	}
+	#patternTopBarContents { background-image:url(/foswiki/pub/System/PatternSkin/header5.gif); background-repeat:repeat-x;}
+#patternTopBarContents { background-color:#ffffff;}
+.patternBookView {
+	border-color:#efefef;
+}
+.patternPreviewPage #patternMain {
+	/* uncomment to set the preview image */
+	/*background-image:url("/foswiki/pub/System/PreviewBackground/preview2bg.gif");*/
+}
+</style>
+<style type="text/css" media="all">
+@import url('style/print.css');
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	height:1%;
+	overflow-x:auto;
+}
+.foswikiAttachments,
+.foswikiForm,
+.foswikiHelp,
+.foswikiPreviewArea,
+.patternPreviewPage .foswikiForm,
+.patternSigLine,
+.patternToolBar,
+.patternTop,
+.patternTopicAction,
+#patternSideBarContents .patternLeftBarPersonal,
+#patternSideBarContents h2,
+#patternSideBarContents li,
+#patternTopBarButtons ul {
+	height:1%;
+}
+#patternSideBarContents .patternLeftBarPersonal {
+	width:100%;
+}
+.foswikiFormStep {
+	height:100%;
+}
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border:2px solid #ccc;
+}
+</style><![endif]-->
+<!--[if gt IE 8 ]><style type="text/css" media="screen">
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	box-shadow: 0 0 10px #ccc;
+}
+</style><![endif]-->
+<meta name="foswiki.TWISTYANIMATIONSPEED" content="fast" /><!--TWISTYPLUGIN::META-->
+<style type="text/css" media="all">
+.foswikiTable {border-width:1px}
+.foswikiTable .tableSortIcon img {padding-left:.3em; vertical-align:text-bottom}
+.foswikiTable td {border-style:solid none; vertical-align:top}
+.foswikiTable th {border-style:none solid; vertical-align:top; background-color:#d6d3cf; color:#000000}
+.foswikiTable th a:link {color:#000000}
+.foswikiTable th a:visited {color:#000000}
+.foswikiTable th a:hover {color:#000000; background-color:#d6d3cf}
+.foswikiTable th.foswikiSortedCol {background-color:#c4c1ba}
+.foswikiTable tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td.foswikiSortedCol {background-color:#f0f0ee}
+</style><!--TABLEPLUGIN_default-->
+<style type="text/css" media="all">
+.foswikiTable#tableAndroidTutorial2 td {border-style:solid none; vertical-align:middle; vertical-align:top}
+.foswikiTable#tableAndroidTutorial2 td.foswikiTableCol0 {text-align:center}
+.foswikiTable#tableAndroidTutorial2 td.foswikiTableCol1 {text-align:left}
+.foswikiTable#tableAndroidTutorial2 td.foswikiTableCol2 {text-align:left}
+.foswikiTable#tableAndroidTutorial2 td.foswikiTableCol3 {text-align:right}
+.foswikiTable#tableAndroidTutorial2 td.foswikiTableCol4 {text-align:left}
+.foswikiTable#tableAndroidTutorial2 td.foswikiTableCol5 {text-align:left}
+.foswikiTable#tableAndroidTutorial2 td.foswikiTableCol6 {text-align:left}
+.foswikiTable#tableAndroidTutorial2 td.foswikiTableCol7 {text-align:center}
+.foswikiTable#tableAndroidTutorial2 th {border-style:solid none; vertical-align:middle; background-color:#ffffff; color:#0066cc}
+.foswikiTable#tableAndroidTutorial2 th a:link {color:#0066cc}
+.foswikiTable#tableAndroidTutorial2 th a:visited {color:#0066cc}
+.foswikiTable#tableAndroidTutorial2 th a:hover {color:#0066cc; background-color:#ffffff}
+.foswikiTable#tableAndroidTutorial2 th.foswikiSortedCol {background-color:#eeeeee}
+.foswikiTable#tableAndroidTutorial2 tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable#tableAndroidTutorial2 tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f5f5f5}
+</style><!--TABLEPLUGIN_specific-->
+<meta name="foswiki.PUBURL" content="http://127.0.0.1/foswiki/pub" /> <!-- PUBURL -->
+<meta name="foswiki.PUBURLPATH" content="/foswiki/pub" /> <!-- PUBURLPATH -->
+<meta name="foswiki.SCRIPTSUFFIX" content="" /> <!-- SCRIPTSUFFIX -->
+<meta name="foswiki.SCRIPTURL" content="http://127.0.0.1/foswiki/bin" /> <!-- SCRIPTURL -->
+<meta name="foswiki.SCRIPTURLPATH" content="/foswiki/bin" /> <!-- SCRIPTURLPATH -->
+<meta name="foswiki.SERVERTIME" content="25%20Jan%202011%20-%2023:45" /> <!-- SERVERTIME -->
+<meta name="foswiki.SKIN" content="pattern" /> <!-- SKIN -->
+<meta name="foswiki.SYSTEMWEB" content="System" /> <!-- SYSTEMWEB -->
+<meta name="foswiki.TOPIC" content="AndroidTutorial" /> <!-- TOPIC -->
+<meta name="foswiki.USERNAME" content="guest" /> <!-- USERNAME -->
+<meta name="foswiki.USERSWEB" content="Main" /> <!-- USERSWEB -->
+<meta name="foswiki.WEB" content="Mundo" /> <!-- WEB -->
+<meta name="foswiki.WIKINAME" content="WikiGuest" /> <!-- WIKINAME -->
+<meta name="foswiki.WIKIUSERNAME" content="Main.WikiGuest" /> <!-- WIKIUSERNAME -->
+<meta name="foswiki.NAMEFILTER" content="%5b%5cs%5c*%3f~%5e%5c%24%40%25%60%22'%26%3b%7c%3c%3e%5c%5b%5c%5d%23%5cx00-%5cx1f%5d" /> <!-- NAMEFILTER --><!--JQUERYPLUGIN::FOSWIKI::META-->
+<link rel='stylesheet' href='/foswiki/pub/System/TwistyPlugin/jquery.twisty.css?version=1.6.0' type='text/css' media='all' /><!--JQUERYPLUGIN::TWISTY: requires= missing ids: JavascriptFiles/foswikiPref-->
+</head>
+<body class="patternViewPage patternPrintPage">
+<a name="PageTop"></a><div class="foswikiPage"><div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain">
+<div id="patternMainContents">
+<div class="patternContent"><div class="foswikiTopic"> <h1><a name="MundoCore_on_Android"></a>  MundoCore on Android </h1>
+<p />
+<a name="foswikiTOC"></a><div class="foswikiToc"> <ul>
+<li> <a href="?cover=print#MundoCore_on_Android"> MundoCore on Android </a> <ul>
+<li> <a href="?cover=print#Prerequisites"> Prerequisites </a>
+</li> <li> <a href="?cover=print#AndroidChat"> AndroidChat </a> <ul>
+<li> <a href="?cover=print#Project_Structure"> Project Structure </a>
+</li> <li> <a href="?cover=print#User_Interface"> User Interface </a>
+</li> <li> <a href="?cover=print#Implementation"> Implementation </a>
+</li> <li> <a href="?cover=print#AndroidManifest.xml"> AndroidManifest.xml </a>
+</li></ul> 
+</li> <li> <a href="?cover=print#Android_45specifics_in_the_Java_Code"> Android-specifics in the Java Code </a> <ul>
+<li> <a href="?cover=print#Loading_the_Configuration_File"> Loading the Configuration File </a>
+</li> <li> <a href="?cover=print#Threads"> Threads </a>
+</li> <li> <a href="?cover=print#Logging"> Logging </a>
+</li></ul> 
+</li> <li> <a href="?cover=print#Known_Issues"> Known Issues </a> <ul>
+<li> <a href="?cover=print#Discovery"> Discovery </a>
+</li> <li> <a href="?cover=print#Pause_47Resume"> Pause/Resume </a>
+</li></ul> 
+</li></ul> 
+</li></ul> 
+</div>
+<p />
+<h2><a name="Prerequisites"></a>  Prerequisites </h2>
+<p /> <ul>
+<li> The Android SDK. It can be obtained from: <a href="http://developer.android.com/" target="_top">http://developer.android.com/</a>
+</li></ul> 
+<p />
+<h2><a name="AndroidChat"></a>  <span class="foswikiNewLink">AndroidChat<a href="/foswiki/bin/edit/Mundo/AndroidChat?topicparent=Mundo.AndroidTutorial" rel="nofollow" title="Create this topic">?</a></span> </h2>
+<p />
+In the following, an implementation of the simple chat example for Android is presented.
+<p />
+The creation of Eclipse projects for Android is similar to the creation of projects for the Standard Edition, as described here: <a href="NewPrjTutorialEclipse.html">Creating a New Project in Eclipse</a>.
+<p /> <ul>
+<li> Select <strong>File</strong> &gt; <strong>New Project</strong>
+</li> <li> Select <strong>Android</strong> &gt; <strong>Android Project</strong>, then click <strong>Next</strong>
+</li> <li> This example uses the following settings:
+</li></ul> 
+<table class="foswikiTable" rules="none" border="1">
+	<tbody>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> Project name: </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> <span class="foswikiNewLink">AndroidChat<a href="/foswiki/bin/edit/Mundo/AndroidChat?topicparent=Mundo.AndroidTutorial" rel="nofollow" title="Create this topic">?</a></span> </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> Application name: </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> <span class="foswikiNewLink">AndroidChat<a href="/foswiki/bin/edit/Mundo/AndroidChat?topicparent=Mundo.AndroidTutorial" rel="nofollow" title="Create this topic">?</a></span> </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> Package name: </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> org.mundo.chat </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> Create Activity: </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> <span class="foswikiNewLink">ChatTest<a href="/foswiki/bin/edit/Mundo/ChatTest?topicparent=Mundo.AndroidTutorial" rel="nofollow" title="Create this topic">?</a></span> </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol foswikiLast"> Min SDK Version: </td>
+			<td class="foswikiTableCol1 foswikiLastCol foswikiLast"> 8 </td>
+		</tr>
+	</tbody></table>
+<p />
+<h3><a name="Project_Structure"></a>  Project Structure </h3>
+<p />
+The following shows the Eclipse project structure of the <span class="foswikiNewLink">AndroidChat<a href="/foswiki/bin/edit/Mundo/AndroidChat?topicparent=Mundo.AndroidTutorial" rel="nofollow" title="Create this topic">?</a></span> example program:
+<p /> <ul>
+<li> src  <ul>
+<li> org.mundo.chat  <ul>
+<li> <strong>ChatTest.java</strong>: the main Java code goes here
+</li> <li> R.java (automatically generated from the resources)
+</li></ul> 
+</li></ul> 
+</li> <li> Android Library  <ul>
+<li> android.jar
+</li></ul> 
+</li> <li> Referenced Libraries  <ul>
+<li> <strong>mundocore.jar</strong>: link the standard 1.5 library here
+</li></ul> 
+</li> <li> assets  <ul>
+<li> <strong>node.conf.xml</strong>: put the MundoCore configuration file here
+</li></ul> 
+</li> <li> res  <ul>
+<li> layout  <ul>
+<li> <strong>main.xml</strong>: description of the user interface
+</li></ul> 
+</li> <li> ...
+</li></ul> 
+</li> <li> <strong>AndroidManifest.xml</strong>
+</li></ul> 
+<p />
+<h3><a name="User_Interface"></a>  User Interface </h3>
+<p />
+<img alt="androidchat.png" height="492" src="images/androidchat.png" width="332" />
+<p />
+The user interface is described in the file <strong>main.xml</strong>.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;?xml version=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;1.0&quot;</FONT></B><B><FONT COLOR="#A020F0"> encoding=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;utf-8&quot;</FONT></B><B><FONT COLOR="#A020F0">?&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;LinearLayout xmlns:android=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;http://schemas.android.com/apk/res/android&quot;</FONT></B><B><FONT COLOR="#A020F0">
+    android:orientation=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;vertical&quot;</FONT></B><B><FONT COLOR="#A020F0">
+    android:layout_width=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">
+    android:layout_height=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;ScrollView android:layout_width=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                   android:layout_height=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                   android:layout_weight=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;1&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                   android:id=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;@+id/scrollView&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+        <B><FONT COLOR="#A020F0">&lt;TextView android:layout_width=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:text=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;@string/hello&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:layout_height=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:layout_weight=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;1&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:id=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;@+id/textPane&quot;</FONT></B><B><FONT COLOR="#A020F0"> /&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;/ScrollView&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;LinearLayout android:id=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;@+id/LinearLayout01&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:layout_height=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;wrap_content&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:orientation=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;horizontal&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:layout_width=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+        <B><FONT COLOR="#A020F0">&lt;EditText android:layout_height=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;wrap_content&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:clickable=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;false&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:layout_width=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:layout_weight=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;1&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:id=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;@+id/inputLine&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                     android:singleLine=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;true&quot;</FONT></B><B><FONT COLOR="#A020F0"> /&gt;</FONT></B>
+        <B><FONT COLOR="#A020F0">&lt;Button android:layout_height=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;wrap_content&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                   android:text=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;Send&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                   android:layout_width=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;fill_parent&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                   android:layout_weight=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;4&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                   android:id=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;@+id/sendButton&quot;</FONT></B><B><FONT COLOR="#A020F0"> /&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;/LinearLayout&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/LinearLayout&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="Implementation"></a>  Implementation </h3>
+<p />
+<strong>ChatTest.java</strong> contains the implementation.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">package</FONT></B> org.mundo.chat;
+
+<B><FONT COLOR="#A020F0">import</FONT></B> java.io.InputStreamReader;
+
+<B><FONT COLOR="#A020F0">import</FONT></B> android.app.Activity;
+<B><FONT COLOR="#A020F0">import</FONT></B> android.os.Bundle;
+<B><FONT COLOR="#A020F0">import</FONT></B> android.view.View;
+<B><FONT COLOR="#A020F0">import</FONT></B> android.widget.Button;
+<B><FONT COLOR="#A020F0">import</FONT></B> android.widget.EditText;
+<B><FONT COLOR="#A020F0">import</FONT></B> android.widget.ScrollView;
+<B><FONT COLOR="#A020F0">import</FONT></B> android.widget.TextView;
+
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.LogEntry;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Mundo;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Logger;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Publisher;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.IReceiver;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Message;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.MessageContext;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.TypedMap;
+
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> ChatTest <B><FONT COLOR="#A020F0">extends</FONT></B> Activity {
+  <I><FONT COLOR="#B22222">/** Called when the activity is first created. */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> onCreate(Bundle savedInstanceState) {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.onCreate(savedInstanceState);
+    setContentView(R.layout.main);
+
+    scrollView = (ScrollView)findViewById(R.id.scrollView);
+    textPane = (TextView)findViewById(R.id.textPane);
+    inputLine = (EditText)findViewById(R.id.inputLine);
+    sendButton = (Button)findViewById(R.id.sendButton);
+    sendButton.setOnClickListener(<B><FONT COLOR="#A020F0">new</FONT></B> View.OnClickListener() {
+      <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> onClick(View v) {
+        String text = inputLine.getText().toString();
+        TypedMap map = <B><FONT COLOR="#A020F0">new</FONT></B> TypedMap();
+        map.putString(<B><FONT COLOR="#BC8F8F">&quot;ln&quot;</FONT></B>, text);
+        publisher.send(<B><FONT COLOR="#A020F0">new</FONT></B> Message(map));
+        textPane.append(<B><FONT COLOR="#BC8F8F">&quot;(&quot;</FONT></B>+text+<B><FONT COLOR="#BC8F8F">&quot;)\n&quot;</FONT></B>);
+        scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+        inputLine.setText(<B><FONT COLOR="#BC8F8F">&quot;&quot;</FONT></B>);
+      }
+    });
+    
+    Logger.getLogger(<B><FONT COLOR="#BC8F8F">&quot;global&quot;</FONT></B>).addHandler(LOG_HANDLER);
+    <B><FONT COLOR="#A020F0">try</FONT></B> {
+      Mundo.setConfigXML(<B><FONT COLOR="#A020F0">new</FONT></B> InputStreamReader(getClass().getClassLoader().
+          getResourceAsStream(<B><FONT COLOR="#BC8F8F">&quot;assets/node.conf.xml&quot;</FONT></B>), <B><FONT COLOR="#BC8F8F">&quot;UTF-8&quot;</FONT></B>));
+    } <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x) {
+      Logger.getLogger(<B><FONT COLOR="#BC8F8F">&quot;global&quot;</FONT></B>).warning(<B><FONT COLOR="#BC8F8F">&quot;could not read node.conf.xml!&quot;</FONT></B>);
+    }
+    Mundo.init();
+    Service svc = <B><FONT COLOR="#A020F0">new</FONT></B> Service();
+    Mundo.registerService(svc);
+    publisher = svc.getSession().publish(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;chattest&quot;</FONT></B>);
+    svc.getSession().subscribe(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;chattest&quot;</FONT></B>, CHAT_RECEIVER);
+  }
+
+  @Override
+  <B><FONT COLOR="#A020F0">protected</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> onDestroy() {
+    Mundo.shutdown();
+    <B><FONT COLOR="#A020F0">super</FONT></B>.onDestroy();
+  }
+    
+  <B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> IReceiver CHAT_RECEIVER = <B><FONT COLOR="#A020F0">new</FONT></B> IReceiver() {
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> received(Message msg, MessageContext ctx) {
+      runOnUiThread(<B><FONT COLOR="#A020F0">new</FONT></B> PrintAction(msg.getMap().getString(<B><FONT COLOR="#BC8F8F">&quot;ln&quot;</FONT></B>)));
+    }
+  };
+  
+  <B><FONT COLOR="#A020F0">class</FONT></B> PrintAction <B><FONT COLOR="#A020F0">implements</FONT></B> Runnable {
+    PrintAction(String l) {
+      ln = l;
+    }
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> run() {
+      textPane.append(ln+<B><FONT COLOR="#BC8F8F">&quot;\n&quot;</FONT></B>);
+    }
+    <B><FONT COLOR="#A020F0">private</FONT></B> String ln;
+  }
+  
+  <B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> Logger.IHandler LOG_HANDLER = <B><FONT COLOR="#A020F0">new</FONT></B> Logger.IHandler() {
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> publish(LogEntry e) {
+      <B><FONT COLOR="#A020F0">if</FONT></B> (e.getLevel() &lt;= Logger.WARNING)
+        runOnUiThread(<B><FONT COLOR="#A020F0">new</FONT></B> PrintAction(e.toString()));
+    }
+  };
+
+  <B><FONT COLOR="#A020F0">private</FONT></B> Button sendButton;
+  <B><FONT COLOR="#A020F0">private</FONT></B> TextView textPane;
+  <B><FONT COLOR="#A020F0">private</FONT></B> EditText inputLine;
+  <B><FONT COLOR="#A020F0">private</FONT></B> ScrollView scrollView;
+  <B><FONT COLOR="#A020F0">private</FONT></B> Publisher publisher;
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="AndroidManifest.xml"></a>  <span class="foswikiNewLink">AndroidManifest<a href="/foswiki/bin/edit/Mundo/AndroidManifest?topicparent=Mundo.AndroidTutorial" rel="nofollow" title="Create this topic">?</a></span>.xml </h3>
+<p />
+By default, Android applications may not enumerate the available network interfaces or open server sockets. It is necessary to request the required permissions first in the manifest. When using Eclipse, perform the following steps to add permissions:
+<p /> <ul>
+<li> Open <code>AndroidManifest.xml</code> (with the Android Manifest Editor)
+</li> <li> Select the <strong>Permissions</strong> tab
+</li> <li> Click <strong>Add</strong>
+</li> <li> Select <strong>Uses Permission</strong>
+</li> <li> Change the name of the new permission to <code>android.permission.INTERNET</code>
+</li> <li> Save the manifest
+</li></ul> 
+<p />
+<h2><a name="Android_45specifics_in_the_Java_Code"></a>  Android-specifics in the Java Code </h2>
+<p />
+<h3><a name="Loading_the_Configuration_File"></a>  Loading the Configuration File </h3>
+<p />
+An Android program uses the following code to read and set the configuration file <code>node.conf.xml</code>. Note that <code>Mundo.setConfigXML</code> must be called before <code>Mundo.init</code>.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>Mundo.setConfigXML(<B><FONT COLOR="#A020F0">new</FONT></B> InputStreamReader(getClass().getClassLoader()
+                   .getResourceAsStream(<B><FONT COLOR="#BC8F8F">&quot;assets/node.conf.xml&quot;</FONT></B>), <B><FONT COLOR="#BC8F8F">&quot;UTF-8&quot;</FONT></B>));
+Mundo.init();</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="Threads"></a>  Threads </h3>
+<p />
+Calls to UI components must not be made from a non-UI thread. For that reason, a message receiver cannot directly modify views, it has to delay the changes and execute them within the UI thread. Using <code>runOnUiThread</code> is one possible approach:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> IReceiver CHAT_RECEIVER = <B><FONT COLOR="#A020F0">new</FONT></B> IReceiver() {
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> received(Message msg, MessageContext ctx) {
+        runOnUiThread(<B><FONT COLOR="#A020F0">new</FONT></B> PrintAction(msg.getMap().getString(<B><FONT COLOR="#BC8F8F">&quot;ln&quot;</FONT></B>)));
+    }
+};
+  
+<B><FONT COLOR="#A020F0">class</FONT></B> PrintAction <B><FONT COLOR="#A020F0">implements</FONT></B> Runnable {
+    PrintAction(String l) {
+        ln = l;
+    }
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> run() {
+        textPane.append(ln+<B><FONT COLOR="#BC8F8F">&quot;\n&quot;</FONT></B>);
+    }
+    <B><FONT COLOR="#A020F0">private</FONT></B> String ln;
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="Logging"></a>  Logging </h3>
+<p />
+The following is optional. Log output can also be redirected to, e.g., a text view using a log handler:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> Logger.IHandler LOG_HANDLER = <B><FONT COLOR="#A020F0">new</FONT></B> Logger.IHandler() {
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> publish(LogEntry e) {
+        runOnUiThread(<B><FONT COLOR="#A020F0">new</FONT></B> PrintAction(e.toString()));
+    }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The handler must then be registered with the MundoCore framework:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>Logger.getLogger(<B><FONT COLOR="#BC8F8F">&quot;global&quot;</FONT></B>).addHandler(LOG_HANDLER);</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Known_Issues"></a>  Known Issues </h2>
+<p />
+<h3><a name="Discovery"></a>  Discovery </h3>
+<p />
+The emulator comes with a somewhat problematic NAT implementation that does not give the host a real IP address in the NATed address space. For that reason, automatic discovery will not work. Use a host entry in the configuration file of the Android node to explicitly connect to the host PC, which is reachable under the special address <code>10.0.2.2</code>:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;primary-port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>4242<B><FONT COLOR="#A020F0">&lt;/primary-port&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;hosts xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;host xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptHost&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;name&gt;</FONT></B>10.0.2.2<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;retry-interval xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>3<B><FONT COLOR="#A020F0">&lt;/retry-interval&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/host&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/hosts&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+(also see: <a href="http://d.android.com/guide/developing/tools/emulator.html#emulatornetworking" target="_top">http://d.android.com/guide/developing/tools/emulator.html#emulatornetworking</a>)
+<p />
+On the real device, broadcast discovery can be used as usual, e.g.:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;primary-port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>4242<B><FONT COLOR="#A020F0">&lt;/primary-port&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;broadcast xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptBroadcast&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;send xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>true<B><FONT COLOR="#A020F0">&lt;/send&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/broadcast&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="Pause_47Resume"></a>  Pause/Resume </h3>
+<p />
+MundoCore will not be able to communicate correctly after a pause/resume, because the application on the Android phone is completely suspended for a while. Remote peers will run into timeouts and think that the Android node has gone. To fix this problem, force close the application in <code>onStop</code>:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>@Override
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> onStop() {
+  Mundo.shutdown();
+  System.exit(0);
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Alternatively, put the communication inside an Android Service that continues running in the background (<a href="http://developerlife.com/tutorials/?p=356" target="_top">http://developerlife.com/tutorials/?p=356</a>).
+<p />
+</div></div><!-- /patternContent-->
+</div></div></div></div></div></div></div></div>
+</body></html>

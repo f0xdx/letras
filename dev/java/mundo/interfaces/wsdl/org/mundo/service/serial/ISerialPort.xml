@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions">
+  <wsdl:types>
+    <xs:schema>
+      <xs:complexType name="type_openRequest"></xs:complexType>
+      <xs:element name="openRequest" type="type_openRequest"></xs:element>
+      <xs:element name="openResponse" type="xsd:boolean"></xs:element>
+      <xs:complexType name="type_closeRequest"></xs:complexType>
+      <xs:element name="closeRequest" type="type_closeRequest"></xs:element>
+      <xs:element name="closeResponse" type="xsd:boolean"></xs:element>
+      <xs:complexType name="type_setParamsRequest:i,i,c,i">
+        <xs:element name="p0" type="xsd:int" description="baudRate"></xs:element>
+        <xs:element name="p1" type="xsd:int" description="byteSize"></xs:element>
+        <xs:element name="p2" type="xsd:char" description="parity"></xs:element>
+        <xs:element name="p3" type="xsd:int" description="stopBits"></xs:element>
+      </xs:complexType>
+      <xs:element name="setParamsRequest:i,i,c,i" type="type_setParamsRequest:i,i,c,i"></xs:element>
+      <xs:element name="setParamsResponse:i,i,c,i" type="xsd:boolean"></xs:element>
+      <xs:complexType name="type_setFlowControlRequest:i">
+        <xs:element name="p0" type="xsd:int" description="fc"></xs:element>
+      </xs:complexType>
+      <xs:element name="setFlowControlRequest:i" type="type_setFlowControlRequest:i"></xs:element>
+      <xs:element name="setFlowControlResponse:i" type="xsd:boolean"></xs:element>
+      <xs:complexType name="type_setEOLCharsRequest:s">
+        <xs:element name="p0" type="xsd:string" description=""></xs:element>
+      </xs:complexType>
+      <xs:element name="setEOLCharsRequest:s" type="type_setEOLCharsRequest:s"></xs:element>
+      <xs:element name="setEOLCharsResponse:s" type="void"></xs:element>
+      <xs:complexType name="type_sendRequest:s">
+        <xs:element name="p0" type="xsd:string" description=""></xs:element>
+      </xs:complexType>
+      <xs:element name="sendRequest:s" type="type_sendRequest:s"></xs:element>
+      <xs:element name="sendResponse:s" type="xsd:boolean"></xs:element>
+      <xs:complexType name="type_getInChannelRequest"></xs:complexType>
+      <xs:element name="getInChannelRequest" type="type_getInChannelRequest"></xs:element>
+      <xs:element name="getInChannelResponse" type="xsd:string"></xs:element>
+      <xs:complexType name="type_setReadModeRequest:i">
+        <xs:element name="p0" type="xsd:int" description="mode"></xs:element>
+      </xs:complexType>
+      <xs:element name="setReadModeRequest:i" type="type_setReadModeRequest:i"></xs:element>
+      <xs:element name="setReadModeResponse:i" type="xsd:boolean"></xs:element>
+      <xs:complexType name="type_readLineRequest:i">
+        <xs:element name="p0" type="xsd:int" description="timeout"></xs:element>
+      </xs:complexType>
+      <xs:element name="readLineRequest:i" type="type_readLineRequest:i"></xs:element>
+      <xs:element name="readLineResponse:i" type="xsd:string"></xs:element>
+      <xs:complexType name="type_readBinaryRequest:i,i">
+        <xs:element name="p0" type="xsd:int" description="n"></xs:element>
+        <xs:element name="p1" type="xsd:int" description="timeout"></xs:element>
+      </xs:complexType>
+      <xs:element name="readBinaryRequest:i,i" type="type_readBinaryRequest:i,i"></xs:element>
+      <xs:element name="readBinaryResponse:i,i" type="org.mundo.rt.Blob"></xs:element>
+      <xs:element name="ISerialPort" type="type_ISerialPort"></xs:element>
+      <xs:complexType name="type_ISerialPort">
+        <mc:constant name="FLOW_NONE" type="xsd:int" value="1"></mc:constant>
+        <mc:constant name="FLOW_RTSCTS" type="xsd:int" value="2"></mc:constant>
+        <mc:constant name="FLOW_HARDWARE" type="xsd:int" value="3"></mc:constant>
+        <mc:constant name="FLOW_XONXOFF" type="xsd:int" value="4"></mc:constant>
+        <mc:constant name="READ_LINE" type="xsd:int" value="1"></mc:constant>
+        <mc:constant name="READ_EVENTS" type="xsd:int" value="2"></mc:constant>
+        <mc:constant name="READ_BINARY" type="xsd:int" value="3"></mc:constant>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:interface name="org.mundo.service.serial.ISerialPort">
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="open">
+      <wsdl:input element="openRequest"></wsdl:input>
+      <wsdl:output element="openResponse"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="close">
+      <wsdl:input element="closeRequest"></wsdl:input>
+      <wsdl:output element="closeResponse"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="setParams">
+      <wsdl:input element="setParamsRequest:i,i,c,i"></wsdl:input>
+      <wsdl:output element="setParamsResponse:i,i,c,i"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="setFlowControl">
+      <wsdl:input element="setFlowControlRequest:i"></wsdl:input>
+      <wsdl:output element="setFlowControlResponse:i"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="setEOLChars">
+      <wsdl:input element="setEOLCharsRequest:s"></wsdl:input>
+      <wsdl:output element="setEOLCharsResponse:s"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="send">
+      <wsdl:input element="sendRequest:s"></wsdl:input>
+      <wsdl:output element="sendResponse:s"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="getInChannel">
+      <wsdl:input element="getInChannelRequest"></wsdl:input>
+      <wsdl:output element="getInChannelResponse"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="setReadMode">
+      <wsdl:input element="setReadModeRequest:i"></wsdl:input>
+      <wsdl:output element="setReadModeResponse:i"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="readLine">
+      <wsdl:input element="readLineRequest:i"></wsdl:input>
+      <wsdl:output element="readLineResponse:i"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="readBinary">
+      <wsdl:input element="readBinaryRequest:i,i"></wsdl:input>
+      <wsdl:output element="readBinaryResponse:i,i"></wsdl:output>
+    </operation>
+  </wsdl:interface>
+  <wsdl:service name="%SERVICE_INSTANCE_NAME%" interface="org.mundo.service.serial.ISerialPort">
+    <wsdl:endpoint name="org.mundo.service.serial.ISerialPortEndpoint" address="%SERVICE_CHANNEL_NAME%"></wsdl:endpoint>
+  </wsdl:service>
+</wsdl:description>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions">
+  <wsdl:types>
+    <xs:schema>
+      <xs:complexType name="type_speakRequest:s">
+        <xs:element name="p0" type="xsd:string" description="utterance"></xs:element>
+      </xs:complexType>
+      <xs:element name="speakRequest:s" type="type_speakRequest:s"></xs:element>
+      <xs:element name="speakResponse:s" type="void"></xs:element>
+      <xs:complexType name="type_speakRequest:s,s">
+        <xs:element name="p0" type="xsd:string" description="voiceName"></xs:element>
+        <xs:element name="p1" type="xsd:string" description="utterance"></xs:element>
+      </xs:complexType>
+      <xs:element name="speakRequest:s,s" type="type_speakRequest:s,s"></xs:element>
+      <xs:element name="speakResponse:s,s" type="void"></xs:element>
+      <xs:complexType name="type_speakJSMLRequest:s">
+        <xs:element name="p0" type="xsd:string" description="jsml"></xs:element>
+      </xs:complexType>
+      <xs:element name="speakJSMLRequest:s" type="type_speakJSMLRequest:s"></xs:element>
+      <xs:element name="speakJSMLResponse:s" type="void"></xs:element>
+      <xs:complexType name="type_playFileRequest:s">
+        <xs:element name="p0" type="xsd:string" description="file"></xs:element>
+      </xs:complexType>
+      <xs:element name="playFileRequest:s" type="type_playFileRequest:s"></xs:element>
+      <xs:element name="playFileResponse:s" type="void"></xs:element>
+      <xs:complexType name="type_stopPlaybackRequest"></xs:complexType>
+      <xs:element name="stopPlaybackRequest" type="type_stopPlaybackRequest"></xs:element>
+      <xs:element name="stopPlaybackResponse" type="void"></xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:interface name="org.mundo.speech.synthesis.ITextToSpeech">
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="speak">
+      <wsdl:input element="speakRequest:s"></wsdl:input>
+      <wsdl:output element="speakResponse:s"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="speak">
+      <wsdl:input element="speakRequest:s,s"></wsdl:input>
+      <wsdl:output element="speakResponse:s,s"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="speakJSML">
+      <wsdl:input element="speakJSMLRequest:s"></wsdl:input>
+      <wsdl:output element="speakJSMLResponse:s"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="playFile">
+      <wsdl:input element="playFileRequest:s"></wsdl:input>
+      <wsdl:output element="playFileResponse:s"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="stopPlayback">
+      <wsdl:input element="stopPlaybackRequest"></wsdl:input>
+      <wsdl:output element="stopPlaybackResponse"></wsdl:output>
+    </operation>
+  </wsdl:interface>
+  <wsdl:service name="%SERVICE_INSTANCE_NAME%" interface="org.mundo.speech.synthesis.ITextToSpeech">
+    <wsdl:endpoint name="org.mundo.speech.synthesis.ITextToSpeechEndpoint" address="%SERVICE_CHANNEL_NAME%"></wsdl:endpoint>
+  </wsdl:service>
+</wsdl:description>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions">
+  <wsdl:types>
+    <xs:schema>
+      <xs:element name="MundoSynthesizerEvent" type="type_MundoSynthesizerEvent"></xs:element>
+      <xs:complexType name="type_MundoSynthesizerEvent">
+        <mc:constant name="SPEAKABLE_STARTED" type="xsd:int" value="0x7000002"></mc:constant>
+        <mc:constant name="SPEAKABLE_ENDED" type="xsd:int" value="0x7000004"></mc:constant>
+        <xs:element name="id" type="xsd:int"></xs:element>
+        <xs:element name="speakableId" type="xsd:long"></xs:element>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <mc:serialization name="org.mundo.ui.speech.spi.MundoSynthesizerEvent" element="MundoSynthesizerEvent"></mc:serialization>
+</wsdl:description>

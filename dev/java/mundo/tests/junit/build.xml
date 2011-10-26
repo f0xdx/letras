@@ -1,7 +1,0 @@
- <project name="tests" default="tests" basedir=".">
-  <target name="tests">
-    <ant dir="contentbroker1"/>
-    <ant dir="contentbroker2"/>
-    <ant dir="servicediscovery1"/>
-  </target>  
-</project>

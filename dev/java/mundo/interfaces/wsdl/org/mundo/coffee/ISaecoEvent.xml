@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions" xsi:type="array" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+  <wsdl:types xsi:type="array">
+    <xs:schema xsi:type="array">
+      <xs:element name="buttonPushedRequest:i" type="type_buttonPushedRequest:i" xsi:type="array"></xs:element>
+      <xs:complexType name="type_buttonPushedRequest:i" xsi:type="array">
+        <xs:element name="p0" type="xsd:int" description="but" xsi:type="array"></xs:element>
+      </xs:complexType>
+      <xs:element name="buttonPushedResponse:i" type="void" xsi:type="array"></xs:element>
+      <xs:element name="waterEmptyRequest" type="type_waterEmptyRequest" xsi:type="array"></xs:element>
+      <xs:complexType name="type_waterEmptyRequest" xsi:type="array"></xs:complexType>
+      <xs:element name="waterEmptyResponse" type="void" xsi:type="array"></xs:element>
+      <xs:element name="waterRefilledRequest" type="type_waterRefilledRequest" xsi:type="array"></xs:element>
+      <xs:complexType name="type_waterRefilledRequest" xsi:type="array"></xs:complexType>
+      <xs:element name="waterRefilledResponse" type="void" xsi:type="array"></xs:element>
+      
+	  <xs:element name="cupAvailableRequest:s" type="type_cupAvailableRequest:s" xsi:type="array"></xs:element>
+      <xs:complexType name="type_cupAvailableRequest:s" xsi:type="array">
+        <xs:element name="p0" type="xsd:string" description="CupRFID" xsi:type="array"></xs:element>
+      </xs:complexType>
+      <xs:element name="cupAvailableResponse:s" type="void" xsi:type="array"></xs:element>
+      
+      <xs:element name="cupUnavailableRequest:s" type="type_cupUnavailableRequest:s" xsi:type="array"></xs:element>
+      <xs:complexType name="type_cupUnavailableRequest:s" xsi:type="array">
+        <xs:element name="p0" type="xsd:string" description="CupRFID" xsi:type="array"></xs:element>
+      </xs:complexType>
+      <xs:element name="cupUnavailableResponse:s" type="void" xsi:type="array"></xs:element>
+      
+      <xs:element name="pumpOnRequest" type="type_pumpOnRequest" xsi:type="array"></xs:element>
+      <xs:complexType name="type_pumpOnRequest" xsi:type="array"></xs:complexType>
+      <xs:element name="pumpOnResponse" type="void" xsi:type="array"></xs:element>
+	  
+      <xs:element name="pumpOffRequest:i" type="type_pumpOffRequest:i" xsi:type="array"></xs:element>
+      <xs:complexType name="type_pumpOffRequest:i" xsi:type="array">
+        <xs:element name="p0" type="xsd:int" description="amount" xsi:type="array"></xs:element>
+      </xs:complexType>
+      <xs:element name="pumpOffResponse:i" type="void" xsi:type="array"></xs:element>
+      
+	  <xs:element name="finishedRequest" type="type_finishedRequest" xsi:type="array"></xs:element>
+      <xs:complexType name="type_finishedRequest" xsi:type="array"></xs:complexType>
+      <xs:element name="finishedResponse" type="void" xsi:type="array"></xs:element>
+      <xs:element name="ISaecoEvent" type="type_ISaecoEvent" xsi:type="array"></xs:element>
+      <xs:complexType name="type_ISaecoEvent" xsi:type="array">
+        <mc:constant name="ESPRESSO" type="xsd:int" value="0x01" xsi:type="array"></mc:constant>
+        <mc:constant name="COFFEE" type="xsd:int" value="0x02" xsi:type="array"></mc:constant>
+        <mc:constant name="WATER" type="xsd:int" value="0x04" xsi:type="array"></mc:constant>
+        <mc:constant name="MENU" type="xsd:int" value="0x08" xsi:type="array"></mc:constant>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:interface name="org.mundo.coffee.ISaecoEvent" xsi:type="array">
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="buttonPushed" xsi:type="array">
+      <wsdl:input element="buttonPushedRequest:i" xsi:type="array"></wsdl:input>
+      <wsdl:output element="buttonPushedResponse:i" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="waterEmpty" xsi:type="array">
+      <wsdl:input element="waterEmptyRequest" xsi:type="array"></wsdl:input>
+      <wsdl:output element="waterEmptyResponse" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="waterRefilled" xsi:type="array">
+      <wsdl:input element="waterRefilledRequest" xsi:type="array"></wsdl:input>
+      <wsdl:output element="waterRefilledResponse" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="cupAvailable" xsi:type="array">
+      <wsdl:input element="cupAvailableRequest:s" xsi:type="array"></wsdl:input>
+      <wsdl:output element="cupAvailableResponse:s" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="cupUnavailable" xsi:type="array">
+      <wsdl:input element="cupUnavailableRequest:s" xsi:type="array"></wsdl:input>
+      <wsdl:output element="cupUnavailableResponse:s" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="pumpOn" xsi:type="array">
+      <wsdl:input element="pumpOnRequest" xsi:type="array"></wsdl:input>
+      <wsdl:output element="pumpOnResponse" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="pumpOff" xsi:type="array">
+      <wsdl:input element="pumpOffRequest:i" xsi:type="array"></wsdl:input>
+      <wsdl:output element="pumpOffResponse:i" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="finished" xsi:type="array">
+      <wsdl:input element="finishedRequest" xsi:type="array"></wsdl:input>
+      <wsdl:output element="finishedResponse" xsi:type="array"></wsdl:output>
+    </operation>
+  </wsdl:interface>
+  <wsdl:service name="%SERVICE_INSTANCE_NAME%" interface="org.mundo.coffee.ISaecoEvent" xsi:type="array">
+    <wsdl:endpoint name="org.mundo.coffee.ISaecoEventEndpoint" address="%SERVICE_CHANNEL_NAME%" xsi:type="array"></wsdl:endpoint>
+  </wsdl:service>
+</wsdl:description>

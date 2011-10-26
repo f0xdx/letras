@@ -29,7 +29,7 @@ class ChatService extends Service implements IChat {
       BufferedReader r=new BufferedReader(new InputStreamReader(System.in));
       String ln;
       while ( (ln=r.readLine())!=null && !ln.equals(".") )
-        doChat.chatMessage(ln, doChat.ONEWAY_MULTICAST);
+        doChat.chatMessage(ln, doChat.ONEWAY);
     }
     catch (Exception x) {
       x.printStackTrace();

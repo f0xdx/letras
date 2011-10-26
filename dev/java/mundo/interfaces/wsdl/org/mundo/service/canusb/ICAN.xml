@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions" xsi:type="array">
+  <wsdl:types xsi:type="array">
+    <xs:schema xsi:type="array">
+      <xs:element name="sendRequest:i,b[" type="type_sendRequest:i,b[" xsi:type="array"></xs:element>
+      <xs:complexType name="type_sendRequest:i,b[" xsi:type="array">
+        <xs:element name="p0" type="xsd:int" description="msgId" xsi:type="array"></xs:element>
+        <xs:element name="p1" type="byte[]" description="payload" xsi:type="array"></xs:element>
+      </xs:complexType>
+      <xs:element name="sendResponse:i,b[" type="xsd:boolean" xsi:type="array"></xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:interface name="org.mundo.service.canusb.ICAN" xsi:type="array">
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="send" xsi:type="array">
+      <wsdl:input element="sendRequest:i,b[" xsi:type="array"></wsdl:input>
+      <wsdl:output element="sendResponse:i,b[" xsi:type="array"></wsdl:output>
+    </operation>
+  </wsdl:interface>
+  <wsdl:service name="%SERVICE_INSTANCE_NAME%" interface="org.mundo.service.canusb.ICAN" xsi:type="array">
+    <wsdl:endpoint name="org.mundo.service.canusb.ICANEndpoint" address="%SERVICE_CHANNEL_NAME%" xsi:type="array"></wsdl:endpoint>
+  </wsdl:service>
+</wsdl:description>

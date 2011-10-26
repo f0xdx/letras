@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions" xsi:type="array">
+  <wsdl:types xsi:type="array">
+    <xs:schema xsi:type="array">
+      <xs:element name="Options" type="type_Options" xsi:type="array"></xs:element>
+      <xs:complexType name="type_Options" xsi:type="array">
+        <xs:element name="channelName" type="xsd:string" xsi:type="array"></xs:element>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <mc:serialization name="org.mundo.service.serial.Options" element="Options" xsi:type="array"></mc:serialization>
+</wsdl:description>
