@@ -71,12 +71,13 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 	public void received(Message msg, MessageContext mc) {
 		Object obj = msg.getObject();
 		if (obj instanceof PenEvent) {
-			if (((PenEvent) obj).state() == IPenState.DOWN) {
+			PenEvent evt = (PenEvent) obj;
+			if (evt.state() == IPenState.DOWN) {
 				// Trace started
 				this.currentTrace = new Trace();
 				this.notifyTraceStarted(this.penId, this.currentTrace);
 			}
-			else {
+			else if (evt.state() == IPenState.UP ){
 				// Trace somehow ended
 				di.add(this.currentTrace);
 				this.notifyTraceEnded(this.penId, this.currentTrace);
