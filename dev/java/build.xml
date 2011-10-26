@@ -290,7 +290,7 @@
 
 
     <target name="create_drivers" 
-            depends="compile,cr_drv_nokia,cr_drv_logitech,cr_drv_adp201,cr_drv_adp301" 
+            depends="compile,cr_drv_nokia,cr_drv_logitech,cr_drv_adp301" 
             description="Creates and copies used drivers">
 	<echo>[creating pen drivers]</echo>
         <mkdir dir="${bin}/rdps/drivers" />
