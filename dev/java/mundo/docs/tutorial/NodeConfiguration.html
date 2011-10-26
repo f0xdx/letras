@@ -1,0 +1,636 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+<title> NodeConfiguration &lt; Mundo &lt; Foswiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="alternate" href="http://127.0.0.1/foswiki/bin/edit/Mundo/NodeConfiguration?t=1295995548" type="application/x-wiki" title="edit NodeConfiguration" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<meta name="robots" content="noindex" /><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/foswiki/bin/view/Mundo/WebRss" />
+<style type="text/css" media="all">
+@import url('style/base.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/layout.css');
+@import url('style/style.css');
+@import url('style/colors.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/column_left.css');
+@import url('style/variant_foswiki_noframe.css');
+</style><style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .foswikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#efefef;
+	}
+	#patternTopBarContents { background-image:url(/foswiki/pub/System/PatternSkin/header5.gif); background-repeat:repeat-x;}
+#patternTopBarContents { background-color:#ffffff;}
+.patternBookView {
+	border-color:#efefef;
+}
+.patternPreviewPage #patternMain {
+	/* uncomment to set the preview image */
+	/*background-image:url("/foswiki/pub/System/PreviewBackground/preview2bg.gif");*/
+}
+</style>
+<style type="text/css" media="all">
+@import url('style/print.css');
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	height:1%;
+	overflow-x:auto;
+}
+.foswikiAttachments,
+.foswikiForm,
+.foswikiHelp,
+.foswikiPreviewArea,
+.patternPreviewPage .foswikiForm,
+.patternSigLine,
+.patternToolBar,
+.patternTop,
+.patternTopicAction,
+#patternSideBarContents .patternLeftBarPersonal,
+#patternSideBarContents h2,
+#patternSideBarContents li,
+#patternTopBarButtons ul {
+	height:1%;
+}
+#patternSideBarContents .patternLeftBarPersonal {
+	width:100%;
+}
+.foswikiFormStep {
+	height:100%;
+}
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border:2px solid #ccc;
+}
+</style><![endif]-->
+<!--[if gt IE 8 ]><style type="text/css" media="screen">
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	box-shadow: 0 0 10px #ccc;
+}
+</style><![endif]-->
+<meta name="foswiki.TWISTYANIMATIONSPEED" content="fast" /><!--TWISTYPLUGIN::META-->
+<style type="text/css" media="all">
+.foswikiTable {border-width:1px}
+.foswikiTable .tableSortIcon img {padding-left:.3em; vertical-align:text-bottom}
+.foswikiTable td {border-style:solid none; vertical-align:top}
+.foswikiTable th {border-style:none solid; vertical-align:top; background-color:#d6d3cf; color:#000000}
+.foswikiTable th a:link {color:#000000}
+.foswikiTable th a:visited {color:#000000}
+.foswikiTable th a:hover {color:#000000; background-color:#d6d3cf}
+.foswikiTable th.foswikiSortedCol {background-color:#c4c1ba}
+.foswikiTable tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td.foswikiSortedCol {background-color:#f0f0ee}
+</style><!--TABLEPLUGIN_default-->
+<meta name="foswiki.PUBURL" content="http://127.0.0.1/foswiki/pub" /> <!-- PUBURL -->
+<meta name="foswiki.PUBURLPATH" content="/foswiki/pub" /> <!-- PUBURLPATH -->
+<meta name="foswiki.SCRIPTSUFFIX" content="" /> <!-- SCRIPTSUFFIX -->
+<meta name="foswiki.SCRIPTURL" content="http://127.0.0.1/foswiki/bin" /> <!-- SCRIPTURL -->
+<meta name="foswiki.SCRIPTURLPATH" content="/foswiki/bin" /> <!-- SCRIPTURLPATH -->
+<meta name="foswiki.SERVERTIME" content="25%20Jan%202011%20-%2023:45" /> <!-- SERVERTIME -->
+<meta name="foswiki.SKIN" content="pattern" /> <!-- SKIN -->
+<meta name="foswiki.SYSTEMWEB" content="System" /> <!-- SYSTEMWEB -->
+<meta name="foswiki.TOPIC" content="NodeConfiguration" /> <!-- TOPIC -->
+<meta name="foswiki.USERNAME" content="guest" /> <!-- USERNAME -->
+<meta name="foswiki.USERSWEB" content="Main" /> <!-- USERSWEB -->
+<meta name="foswiki.WEB" content="Mundo" /> <!-- WEB -->
+<meta name="foswiki.WIKINAME" content="WikiGuest" /> <!-- WIKINAME -->
+<meta name="foswiki.WIKIUSERNAME" content="Main.WikiGuest" /> <!-- WIKIUSERNAME -->
+<meta name="foswiki.NAMEFILTER" content="%5b%5cs%5c*%3f~%5e%5c%24%40%25%60%22'%26%3b%7c%3c%3e%5c%5b%5c%5d%23%5cx00-%5cx1f%5d" /> <!-- NAMEFILTER --><!--JQUERYPLUGIN::FOSWIKI::META-->
+</head>
+<body class="patternViewPage patternPrintPage">
+<a name="PageTop"></a><div class="foswikiPage"><div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain">
+<div id="patternMainContents">
+<div class="patternContent"><div class="foswikiTopic"> <h1><a name="Node_Configuration"></a>  Node Configuration </h1>
+<p />
+<a name="foswikiTOC"></a><div class="foswikiToc"> <ul>
+<li> <a href="?cover=print#Node_Configuration"> Node Configuration </a> <ul>
+<li> <a href="?cover=print#node.conf.xml"> node.conf.xml </a>
+</li> <li> <a href="?cover=print#General_Settings"> General Settings </a> <ul>
+<li> <a href="?cover=print#Node_name"> Node name </a>
+</li></ul> 
+</li> <li> <a href="?cover=print#ServiceManager"> ServiceManager </a> <ul>
+<li> <a href="?cover=print#instances"> instances </a>
+</li> <li> <a href="?cover=print#new_45instance"> new-instance </a>
+</li> <li> <a href="?cover=print#plugin_45directory"> plugin-directory </a>
+</li></ul> 
+</li> <li> <a href="?cover=print#IPTransportService"> IPTransportService </a> <ul>
+<li> <a href="?cover=print#discovery"> discovery </a>
+</li> <li> <a href="?cover=print#broadcast"> broadcast </a>
+</li> <li> <a href="?cover=print#broadcast_47nets"> broadcast/nets </a> <ul>
+<li> <a href="?cover=print#Broadcast_example_1:_10.x.x.x"> Broadcast example 1: 10.x.x.x </a>
+</li> <li> <a href="?cover=print#Broadcast_example_2:_VPN"> Broadcast example 2: VPN </a>
+</li></ul> 
+</li> <li> <a href="?cover=print#multicast"> multicast </a>
+</li> <li> <a href="?cover=print#hosts"> hosts </a>
+</li> <li> <a href="?cover=print#Example_configurations"> Example configurations </a> <ul>
+<li> <a href="?cover=print#Discovery_example_1:_Localhost"> Discovery example 1: Localhost </a>
+</li> <li> <a href="?cover=print#Discovery_example_2:_LAN"> Discovery example 2: LAN </a>
+</li> <li> <a href="?cover=print#Discovery_example_3:_ActiveSync"> Discovery example 3: ActiveSync </a>
+</li> <li> <a href="?cover=print#Discovery_example_4:_Firewalled_Broadcasts"> Discovery example 4: Firewalled Broadcasts </a>
+</li></ul> 
+</li></ul> 
+</li> <li> <a href="?cover=print#PluginManager"> PluginManager </a> <ul>
+<li> <a href="?cover=print#exclude"> exclude </a>
+</li></ul> 
+</li> <li> <a href="?cover=print#Logging_Configuration"> Logging Configuration </a> <ul>
+<li> <a href="?cover=print#log_45levels"> log-levels </a>
+</li> <li> <a href="?cover=print#Logging_example_configuration"> Logging example configuration </a>
+</li></ul> 
+</li></ul> 
+</li></ul> 
+</div>
+<p />
+<h2><a name="node.conf.xml"></a>  node.conf.xml </h2>
+<p />
+The configuration file is named <code>node.conf.xml</code> and usually resides in the same directory as the program. The structure of this file is as follows:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;NodeConfig xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> xmlns:xsi=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;http://www.w3.org/1999/XMLSchema-instance&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;name ... ?&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;ServiceManager ...&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;Logger ... ?&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/NodeConfig&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Type default for <code>xsi:type</code> is <code>string</code>. For that reason, the type specification can be omitted for string options.
+<p /> <ul>
+<li> <code>...&gt;</code>: appears once
+</li> <li> <code>... ?&gt;</code>: is optional
+</li> <li> <code>... *&gt;</code>: appears zero or many times
+</li></ul> 
+<p />
+<h2><a name="General_Settings"></a>  General Settings </h2>
+<p />
+<h3><a name="Node_name"></a>  Node name </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;name xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>NAME<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The NAME attribute defines the friendly name for the node. The node name can be displayed in the <em>Inspect</em> application and is very helpful during monitoring and debugging.
+<p />
+<h2><a name="ServiceManager"></a>  <span class="foswikiNewLink">ServiceManager<a href="/foswiki/bin/edit/Mundo/ServiceManager?topicparent=Mundo.NodeConfiguration" rel="nofollow" title="Create this topic">?</a></span> </h2>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;ServiceManager xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;ServiceManager$Options&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;instances ...&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;plugin-directory ... ?&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/ServiceManager&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="instances"></a>  instances </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;instances xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;new-instance ... *&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/instances&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="new_45instance"></a>  new-instance </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;new-instance xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;name xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;classname xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...<B><FONT COLOR="#A020F0">&lt;/classname&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;config ...?&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/new-instance&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>name</code>: The friendly name of the new service instance.
+<p />
+<code>classname</code>: The class name of the service class to create.
+<p />
+<code>config</code>: Configuration options for the new service instance. This is service-specific.
+<p />
+<h3><a name="plugin_45directory"></a>  plugin-directory </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;plugin-directory xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...<B><FONT COLOR="#A020F0">&lt;/plugin-directory&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>plugin-directory</code>: Specifies the directory to search for <span class="foswikiNewLink">components<a href="/foswiki/bin/edit/Mundo/JComponents?topicparent=Mundo.NodeConfiguration" rel="nofollow" title="Create this topic">?</a></span>.
+<p />
+<h2><a name="IPTransportService"></a>  <span class="foswikiNewLink">IPTransportService<a href="/foswiki/bin/edit/Mundo/IPTransportService?topicparent=Mundo.NodeConfiguration" rel="nofollow" title="Create this topic">?</a></span> </h2>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;new-instance xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;name&gt;</FONT></B>IPTransport<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;classname&gt;</FONT></B>org.mundo.net.ip.IPTransportService<B><FONT COLOR="#A020F0">&lt;/classname&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;config xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$Options&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;primary-port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/primary-port&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;protocol xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/protocol&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;tcp-server xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/tcp-server&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;udp-server xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/udp-server&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;localhost-udp xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/localhost-udp&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;route-timeout xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/route-timeout&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;connection-timeout xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/connection-timeout&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;keep-open xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/keep-open&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;per-interface-server xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/per-interface-server&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;discovery ...&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;broadcast ...&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;multicast ...&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;hosts ...&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/config&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/new-instance&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>primaryPort</code> (default: 4242): The primary port is a well known TCP port that is shared by all nodes participating in the same overlay network. When a node is started, it tries to allocate the primary port. This allocation will fail if another <a href="/foswiki/bin/view/Mundo/MundoCore">MundoCore</a> process is already running on the same machine. In that case, the process allocates any other free port for its server and connects to the primary port on the local machine. If the connection to the primary port breaks, this means that the process that held the primary port has shut down. When this happens, the current process tries to allocate the primary port. Thus, if at least one MundoCore process is running on a machine, some process will listen on the primary port.
+<p />
+<code>discovery</code>: Specifies the options for node discovery.
+<p />
+<code>tcp-server</code>: Specifies if the node supports incoming TCP connections. In almost any case a node also provides TCP server functionality. However, for example, a node running on a cellphone might set this option to <code>false</code> and therefore only act as a TCP client.
+<p />
+<code>udp-server</code>: Defines whether this node allows incoming UDP connections.
+<p />
+<code>route-timeout</code> (default: 75): Defines the timeout in seconds for routes. The route timeout counter is reset each time a broadcast discovery packet or a neighbors message is received. Usually, <code>route-timeout</code> should be set to something like <code>2.5 * broadcast-interval</code> to take possible packet losses into account. If UDP packet loss in the network is high, then the factor between <code>route-timeout</code> and <code>broadcast-interval</code> should be increased. The value of <code>routeTimeout</code> also determines how long it takes, in the worst case, for the node to realize that a peer has become unavailable.
+<p />
+<code>connection-timeout</code> (default: 10): Defines the idle timeout in seconds for connections. MundoCore closes unused TCP connections after a relatively short time and re-opens them on demand.
+<p />
+<code>keep-open</code>: Defines if idle TCP connections should be closed automatically. If set to <code>true</code>, this node will ignore the <code>connectionTimeout</code> option and will not close any connections automatically. In addition, the node requests peers at connection setup to keep connections open from the other side as well. Otherwise, peers could close connections based on their local idle timeout counters. The <code>keep-open</code> option should not be carelessly set to <code>true</code>, because many connections will be opened during discovery that are useless in the long term. These connections will be closed automatically as soon as they become idle.
+<p />
+<code>per-interface-server</code>: Starts a TCP server for each network interface separately. If this option is set <code>false</code>, then this service will bind server sockets without specifying IP addresses. If this option is set <code>true</code>, then this service will perform separate bind operations for each IPv4 network interface. If a socket bind operation is performed without specifying an address, then the bind affects all IPv4 and IPv6 network interfaces. Now, it might occur that an IPv4 port is already allocated, but the corresponding IPv6 port is available. The operating system will return success on the bind operation, but the resulting socket is useless for IPv4.
+<p />
+<h3><a name="discovery"></a>  discovery </h3>
+<p />
+Specifies options for automatic peer discovery.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;discovery xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptDiscovery&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;connect-primary xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/connect-primary&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;send-neighbors xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/send-neighbors&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;attributes xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/attributes&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;required-attribute xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/required-attribute&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/discovery&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>connect-primary</code> (default: true): Defines if a node should try to connect to the local primary port. This mechanism allows to discover peer nodes running on the same computer even when no real network interface is present. Broadcast discovery would not work reliably in this case, because, e.g., the Windows loopback network interface randomly loses broadcast packets. The default value of \code{connectToPrimary} is \code{true}. There is usually no reason to disable this function.
+<p />
+<code>attributes</code> (default: ""): Defines a list of attributes for this node. This option can be used to restrict the scope of peer discovery. For example, <em>super peers</em> can identify themselves by setting certain attributes.
+<p />
+<code>required-attribute</code> (default: ""): Requires peers to have the specified attribute. This option can be used to restrict the scope of peer discovery. This node will only connect to nodes that have the specified attribute defined. For example, a node can define that it will only connect to super peers.
+<p />
+<h3><a name="broadcast"></a>  broadcast </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;broadcast xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptBroadcast&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;send xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/send&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;answer xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/answer&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;interval xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/interval&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;nets ...?&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/broadcast&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>answer</code> (default: false): Defines if the node responds to broadcast discovery packets. If a node receives a broadcast discovery packet, it opens a TCP connection to the originating node.
+<p />
+<code>interval</code> (default: 30): Defines the interval in seconds between sending broadcast packets.
+<p />
+<h3><a name="broadcast_47nets"></a>  broadcast/nets </h3>
+<p />
+The broadcast option defines the list of network interfaces on which broadcast discovery packets should be sent. If a <code>net</code> entry matches a network interface, then the specified <code>net</code> configuration settings will be used. For all other network interfaces, the <code>default</code> settings will be used. If <code>default</code> is omitted, then broadcasts will only be sent on the interfaces explicitly specified by <code>net</code> entries.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;broadcasts xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;net ...*&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;default ...?&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/broadcasts&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The <code>net</code> element has two subelements, <code>broadcast</code> and <code>netmask</code>. Both must be specified.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;net xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptNet&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;broadcast&gt;</FONT></B>...<B><FONT COLOR="#A020F0">&lt;/broadcast&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;netmask&gt;</FONT></B>...<B><FONT COLOR="#A020F0">&lt;/netmask&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/net&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+In the <em>default</em> entry, the broadcast address is omitted.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;default xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptNet&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;netmask&gt;</FONT></B>...<B><FONT COLOR="#A020F0">&lt;/netmask&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/default&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>broadcast</code>: The broadcast address to use. MundoCore will automatically search for a suitable network interface. If none can be found, the configuration entry is ignored. <code>broadcast</code> contains four decimal octets separated by dots. The broadcast address is defined as follows:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>broadcast = netaddr | (0xffffffff <B><FONT COLOR="#A020F0">&amp; ~netmask)
+</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>netmask</code>: Specifies an IPv4 netmask, which defines the class of the network. The string contains four decimal octets separated by dots.
+<p />
+These options can be used to override netmasks and broadcast addresses provided by the operating system. It is necessary to do so under the following two circumstances:
+<p /> <ul>
+<li> The Java API permits to enumerate the network interfaces present, but it does not provide netmasks. Thus, MundoCore assumes that each interface lives in a class C network. If this is not the case, the correct netmask and broadcast address must be specified in the configuration file.
+</li></ul> 
+<p /> <ul>
+<li> The C++ version is able to read out the netmasks from the operating system. However, the information obtained from the OS can be wrong (e.g., when using VPN connections on Windows CE) and must be overridden in the configuration file.
+</li></ul> 
+MundoCore automatically matches the available network interfaces with the configuration entries made in this section. An interface with <code>ipaddr</code> matches a configuration entry, if <code>(ipaddr &amp; netmask) =</code> netaddr= with <code>netaddr = (broadcast &amp; netmask)</code>.
+<p />
+If a match is found, then the <code>netmask</code> and <code>broadcast</code> attributes defined in the configuration override the settings of the network interface.
+<p />
+<h4><a name="Broadcast_example_1:_10.x.x.x"></a>  Broadcast example 1: 10.x.x.x </h4>
+<p />
+Consider a PDA with a WLAN interface that is configured as follows:
+<p />
+<table class="foswikiTable" rules="none" border="1">
+	<tbody>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> IP address: </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> 10.0.0.100 </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> broadcast: </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> 10.255.255.255 </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol foswikiLast"> netmask: </td>
+			<td class="foswikiTableCol1 foswikiLastCol foswikiLast"> 255.0.0.0 </td>
+		</tr>
+	</tbody></table>
+Since MundoCore Java is unable to get the netmask from the operating system, it assumes a class C network by default. However, some operating systems do not propagate broadcast packets at all, if a wrong broadcast address is specified.
+<p />
+To override broadcast and netmask with the correct values, make the following entry in the configuration file:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;net xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptNet&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;broadcast&gt;</FONT></B>10.255.255.255<B><FONT COLOR="#A020F0">&lt;/broadcast&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;netmask&gt;</FONT></B>255.0.0.0<B><FONT COLOR="#A020F0">&lt;/netmask&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/net&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h4><a name="Broadcast_example_2:_VPN"></a>  Broadcast example 2: VPN </h4>
+<p />
+Consider a PDA with a WLAN interface using a PPTP VPN. After connection establishment, the VPN client provides a virtual network interface with the following settings:
+<p />
+<table class="foswikiTable" rules="none" border="1">
+	<tbody>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> IP address: </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> 130.83.163.240 (set by DHCP) </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> broadcast: </td>
+			<td class="foswikiTableCol1 foswikiLastCol"> 130.83.255.255 </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol foswikiLast"> netmask: </td>
+			<td class="foswikiTableCol1 foswikiLastCol foswikiLast"> 255.255.0.0 </td>
+		</tr>
+	</tbody></table>
+The MundoCore C++ version uses the information provided by the operating system. However, the target network is in reality a half class C network and there seems to be no way to configure the correct netmask at the VPN client or server.
+<p />
+To override broadcast and netmask with the correct values, make the following entry in the configuration file:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;net xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptNet&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;broadcast&gt;</FONT></B>130.83.163.255<B><FONT COLOR="#A020F0">&lt;/broadcast&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;netmask&gt;</FONT></B>255.255.255.128<B><FONT COLOR="#A020F0">&lt;/netmask&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/net&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="multicast"></a>  multicast </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;multicast xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptMulticast&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;group xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/group&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/port&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;ttl xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/ttl&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;send xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/send&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;answer xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/answer&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;interval xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/interval&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/multicast&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h3><a name="hosts"></a>  hosts </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;hosts xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;host ...*&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/hosts&gt;</FONT></B>
+
+<B><FONT COLOR="#A020F0">&lt;host xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptHost&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;name xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/port&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;retry-interval xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/retry-interval&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;disconnected-retry-interval xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/disconnected-retry-interval&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/host&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Requires <span class="foswikiNewLink">MoundoCore<a href="/foswiki/bin/edit/Mundo/MoundoCore?topicparent=Mundo.NodeConfiguration" rel="nofollow" title="Create this topic">?</a></span> to explicitly connect to a node. MundoCore will try to open a TCP connection to the specified host and port.
+<p />
+<code>name</code>: Defines the host name or IP address of the peer.
+<p />
+<code>port</code>: Defines the port number on the peer. If omitted, the port number defaults to the primary port number of this node.
+<p />
+<code>retry-interval</code>: Defines the retry interval in seconds. If <a href="/foswiki/bin/view/Mundo/MundoCore">MundoCore</a> is unable to open the specified connection, then it will retry every <code>retry-interval</code> seconds. If this option is omitted, MundoCore will only make a single connection attempt at program startup and no further retries.
+<p />
+<code>disconnected-retry-interval</code>: Defines the retry interval in seconds. This value overrides <code>retry-interval</code> in case that this node is "isolated", i.e., it does not have any connection open to any peer.
+<p />
+<h3><a name="Example_configurations"></a>  Example configurations </h3>
+<p />
+<h4><a name="Discovery_example_1:_Localhost"></a>  Discovery example 1: Localhost </h4>
+<p />
+If no discovery configuration is present, then MundoCore uses a secure default configuration. The node will only discover other peers running on the same host and it will not respond to discovery requests received from the network. This internal default configuration is equivalent to the following configuration:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;IPTransportService xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;primary-port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>4242<B><FONT COLOR="#A020F0">&lt;/primary-port&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;discovery xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptDiscovery&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;connect-primary xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>true<B><FONT COLOR="#A020F0">&lt;/connect-primary&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/discovery&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;broadcast xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptBroadcast&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;send xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>false<B><FONT COLOR="#A020F0">&lt;/send&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;answer xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>false<B><FONT COLOR="#A020F0">&lt;/answer&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/broadcast&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/IPTransportService&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h4><a name="Discovery_example_2:_LAN"></a>  Discovery example 2: LAN </h4>
+<p />
+To enable discovery within the local subnet, the options <code>broadcasts</code> and <code>answer-broadcasts</code> must be set:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;IPTransportService xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;primary-port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>4242<B><FONT COLOR="#A020F0">&lt;/primary-port&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;broadcast xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptBroadcast&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;send xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>true<B><FONT COLOR="#A020F0">&lt;/send&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;nets xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;default xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptNet&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+        <B><FONT COLOR="#A020F0">&lt;netmask&gt;</FONT></B>255.255.255.0<B><FONT COLOR="#A020F0">&lt;/netmask&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;/default&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;/nets&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/broadcast&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/IPTransportService&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+This configuration should suit most applications. A couple of special configurations are described in the following sections.
+<p />
+<h4><a name="Discovery_example_3:_ActiveSync"></a>  Discovery example 3: <span class="foswikiNewLink">ActiveSync<a href="/foswiki/bin/edit/Mundo/ActiveSync?topicparent=Mundo.NodeConfiguration" rel="nofollow" title="Create this topic">?</a></span> </h4>
+<p />
+It is possible to use the USB connection between PDA and host for communication. To set up this type of connection, install the following configuration file on the PDA:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;IPTransportService xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;primary-port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>4242<B><FONT COLOR="#A020F0">&lt;/primary-port&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;hosts xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;host xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptHost&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;name&gt;</FONT></B>192.168.55.100<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;retry-interval xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>3<B><FONT COLOR="#A020F0">&lt;/retry-interval&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;/host&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/hosts&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;keep-open xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>true<B><FONT COLOR="#A020F0">&lt;/keep-open&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/IPTransportService&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The <code>keep-open</code> option is set, because TCP connections can only be opened from the PDA to the host and not vice versa. The host would not be able to reopen connections.
+<p />
+<h4><a name="Discovery_example_4:_Firewalled_Broadcasts"></a>  Discovery example 4: Firewalled Broadcasts </h4>
+<p />
+If UDP broadcast packets are blocked by the network, then connections can be configured explicitly. In the following, we assume that a server process is running on host <code>mundo</code> and one or multiple clients want to connect to it.
+<p />
+Configuration file on server:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;primary-port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>4242<B><FONT COLOR="#A020F0">&lt;/primary-port&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Configuration file on client:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;primary-port xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>4242<B><FONT COLOR="#A020F0">&lt;/primary-port&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;hosts xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;host xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;IPTransportService$OptHost&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;name&gt;</FONT></B>mundo.tk.informatik.tu-darmstadt.de<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;retry-interval xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>3<B><FONT COLOR="#A020F0">&lt;/retry-interval&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/host&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/hosts&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="PluginManager"></a>  <span class="foswikiNewLink">PluginManager<a href="/foswiki/bin/edit/Mundo/PluginManager?topicparent=Mundo.NodeConfiguration" rel="nofollow" title="Create this topic">?</a></span> </h2>
+<p />
+Specifies options for <code>PluginManager</code>.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;PluginManager xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;enable-subdirectories xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/enable-subdirectories&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;exclude ...?&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/PluginManager&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>enable-subdirectories</code> (default: false): You can set up the plugin manager to search not only JAR files, but also subdirectories that contain classfiles and other resources accoding to Java's standard file lookup. Because this may lead to security holes, you must explicitly enable this feature using the <code>enable-subdirectories</code> attribute.
+<p />
+<h3><a name="exclude"></a>  exclude </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;exclude xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;path xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...*<B><FONT COLOR="#A020F0">&lt;/path&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/exclude&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+If necessary, you can explicitly exclude one or more JAR files or subdirectories from the plugin mechanism. This is especially useful if you are using an IDE like Eclipse that duplicates the <code>META-INF/plugin.xml</code> file between a source and a binary directory.
+<p />
+<h2><a name="Logging_Configuration"></a>  Logging Configuration </h2>
+<p />
+Specifies options for logging.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;Logger xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;filename xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/filename&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;console xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/console&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;default-log-level xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...?<B><FONT COLOR="#A020F0">&lt;/default-log-level&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;log-levels ...?&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/Logger&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>filename</code>: Specifies the name of the log file.
+<p />
+<code>console</code>: If true, log output will be printed to the console.
+<p />
+<code>default-log-level</code>: Defines the default log level. Can be overridden by settings in <code>log-levels</code>.
+<p />
+<code>log-levels</code>: Allows to override the log level for certain loggers.
+<p />
+<h3><a name="log_45levels"></a>  log-levels </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;log-levels xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;a ...*&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/log-levels&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;a xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;category xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...<B><FONT COLOR="#A020F0">&lt;/category&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;log-level xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:string&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>...<B><FONT COLOR="#A020F0">&lt;/log-level&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/a&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>category</code>: The name of the <code>Logger</code> object created in the service implementation.
+<p />
+<code>log-level</code>: The log level for the specified logger.
+<p />
+The supported log levels are shown in the following table. You can use any notation to specify a log level (level, name, or short name).
+<p />
+<table class="foswikiTable" rules="none" border="1">
+	<tbody>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> level </td>
+			<td class="foswikiTableCol1"> name </td>
+			<td class="foswikiTableCol2 foswikiLastCol"> short name </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> 0 </td>
+			<td class="foswikiTableCol1"> OFF </td>
+			<td class="foswikiTableCol2 foswikiLastCol"> &nbsp; </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> 1 </td>
+			<td class="foswikiTableCol1"> SEVERE </td>
+			<td class="foswikiTableCol2 foswikiLastCol"> S </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> 2 </td>
+			<td class="foswikiTableCol1"> WARNING </td>
+			<td class="foswikiTableCol2 foswikiLastCol"> W </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> 3 </td>
+			<td class="foswikiTableCol1"> INFO </td>
+			<td class="foswikiTableCol2 foswikiLastCol"> I </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> 4 </td>
+			<td class="foswikiTableCol1"> CONFIG </td>
+			<td class="foswikiTableCol2 foswikiLastCol"> C </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol"> 5 </td>
+			<td class="foswikiTableCol1"> FINE </td>
+			<td class="foswikiTableCol2 foswikiLastCol"> F </td>
+		</tr>
+		<tr class="foswikiTableEven foswikiTableRowdataBgSorted1 foswikiTableRowdataBg1">
+			<td class="foswikiTableCol0 foswikiFirstCol"> 6 </td>
+			<td class="foswikiTableCol1"> FINER </td>
+			<td class="foswikiTableCol2 foswikiLastCol"> &nbsp; </td>
+		</tr>
+		<tr class="foswikiTableOdd foswikiTableRowdataBgSorted0 foswikiTableRowdataBg0">
+			<td class="foswikiTableCol0 foswikiFirstCol foswikiLast"> 7 </td>
+			<td class="foswikiTableCol1 foswikiLast"> FINEST </td>
+			<td class="foswikiTableCol2 foswikiLastCol foswikiLast"> &nbsp; </td>
+		</tr>
+	</tbody></table>
+<p />
+<h3><a name="Logging_example_configuration"></a>  Logging example configuration </h3>
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;Logger xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;filename&gt;</FONT></B>log.txt<B><FONT COLOR="#A020F0">&lt;/filename&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;console xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>true<B><FONT COLOR="#A020F0">&lt;/console&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;default-log-level&gt;</FONT></B>WARNING<B><FONT COLOR="#A020F0">&lt;/default-log-level&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;log-levels xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;a xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;category&gt;</FONT></B>meta<B><FONT COLOR="#A020F0">&lt;/category&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;log-level&gt;</FONT></B>SEVERE<B><FONT COLOR="#A020F0">&lt;/log-level&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;/a&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;a xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;category&gt;</FONT></B>oa<B><FONT COLOR="#A020F0">&lt;/category&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;log-level&gt;</FONT></B>FINEST<B><FONT COLOR="#A020F0">&lt;/log-level&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;/a&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/log-levels&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/Logger&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+</div></div><!-- /patternContent-->
+</div></div></div></div></div></div></div></div>
+</body></html>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions" xsi:type="array">
+  <wsdl:types xsi:type="array">
+    <xs:schema xsi:type="array">
+      <xs:element name="lineReceivedRequest:s" type="type_lineReceivedRequest:s" xsi:type="array"></xs:element>
+      <xs:complexType name="type_lineReceivedRequest:s" xsi:type="array">
+        <xs:element name="p0" type="xsd:string" description="" xsi:type="array"></xs:element>
+      </xs:complexType>
+      <xs:element name="lineReceivedResponse:s" type="void" xsi:type="array"></xs:element>
+      <xs:element name="portConnectedRequest" type="type_portConnectedRequest" xsi:type="array"></xs:element>
+      <xs:complexType name="type_portConnectedRequest" xsi:type="array"></xs:complexType>
+      <xs:element name="portConnectedResponse" type="void" xsi:type="array"></xs:element>
+      <xs:element name="portDisconnectedRequest" type="type_portDisconnectedRequest" xsi:type="array"></xs:element>
+      <xs:complexType name="type_portDisconnectedRequest" xsi:type="array"></xs:complexType>
+      <xs:element name="portDisconnectedResponse" type="void" xsi:type="array"></xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:interface name="org.mundo.service.serial.ISerialReceiver" xsi:type="array">
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="lineReceived" xsi:type="array">
+      <wsdl:input element="lineReceivedRequest:s" xsi:type="array"></wsdl:input>
+      <wsdl:output element="lineReceivedResponse:s" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="portConnected" xsi:type="array">
+      <wsdl:input element="portConnectedRequest" xsi:type="array"></wsdl:input>
+      <wsdl:output element="portConnectedResponse" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="portDisconnected" xsi:type="array">
+      <wsdl:input element="portDisconnectedRequest" xsi:type="array"></wsdl:input>
+      <wsdl:output element="portDisconnectedResponse" xsi:type="array"></wsdl:output>
+    </operation>
+  </wsdl:interface>
+  <wsdl:service name="%SERVICE_INSTANCE_NAME%" interface="org.mundo.service.serial.ISerialReceiver" xsi:type="array">
+    <wsdl:endpoint name="org.mundo.service.serial.ISerialReceiverEndpoint" address="%SERVICE_CHANNEL_NAME%" xsi:type="array"></wsdl:endpoint>
+  </wsdl:service>
+</wsdl:description>

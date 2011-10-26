@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions">
+  <wsdl:types>
+    <xs:schema>
+      <xs:element name="VideoFormat" type="type_VideoFormat"></xs:element>
+      <xs:complexType name="type_VideoFormat">
+        <xs:element name="width" type="xsd:int"></xs:element>
+        <xs:element name="height" type="xsd:int"></xs:element>
+        <xs:element name="depth" type="xsd:int"></xs:element>
+        <xs:element name="palette" type="xsd:int"></xs:element>
+        <xs:element name="framesPerSec" type="xsd:int"></xs:element>
+        <mc:constant name="PALETTE_GREY" type="xsd:int" value="1"></mc:constant>
+        <mc:constant name="PALETTE_HI240" type="xsd:int" value="2"></mc:constant>
+        <mc:constant name="PALETTE_RGB565" type="xsd:int" value="3"></mc:constant>
+        <mc:constant name="PALETTE_RGB24" type="xsd:int" value="4"></mc:constant>
+        <mc:constant name="PALETTE_RGB32" type="xsd:int" value="5"></mc:constant>
+        <mc:constant name="PALETTE_RGB555" type="xsd:int" value="6"></mc:constant>
+        <mc:constant name="PALETTE_YUV422" type="xsd:int" value="7"></mc:constant>
+        <mc:constant name="PALETTE_YUYV" type="xsd:int" value="8"></mc:constant>
+        <mc:constant name="PALETTE_UYVY" type="xsd:int" value="9"></mc:constant>
+        <mc:constant name="PALETTE_YUV420" type="xsd:int" value="10"></mc:constant>
+        <mc:constant name="PALETTE_YUV411" type="xsd:int" value="11"></mc:constant>
+        <mc:constant name="PALETTE_RAW" type="xsd:int" value="12"></mc:constant>
+        <mc:constant name="PALETTE_YUV422P" type="xsd:int" value="13"></mc:constant>
+        <mc:constant name="PALETTE_YUV411P" type="xsd:int" value="14"></mc:constant>
+        <mc:constant name="PALETTE_YUV420P" type="xsd:int" value="15"></mc:constant>
+        <mc:constant name="PALETTE_YUV410P" type="xsd:int" value="16"></mc:constant>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <mc:serialization name="org.mundo.media.VideoFormat" element="VideoFormat">
+  </mc:serialization>
+</wsdl:description>

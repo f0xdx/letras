@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions" xsi:type="array">
+  <wsdl:types xsi:type="array">
+    <xs:schema xsi:type="array">
+      <xs:element name="putRequest:TypedMap" type="type_putRequest:TypedMap" xsi:type="array"></xs:element>
+      <xs:complexType name="type_putRequest:TypedMap" xsi:type="array">
+        <xs:element name="p0" type="org.mundo.rt.TypedMap" description="m" xsi:type="array"></xs:element>
+      </xs:complexType>
+      <xs:element name="putResponse:TypedMap" type="void" xsi:type="array"></xs:element>
+      <xs:element name="getRequest" type="type_getRequest" xsi:type="array"></xs:element>
+      <xs:complexType name="type_getRequest" xsi:type="array"></xs:complexType>
+      <xs:element name="getResponse" type="org.mundo.rt.TypedMap" xsi:type="array"></xs:element>
+      <xs:element name="selectRequest:s" type="type_selectRequest:s" xsi:type="array"></xs:element>
+      <xs:complexType name="type_selectRequest:s" xsi:type="array">
+        <xs:element name="p0" type="xsd:string" description="activeClass" xsi:type="array"></xs:element>
+      </xs:complexType>
+      <xs:element name="selectResponse:s" type="java.util.List" xsi:type="array"></xs:element>
+      <xs:element name="WMStoreService" type="type_WMStoreService" xsi:type="array"></xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:interface name="org.mundo.service.wmstore.WMStoreService" xsi:type="array">
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="put" xsi:type="array">
+      <wsdl:input element="putRequest:TypedMap" xsi:type="array"></wsdl:input>
+      <wsdl:output element="putResponse:TypedMap" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="get" xsi:type="array">
+      <wsdl:input element="getRequest" xsi:type="array"></wsdl:input>
+      <wsdl:output element="getResponse" xsi:type="array"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="select" xsi:type="array">
+      <wsdl:input element="selectRequest:s" xsi:type="array"></wsdl:input>
+      <wsdl:output element="selectResponse:s" xsi:type="array"></wsdl:output>
+    </operation>
+  </wsdl:interface>
+  <wsdl:service name="%SERVICE_INSTANCE_NAME%" interface="org.mundo.service.wmstore.WMStoreService" xsi:type="array">
+    <wsdl:endpoint name="org.mundo.service.wmstore.WMStoreServiceEndpoint" address="%SERVICE_CHANNEL_NAME%" xsi:type="array"></wsdl:endpoint>
+  </wsdl:service>
+</wsdl:description>

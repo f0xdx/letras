@@ -1,0 +1,365 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+<title> PluginTutorial &lt; Mundo &lt; Foswiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="alternate" href="http://127.0.0.1/foswiki/bin/edit/Mundo/PluginTutorial?t=1295995546" type="application/x-wiki" title="edit PluginTutorial" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<meta name="robots" content="noindex" /><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/foswiki/bin/view/Mundo/WebRss" />
+<style type="text/css" media="all">
+@import url('style/base.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/layout.css');
+@import url('style/style.css');
+@import url('style/colors.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/column_left.css');
+@import url('style/variant_foswiki_noframe.css');
+</style><style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .foswikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#efefef;
+	}
+	#patternTopBarContents { background-image:url(/foswiki/pub/System/PatternSkin/header5.gif); background-repeat:repeat-x;}
+#patternTopBarContents { background-color:#ffffff;}
+.patternBookView {
+	border-color:#efefef;
+}
+.patternPreviewPage #patternMain {
+	/* uncomment to set the preview image */
+	/*background-image:url("/foswiki/pub/System/PreviewBackground/preview2bg.gif");*/
+}
+</style>
+<style type="text/css" media="all">
+@import url('style/print.css');
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	height:1%;
+	overflow-x:auto;
+}
+.foswikiAttachments,
+.foswikiForm,
+.foswikiHelp,
+.foswikiPreviewArea,
+.patternPreviewPage .foswikiForm,
+.patternSigLine,
+.patternToolBar,
+.patternTop,
+.patternTopicAction,
+#patternSideBarContents .patternLeftBarPersonal,
+#patternSideBarContents h2,
+#patternSideBarContents li,
+#patternTopBarButtons ul {
+	height:1%;
+}
+#patternSideBarContents .patternLeftBarPersonal {
+	width:100%;
+}
+.foswikiFormStep {
+	height:100%;
+}
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border:2px solid #ccc;
+}
+</style><![endif]-->
+<!--[if gt IE 8 ]><style type="text/css" media="screen">
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	box-shadow: 0 0 10px #ccc;
+}
+</style><![endif]-->
+<meta name="foswiki.TWISTYANIMATIONSPEED" content="fast" /><!--TWISTYPLUGIN::META-->
+<style type="text/css" media="all">
+.foswikiTable {border-width:1px}
+.foswikiTable .tableSortIcon img {padding-left:.3em; vertical-align:text-bottom}
+.foswikiTable td {border-style:solid none; vertical-align:top}
+.foswikiTable th {border-style:none solid; vertical-align:top; background-color:#d6d3cf; color:#000000}
+.foswikiTable th a:link {color:#000000}
+.foswikiTable th a:visited {color:#000000}
+.foswikiTable th a:hover {color:#000000; background-color:#d6d3cf}
+.foswikiTable th.foswikiSortedCol {background-color:#c4c1ba}
+.foswikiTable tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td.foswikiSortedCol {background-color:#f0f0ee}
+</style><!--TABLEPLUGIN_default-->
+<meta name="foswiki.PUBURL" content="http://127.0.0.1/foswiki/pub" /> <!-- PUBURL -->
+<meta name="foswiki.PUBURLPATH" content="/foswiki/pub" /> <!-- PUBURLPATH -->
+<meta name="foswiki.SCRIPTSUFFIX" content="" /> <!-- SCRIPTSUFFIX -->
+<meta name="foswiki.SCRIPTURL" content="http://127.0.0.1/foswiki/bin" /> <!-- SCRIPTURL -->
+<meta name="foswiki.SCRIPTURLPATH" content="/foswiki/bin" /> <!-- SCRIPTURLPATH -->
+<meta name="foswiki.SERVERTIME" content="25%20Jan%202011%20-%2023:45" /> <!-- SERVERTIME -->
+<meta name="foswiki.SKIN" content="pattern" /> <!-- SKIN -->
+<meta name="foswiki.SYSTEMWEB" content="System" /> <!-- SYSTEMWEB -->
+<meta name="foswiki.TOPIC" content="PluginTutorial" /> <!-- TOPIC -->
+<meta name="foswiki.USERNAME" content="guest" /> <!-- USERNAME -->
+<meta name="foswiki.USERSWEB" content="Main" /> <!-- USERSWEB -->
+<meta name="foswiki.WEB" content="Mundo" /> <!-- WEB -->
+<meta name="foswiki.WIKINAME" content="WikiGuest" /> <!-- WIKINAME -->
+<meta name="foswiki.WIKIUSERNAME" content="Main.WikiGuest" /> <!-- WIKIUSERNAME -->
+<meta name="foswiki.NAMEFILTER" content="%5b%5cs%5c*%3f~%5e%5c%24%40%25%60%22'%26%3b%7c%3c%3e%5c%5b%5c%5d%23%5cx00-%5cx1f%5d" /> <!-- NAMEFILTER --><!--JQUERYPLUGIN::FOSWIKI::META-->
+</head>
+<body class="patternViewPage patternPrintPage">
+<a name="PageTop"></a><div class="foswikiPage"><div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain">
+<div id="patternMainContents">
+<div class="patternContent"><div class="foswikiTopic"> <h1><a name="Building_Mundo_Components"></a>  Building Mundo Components </h1>
+<p />
+This chapter describes how to create Mundo Components. Components are self-contained JAR archives that contain one or more services, all support classes (metaclasses, externalization, RMC stubs, pub/sub filtering, etc.), required libraries and descriptions of external dependencies.
+<p />
+Components can be loaded by any MundoCore node that runs a <code>org.mundo.service.ServiceManager</code>. This service supports dynamic loading and unloading of services contained in components and it offers interfaces for remote administration of services.
+<p />
+<h2><a name="Creating_a_simple_Plugin"></a>  Creating a simple Plugin </h2>
+<p />
+First, we create the implementation file (Plugin1.java):
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> Plugin1 <B><FONT COLOR="#A020F0">extends</FONT></B> Service {
+  <B><FONT COLOR="#A020F0">public</FONT></B> Plugin1() {
+  }
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> init() {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.init();
+    System.out.println(<B><FONT COLOR="#BC8F8F">&quot;Plugin1 loaded&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">true</FONT></B>;
+  }
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> shutdown() {
+    System.out.println(<B><FONT COLOR="#BC8F8F">&quot;Plugin1 unloaded&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">super</FONT></B>.shutdown();
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Next, a configuration file for the Plugin must be created (META-INF/plugin.xml):
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;plug-in xmlns=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;http://mundo.org/2004/plugin/&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;service xmlns=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;http://mundo.org/2004/plugin/service&quot;</FONT></B><B><FONT COLOR="#A020F0">
+           xmlns:xsi=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;http://www.w3.org/1999/XMLSchema-instance&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;classname&gt;</FONT></B>Plugin1<B><FONT COLOR="#A020F0">&lt;/classname&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;new-instance&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;name&gt;</FONT></B>Plugin1 default instance<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;/new-instance&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/service&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/plug-in&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The <code>classname</code> tag specifies the fully-qualified name of the class that this Plugin provides. The <code>new-instance</code> tag creates an instance of the previously specified class with <code>Plugin1 default instance</code> as friendly name for the new service instance. A <code>service</code> tag may contain an arbitrary number of <code>new-instance</code> tags: If no <code>new-instance</code> tag is present, services may be solely created by the application program at a later time. On the other hand, it is also possible to immediately create multiple service instances during loading of the Plugin. The Plugin configuration file may contain multiple <code>service</code> sections, allowing Plugins to provide more than one service class.
+<p />
+<h2><a name="Running_the_Plugin"></a>  Running the Plugin </h2>
+<p />
+First, let's have a look at the configuration file of the Service Host:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;NodeConfig xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+...
+  <B><FONT COLOR="#A020F0">&lt;ServiceManager xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;ServiceManager$OptServiceManager&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;plugin-directory&gt;</FONT></B>plugins<B><FONT COLOR="#A020F0">&lt;/plugin-directory&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/ServiceManager&gt;</FONT></B>
+...
+<B><FONT COLOR="#A020F0">&lt;/NodeConfig&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+It is important that a <code>pluginDirectory</code> is specified in this configuration file. Otherwise the Service Host will not enable support for Plugins. Run the service host now:
+<p />
+<pre>java ServiceHost
+</pre>
+<p />
+You have two choices how to deploy plugins: Either you pack them in a jar file or you create a subdirectory-structure for the plugin. While the latter is useful for debugging purposes, JAR files are preferred for production code.
+<p />
+If you are using jar deployment for Plugins, first pack it:
+<p />
+<pre>jar cf plugin1.jar Plugin1.class META-INF
+</pre>
+<p />
+Now copy the archive <code>plugin1.jar</code> to the <code>plugins</code> directory.
+<p />
+If you chose to use the subdirectory-deployment, first create a subdirectory inside your <code>plugins</code> directory. Then, copy all resources needed by the Plugin into that subdirectory. Finally, modify the file creation stamp of the subdirectory using the <code>touch</code> command.
+<p />
+<pre>mkdir /servicehost/plugins/plugin1
+cp -r Plugin1.class META-INF /servicehost/plugins/plugin1
+touch /servicehost/plugins/plugin1
+</pre>
+<p />
+No matter what deployment method you chose, you should see the output from <code>Plugin1.init</code> on the console:
+<p />
+<pre>Plugin1 loaded
+</pre>
+<p />
+If you delete <code>plugin1.jar</code> or the <code>plugin1</code> directory, you should see the output from <code>Plugin1.shutdown</code> on the console:
+<p />
+<pre>Plugin1 unloaded
+</pre>
+<p />
+Once the <span class="foswikiNewLink">ServiceManager<a href="/foswiki/bin/edit/Mundo/ServiceManager?topicparent=Mundo.PluginTutorial" rel="nofollow" title="Create this topic">?</a></span> recognizes that a Plugin file has been deleted, it calls <code>Mundo.unregisterService</code> for all service instances that depend on classes contained in the deleted Plugin. Note that the service implementations must ensure that all references to their objects are removed. Otherwise, the behaviour of the unload operation is undefined.
+<p />
+<h2><a name="Dynamic_service_configuration"></a>  Dynamic service configuration </h2>
+<p />
+The following Plugin implements the configuration interface <code>IConfigure</code>. The configuration data is stored in a <code>TypedMap</code>. The program has also a <code>main</code> method such that it can either run as a Plugin or in a standalone mode. (Note that a well-programmed service should test the configuration data for valid data before using the data. This was skipped in the example to keep it short and simple.)
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> java.io.BufferedReader;
+<B><FONT COLOR="#A020F0">import</FONT></B> java.io.IOException;
+<B><FONT COLOR="#A020F0">import</FONT></B> java.io.InputStreamReader;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Mundo;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.TypedMap;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.ServiceManager;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.IConfigure;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.util.DefaultApplication;
+
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> Plugin2 <B><FONT COLOR="#A020F0">extends</FONT></B> DefaultApplication <B><FONT COLOR="#A020F0">implements</FONT></B> IConfigure {
+  <B><FONT COLOR="#A020F0">public</FONT></B> Plugin2() {
+    conf = <B><FONT COLOR="#A020F0">new</FONT></B> TypedMap();
+  }
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> init() {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.init();
+    System.out.println(<B><FONT COLOR="#BC8F8F">&quot;Plugin2 loaded&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">true</FONT></B>;
+  }
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> shutdown() {
+    System.out.println(<B><FONT COLOR="#BC8F8F">&quot;Plugin2 unloaded&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">super</FONT></B>.shutdown();
+  }
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> setServiceConfig(Object obj) {
+    conf=(TypedMap)obj;
+    System.out.println(<B><FONT COLOR="#BC8F8F">&quot;param=&quot;</FONT></B>+conf.getString(<B><FONT COLOR="#BC8F8F">&quot;param&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;&quot;</FONT></B>));
+  }
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> Object getServiceConfig() {
+    <B><FONT COLOR="#A020F0">return</FONT></B> conf;
+  }
+  <B><FONT COLOR="#A020F0">private</FONT></B> TypedMap conf;
+
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> main(String args[]) {
+    runServices(<B><FONT COLOR="#A020F0">new</FONT></B> Plugin2());
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+You can now run <em>Inspect</em> and connect to the program. Right-click the line <em>Plugin2...</em> in the <em>Services</em> pane and select <em>Configure</em>. Clicking on the <em>Get Configuration</em> button should yield the following output:
+<p />
+Now change the text to:
+<p />
+<pre>testvalue
+</pre>
+<p />
+and click the <em>Set Configuration</em> button. The <em>Plugin2</em> program will now print to the console:
+<p />
+<pre>param=testvalue
+</pre>
+<p />
+<h2><a name="Using_custom_objects_to_store_configuration_data"></a>  Using custom objects to store configuration data </h2>
+<p />
+The following example shows how configuration data can be stored in custom application objects.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> java.io.BufferedReader;
+<B><FONT COLOR="#A020F0">import</FONT></B> java.io.IOException;
+<B><FONT COLOR="#A020F0">import</FONT></B> java.io.InputStreamReader;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.annotation.*;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Mundo;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.TypedMap;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.ServiceManager;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.service.IConfigure;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.util.DefaultApplication;
+
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> Plugin3 <B><FONT COLOR="#A020F0">extends</FONT></B> DefaultApplication <B><FONT COLOR="#A020F0">implements</FONT></B> IConfigure {
+  @mcSerialize
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> Config {
+    <B><FONT COLOR="#A020F0">public</FONT></B> String param1;
+    <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">int</FONT></B> param2;
+
+    <B><FONT COLOR="#A020F0">public</FONT></B> String toString() {
+      <B><FONT COLOR="#A020F0">return</FONT></B> param1+<B><FONT COLOR="#BC8F8F">&quot;, &quot;</FONT></B>+param2;
+    }
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> Plugin3() {
+    conf = <B><FONT COLOR="#A020F0">new</FONT></B> Config();
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> init() {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.init();
+    System.out.println(<B><FONT COLOR="#BC8F8F">&quot;Plugin3 loaded&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">true</FONT></B>;
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> shutdown() {
+    System.out.println(<B><FONT COLOR="#BC8F8F">&quot;Plugin3 unloaded&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">super</FONT></B>.shutdown();
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> setServiceConfig(Object obj) {
+    <B><FONT COLOR="#A020F0">try</FONT></B> {
+      conf = (Config)obj;
+      System.out.println(conf);
+    } <B><FONT COLOR="#A020F0">catch</FONT></B>(ClassCastException x) {
+      x.printStackTrace();
+    }
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> Object getServiceConfig() {
+    <B><FONT COLOR="#A020F0">return</FONT></B> conf;
+  }
+  <B><FONT COLOR="#A020F0">private</FONT></B> Config conf;
+
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> main(String args[]) {
+    runServices(<B><FONT COLOR="#A020F0">new</FONT></B> Plugin3());
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Implementing_and_using_the_IConfigure_interface"></a>  Implementing and using the IConfigure interface </h2>
+<p />
+The <code>Service</code> class provides a default implementation for the <code>IConfigure</code> interface: <code>void setServiceConfig(java.lang.Object cfg)</code> just throws an <code>Exception</code> and should be overwritten by the programmer. Have a look to the Javadoc API definition where rules for a convenient behaviour of the implementation are given. Before parameters are used, you should check if needed parameters are present, if values are not <code>null</code> and that they are within the expected range.
+<p />
+<code>void setServiceConfigMap(<span class="foswikiNewLink">TypedMap<a href="/foswiki/bin/edit/Mundo/TypedMap?topicparent=Mundo.PluginTutorial" rel="nofollow" title="Create this topic">?</a></span> map)</code> is <code>final</code> and can not be overwritten. <code>setServiceConfigMap</code> activates the specified map and then calls the method <code>setServiceConfig</code>.
+<p />
+It is anyway always a good idea to implement the <code>IConfigure</code> interface. It makes the service customizable and reusable. As examples in this chapter showed the <code>setServiceConfig()</code> method is called before the service is registered to set it up properly. But there is a way when the method is called not directly by the programmer. This is when the service is run as plugin. In this case the <code>ServiceManager</code> takes the configuration data from the <code>plugin.xml</code> document and passes it to the service by calling the <code>setServiceConfig()</code> method. The configuration data has to be in the XML entity <code><config xsi:type="map"></code> that has to be a externalized <code>TypedMap</code> (or any other Mundo serializable class) as shown above. The examples also shows how to use other types as strings like integer or Mundo serializable objects. The entity <code>serialparams</code> is deserialized to an object of class <code>SerialParameters</code>.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;plug-in xmlns=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;http://mundo.org/2004/plugin/&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+   <B><FONT COLOR="#A020F0">&lt;service xmlns=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;http://mundo.org/2004/plugin/service&quot;</FONT></B><B><FONT COLOR="#A020F0">
+            xmlns:xsi=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;http://www.w3.org/1999/XMLSchema-instance&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;classname&gt;</FONT></B>ga.mundo.service.rfid.impl.CSAL2002MundoServiceImpl<B><FONT COLOR="#A020F0">&lt;/classname&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;new-instance xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+         <B><FONT COLOR="#A020F0">&lt;name&gt;</FONT></B>RFID Reader Plugin<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>         
+         <B><FONT COLOR="#A020F0">&lt;config xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+            <B><FONT COLOR="#A020F0">&lt;zone&gt;</FONT></B>lan<B><FONT COLOR="#A020F0">&lt;/zone&gt;</FONT></B>
+            <B><FONT COLOR="#A020F0">&lt;channel&gt;</FONT></B>kaffeekueche.reader<B><FONT COLOR="#A020F0">&lt;/channel&gt;</FONT></B>
+            <B><FONT COLOR="#A020F0">&lt;serialparams xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">
+                activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;ga.service.util.SerialParameters&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+               <B><FONT COLOR="#A020F0">&lt;portName&gt;</FONT></B>COM4<B><FONT COLOR="#A020F0">&lt;/portName&gt;</FONT></B>
+               <B><FONT COLOR="#A020F0">&lt;baudRate xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>9600<B><FONT COLOR="#A020F0">&lt;/baudRate&gt;</FONT></B>
+               <B><FONT COLOR="#A020F0">&lt;databits xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>8<B><FONT COLOR="#A020F0">&lt;/databits&gt;</FONT></B>
+               <B><FONT COLOR="#A020F0">&lt;stopbits xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>1<B><FONT COLOR="#A020F0">&lt;/stopbits&gt;</FONT></B>
+               <B><FONT COLOR="#A020F0">&lt;parity xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>0<B><FONT COLOR="#A020F0">&lt;/parity&gt;</FONT></B>
+               <B><FONT COLOR="#A020F0">&lt;flowControlIn xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>0<B><FONT COLOR="#A020F0">&lt;/flowControlIn&gt;</FONT></B>
+               <B><FONT COLOR="#A020F0">&lt;flowControlOut xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;xsd:int&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>0<B><FONT COLOR="#A020F0">&lt;/flowControlOut&gt;</FONT></B>
+            <B><FONT COLOR="#A020F0">&lt;/serialparams&gt;</FONT></B>
+         <B><FONT COLOR="#A020F0">&lt;/config&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;/new-instance&gt;</FONT></B>
+   <B><FONT COLOR="#A020F0">&lt;/service&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/plug-in&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The <code>ServiceManager</code> calls at startup <code>setServiceConfig(Object config)</code>, where <code>config</code> is a <code>TypedMap</code>. <code>zone</code>, <code>channel</code> and <code>serialparams</code> are keys in the map. The keys are used to get the values that are of class <code>String</code> except <code>serialparams</code> returns a object of class <code>SerialParameters</code>.
+<p />
+</div></div><!-- /patternContent-->
+</div></div></div></div></div></div></div></div>
+</body></html>

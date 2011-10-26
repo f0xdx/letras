@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions">
+  <wsdl:types>
+    <xs:schema>
+      <xs:element name="BlenderEvent" type="type_BlenderEvent"></xs:element>
+      <xs:complexType name="type_BlenderEvent">
+        <xs:element name="event" type="xsd:int"></xs:element>
+        <mc:constant name="POWER_ON" type="xsd:int" value="1"></mc:constant>
+        <mc:constant name="POWER_OFF" type="xsd:int" value="2"></mc:constant>
+        <mc:constant name="MOTOR_ON" type="xsd:int" value="3"></mc:constant>
+        <mc:constant name="MOTOR_OFF" type="xsd:int" value="4"></mc:constant>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <mc:serialization name="org.mundo.service.blender.BlenderEvent" element="BlenderEvent"></mc:serialization>
+</wsdl:description>

@@ -1,0 +1,624 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+<title> CustomHandlers &lt; Mundo &lt; Foswiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="alternate" href="http://127.0.0.1/foswiki/bin/edit/Mundo/CustomHandlers?t=1295995549" type="application/x-wiki" title="edit CustomHandlers" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<meta name="robots" content="noindex" /><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/foswiki/bin/view/Mundo/WebRss" />
+<style type="text/css" media="all">
+@import url('style/base.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/layout.css');
+@import url('style/style.css');
+@import url('style/colors.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/column_left.css');
+@import url('style/variant_foswiki_noframe.css');
+</style><style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .foswikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#efefef;
+	}
+	#patternTopBarContents { background-image:url(/foswiki/pub/System/PatternSkin/header5.gif); background-repeat:repeat-x;}
+#patternTopBarContents { background-color:#ffffff;}
+.patternBookView {
+	border-color:#efefef;
+}
+.patternPreviewPage #patternMain {
+	/* uncomment to set the preview image */
+	/*background-image:url("/foswiki/pub/System/PreviewBackground/preview2bg.gif");*/
+}
+</style>
+<style type="text/css" media="all">
+@import url('style/print.css');
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	height:1%;
+	overflow-x:auto;
+}
+.foswikiAttachments,
+.foswikiForm,
+.foswikiHelp,
+.foswikiPreviewArea,
+.patternPreviewPage .foswikiForm,
+.patternSigLine,
+.patternToolBar,
+.patternTop,
+.patternTopicAction,
+#patternSideBarContents .patternLeftBarPersonal,
+#patternSideBarContents h2,
+#patternSideBarContents li,
+#patternTopBarButtons ul {
+	height:1%;
+}
+#patternSideBarContents .patternLeftBarPersonal {
+	width:100%;
+}
+.foswikiFormStep {
+	height:100%;
+}
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border:2px solid #ccc;
+}
+</style><![endif]-->
+<!--[if gt IE 8 ]><style type="text/css" media="screen">
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	box-shadow: 0 0 10px #ccc;
+}
+</style><![endif]-->
+<meta name="foswiki.TWISTYANIMATIONSPEED" content="fast" /><!--TWISTYPLUGIN::META-->
+<style type="text/css" media="all">
+.foswikiTable {border-width:1px}
+.foswikiTable .tableSortIcon img {padding-left:.3em; vertical-align:text-bottom}
+.foswikiTable td {border-style:solid none; vertical-align:top}
+.foswikiTable th {border-style:none solid; vertical-align:top; background-color:#d6d3cf; color:#000000}
+.foswikiTable th a:link {color:#000000}
+.foswikiTable th a:visited {color:#000000}
+.foswikiTable th a:hover {color:#000000; background-color:#d6d3cf}
+.foswikiTable th.foswikiSortedCol {background-color:#c4c1ba}
+.foswikiTable tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td.foswikiSortedCol {background-color:#f0f0ee}
+</style><!--TABLEPLUGIN_default-->
+<meta name="foswiki.PUBURL" content="http://127.0.0.1/foswiki/pub" /> <!-- PUBURL -->
+<meta name="foswiki.PUBURLPATH" content="/foswiki/pub" /> <!-- PUBURLPATH -->
+<meta name="foswiki.SCRIPTSUFFIX" content="" /> <!-- SCRIPTSUFFIX -->
+<meta name="foswiki.SCRIPTURL" content="http://127.0.0.1/foswiki/bin" /> <!-- SCRIPTURL -->
+<meta name="foswiki.SCRIPTURLPATH" content="/foswiki/bin" /> <!-- SCRIPTURLPATH -->
+<meta name="foswiki.SERVERTIME" content="25%20Jan%202011%20-%2023:45" /> <!-- SERVERTIME -->
+<meta name="foswiki.SKIN" content="pattern" /> <!-- SKIN -->
+<meta name="foswiki.SYSTEMWEB" content="System" /> <!-- SYSTEMWEB -->
+<meta name="foswiki.TOPIC" content="CustomHandlers" /> <!-- TOPIC -->
+<meta name="foswiki.USERNAME" content="guest" /> <!-- USERNAME -->
+<meta name="foswiki.USERSWEB" content="Main" /> <!-- USERSWEB -->
+<meta name="foswiki.WEB" content="Mundo" /> <!-- WEB -->
+<meta name="foswiki.WIKINAME" content="WikiGuest" /> <!-- WIKINAME -->
+<meta name="foswiki.WIKIUSERNAME" content="Main.WikiGuest" /> <!-- WIKIUSERNAME -->
+<meta name="foswiki.NAMEFILTER" content="%5b%5cs%5c*%3f~%5e%5c%24%40%25%60%22'%26%3b%7c%3c%3e%5c%5b%5c%5d%23%5cx00-%5cx1f%5d" /> <!-- NAMEFILTER --><!--JQUERYPLUGIN::FOSWIKI::META-->
+</head>
+<body class="patternViewPage patternPrintPage">
+<a name="PageTop"></a><div class="foswikiPage"><div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain">
+<div id="patternMainContents">
+<div class="patternContent"><div class="foswikiTopic"> <h1><a name="Writing_custom_protocol_handlers"></a>  Writing custom protocol handlers </h1>
+<p />
+The programs described in the following sections can also be found in the <code>samples/handlers</code> subdirectory of the distribution or in the CVS.
+<p />
+<h2><a name="Step_1:_Handler_skeleton_and_using_logging"></a>  Step 1: Handler skeleton and using logging </h2>
+<p />
+The first example shows the skeleton of a protocol handler and how to use logging.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.IMessageHandler;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Message;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Logger;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.AbstractHandler;
+
+<I><FONT COLOR="#B22222">/**
+ * This is one of the simplest possible handlers.
+ * 
+ * @author erwin
+ */</FONT></I>
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> SampleHandler1 <B><FONT COLOR="#A020F0">extends</FONT></B> AbstractHandler
+{
+  <B><FONT COLOR="#A020F0">public</FONT></B> SampleHandler1()
+  {
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on initialization of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> init() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.init();
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;init&quot;</FONT></B>);
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on shutdown of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> shutdown() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;shutdown&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">super</FONT></B>.shutdown();
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels down the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> down(Message msg)
+  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;down: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+    <B><FONT COLOR="#A020F0">return</FONT></B> emit_down(msg);
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels up the stack.
+   * This method will not be called, because we did not set the MIMEType yet.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> up(Message msg)
+  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;up: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+    <B><FONT COLOR="#A020F0">return</FONT></B> emit_up(msg);
+  }
+  
+  <B><FONT COLOR="#A020F0">private</FONT></B> Logger log = Logger.getLogger(<B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>);
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+This new protocol handler can now be used in custom protocol stacks or in the global protocol stack. The global protocol stack is configured in the <code>node.conf.xml</code> configuration file. To add <code>SampleHandler1</code> to the protocol stack, insert it into the protocol stack configuration at the appropriate place:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;new-instance xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;name&gt;</FONT></B>ProtocolCoordinator<B><FONT COLOR="#A020F0">&lt;/name&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;classname&gt;</FONT></B>org.mundo.net.ProtocolCoordinator<B><FONT COLOR="#A020F0">&lt;/classname&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;config xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0"> activeClass=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;ProtocolCoordinator$Options&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;default-stack xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;handler&gt;</FONT></B>org.mundo.net.ActivationService<B><FONT COLOR="#A020F0">&lt;/handler&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;handler&gt;</FONT></B>org.mundo.net.P2PTopicBroker<B><FONT COLOR="#A020F0">&lt;/handler&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;handler&gt;</FONT></B>org.mundo.net.RoutingService<B><FONT COLOR="#A020F0">&lt;/handler&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;handler&gt;</FONT></B>org.mundo.net.BinSerializationHandler<B><FONT COLOR="#A020F0">&lt;/handler&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;handler&gt;</FONT></B>org.mundo.net.BinCollectHandler<B><FONT COLOR="#A020F0">&lt;/handler&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;handler&gt;</FONT></B>SampleHandler1<B><FONT COLOR="#A020F0">&lt;/handler&gt;</FONT></B>
+      <B><FONT COLOR="#A020F0">&lt;handler&gt;</FONT></B>org.mundo.net.ip.IPTransportService<B><FONT COLOR="#A020F0">&lt;/handler&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;/default-stack&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/config&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/new-instance&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+In addition, a service declaration must be made for <code>SampleHandler1</code>, so that an instance of <code>SampleHandler1</code> is created at startup:
+<p />
+Logging can also be configured in the <code>node.conf.xml</code> file:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">&lt;Logger xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;filename&gt;</FONT></B>log.txt<B><FONT COLOR="#A020F0">&lt;/filename&gt;</FONT></B> 
+  <B><FONT COLOR="#A020F0">&lt;console xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;boolean&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>true<B><FONT COLOR="#A020F0">&lt;/console&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;default-log-level&gt;</FONT></B>INFO<B><FONT COLOR="#A020F0">&lt;/default-log-level&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;log-levels xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;array&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B>
+    <B><FONT COLOR="#A020F0">&lt;a xsi:type=</FONT></B><B><FONT COLOR="#BC8F8F">&quot;map&quot;</FONT></B><B><FONT COLOR="#A020F0">&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;category&gt;</FONT></B>sample<B><FONT COLOR="#A020F0">&lt;/category&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;log-level&gt;</FONT></B>FINEST<B><FONT COLOR="#A020F0">&lt;/log-level&gt;</FONT></B><B><FONT COLOR="#A020F0">&lt;/a&gt;</FONT></B>
+  <B><FONT COLOR="#A020F0">&lt;/log-levels&gt;</FONT></B>
+<B><FONT COLOR="#A020F0">&lt;/Logger&gt;</FONT></B></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+This configuration contains the following parts: <ul>
+<li> You can use the <code>filename</code> option to write log output to a file.
+</li> <li> <code>default-log-level</code> defines the default log level.
+</li> <li> The <code>log-levels</code> section allows to override the default log level setting for certain logger names (=category).
+</li></ul> 
+For more information about logging configuration, please refer to <span class="foswikiNewLink">Logging Configuration<a href="/foswiki/bin/edit/Mundo/MCConfLogging?topicparent=Mundo.CustomHandlers" rel="nofollow" title="Create this topic">?</a></span>
+<p />
+<h2><a name="Step_2:_Setting_the_MIME_type_for_upward_processing"></a>  Step 2: Setting the MIME type for upward processing </h2>
+<p />
+In the first example, packets pass our handler on the sender side, but not on the receiver side. In order that upward processing of messages works correctly, the MIME type of the handler must be registered with the <code>ProtocolCoordinator</code>.
+<p />
+In addition, the MIME type of a message must be changed always when a message travels down the stack on the sender side. On the receiver side, the type must be changed back accordingly when a message travels up the stack.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.IMessageHandler;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Message;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Logger;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.ProtocolCoordinator;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.AbstractHandler;
+
+<I><FONT COLOR="#B22222">/**
+ * This is one of the simplest possible handlers.
+ * 
+ * @author erwin
+ */</FONT></I>
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> SampleHandler2 <B><FONT COLOR="#A020F0">extends</FONT></B> AbstractHandler
+{
+  <B><FONT COLOR="#A020F0">public</FONT></B> SampleHandler2()
+  {
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on initialization of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> init() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.init();
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;init&quot;</FONT></B>);
+    <I><FONT COLOR="#B22222">// Register our MIME Type with the protocol coordinator
+</FONT></I>    ProtocolCoordinator.register(mimeType, <B><FONT COLOR="#A020F0">this</FONT></B>);
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on shutdown of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> shutdown() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;shutdown&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">super</FONT></B>.shutdown();
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels down the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> down(Message msg)
+  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;down: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+    <I><FONT COLOR="#B22222">// Set our MIME Type before sending the message
+</FONT></I>    msg.setType(mimeType);
+    <B><FONT COLOR="#A020F0">return</FONT></B> emit_down(msg);
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels up the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> up(Message msg)
+  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;up: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+    <I><FONT COLOR="#B22222">// Change the MIME Type back. In this example, we assume that the next
+</FONT></I>    <I><FONT COLOR="#B22222">// handler is always mc-bincoll. Note that this assumption cannot be
+</FONT></I>    <I><FONT COLOR="#B22222">// made in general!
+</FONT></I>    msg.setType(<B><FONT COLOR="#BC8F8F">&quot;message/mc-bincoll&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">return</FONT></B> emit_up(msg);
+  }
+  
+  <B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> String mimeType = <B><FONT COLOR="#BC8F8F">&quot;message/sample2&quot;</FONT></B>;
+  <B><FONT COLOR="#A020F0">private</FONT></B> Logger log = Logger.getLogger(<B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>);
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Step_3:_Adding_custom_headers"></a>  Step 3: Adding custom headers </h2>
+<p />
+The handler presented in Step 2 always assumes that the next higher handler is <code>mc-bincoll</code>. However, this assumption cannot be made in the general case.
+<p />
+To write a more generic handler, the previous MIME type of the message must be stored in a custom header. This header must be created when a packet is passed down. On the receiver side, the MIME type must be restored using information from the custom header.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.IMessageHandler;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Message;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Logger;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.TypedMap;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.ProtocolCoordinator;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.AbstractHandler;
+
+<I><FONT COLOR="#B22222">/**
+ * Example handler 3
+ */</FONT></I>
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> SampleHandler3 <B><FONT COLOR="#A020F0">extends</FONT></B> AbstractHandler
+{
+  <B><FONT COLOR="#A020F0">public</FONT></B> SampleHandler3()
+  {
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on initialization of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> init() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.init();
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;init&quot;</FONT></B>);
+    <I><FONT COLOR="#B22222">// Register our MIME Type with the protocol coordinator
+</FONT></I>    ProtocolCoordinator.register(mimeType, <B><FONT COLOR="#A020F0">this</FONT></B>);
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on shutdown of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> shutdown() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;shutdown&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">super</FONT></B>.shutdown();
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels down the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> down(Message msg)
+  {
+    <B><FONT COLOR="#A020F0">try</FONT></B>
+    {
+      log.fine(<B><FONT COLOR="#BC8F8F">&quot;down: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+
+      <I><FONT COLOR="#B22222">// Add our own header to the message
+</FONT></I>      TypedMap hdr = <B><FONT COLOR="#A020F0">new</FONT></B> TypedMap();
+      <I><FONT COLOR="#B22222">// Store the current MIME type of the message in our header
+</FONT></I>      hdr.putString(<B><FONT COLOR="#BC8F8F">&quot;type&quot;</FONT></B>, msg.getType());
+      putHeader(msg, <B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>, hdr);
+
+      <I><FONT COLOR="#B22222">// Set our MIME type
+</FONT></I>      msg.setType(mimeType);
+
+      <B><FONT COLOR="#A020F0">return</FONT></B> emit_down(msg);
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x)
+    {
+      log.exception(x);
+    }
+    <I><FONT COLOR="#B22222">// Tell the caller that we dropped the packet
+</FONT></I>    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">false</FONT></B>;
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels up the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> up(Message msg)
+  {
+    <B><FONT COLOR="#A020F0">try</FONT></B>
+    {
+      log.fine(<B><FONT COLOR="#BC8F8F">&quot;up: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+
+      <I><FONT COLOR="#B22222">// Get our header
+</FONT></I>      TypedMap hdr = getHeader(msg, <B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>);
+      <I><FONT COLOR="#B22222">// Restore the previous MIME type
+</FONT></I>      msg.setType(hdr.getString(<B><FONT COLOR="#BC8F8F">&quot;type&quot;</FONT></B>));
+      
+      <B><FONT COLOR="#A020F0">return</FONT></B> emit_up(msg);
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x)
+    {
+      log.exception(x);
+    }
+    <I><FONT COLOR="#B22222">// Tell the caller that we dropped the packet
+</FONT></I>    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">false</FONT></B>;
+  }
+  
+  <B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> String mimeType = <B><FONT COLOR="#BC8F8F">&quot;message/sample3&quot;</FONT></B>;
+  <B><FONT COLOR="#A020F0">private</FONT></B> Logger log = Logger.getLogger(<B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>);
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Step_4:_Sending_reply_messages"></a>  Step 4: Sending reply messages </h2>
+<p />
+Protocol handlers also often need to send control messages as a reply to received packets. The following example program demonstrates how to send an acknowledge message back to the sender from the <code>up</code>-handler.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.IMessageHandler;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Message;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Logger;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.TypedMap;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.ProtocolCoordinator;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.AbstractHandler;
+
+<I><FONT COLOR="#B22222">/**
+ * This handler demonstrates how to send back reply messages.
+ */</FONT></I>
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> SampleHandler4 <B><FONT COLOR="#A020F0">extends</FONT></B> AbstractHandler
+{
+  <B><FONT COLOR="#A020F0">public</FONT></B> SampleHandler4()
+  {
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on initialization of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> init() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.init();
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;init&quot;</FONT></B>);
+    <I><FONT COLOR="#B22222">// Register our MIME Type with the protocol coordinator
+</FONT></I>    ProtocolCoordinator.register(mimeType, <B><FONT COLOR="#A020F0">this</FONT></B>);
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on shutdown of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> shutdown() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;shutdown&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">super</FONT></B>.shutdown();
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels down the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> down(Message msg)
+  {
+    <B><FONT COLOR="#A020F0">try</FONT></B>
+    {
+      log.fine(<B><FONT COLOR="#BC8F8F">&quot;down: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+
+      <I><FONT COLOR="#B22222">// Add our own header to the message
+</FONT></I>      TypedMap hdr = <B><FONT COLOR="#A020F0">new</FONT></B> TypedMap();
+      <I><FONT COLOR="#B22222">// Store the current MIME type of the message in our header
+</FONT></I>      hdr.putString(<B><FONT COLOR="#BC8F8F">&quot;type&quot;</FONT></B>, msg.getType());
+      <I><FONT COLOR="#B22222">// The packet contains a message
+</FONT></I>      hdr.putString(<B><FONT COLOR="#BC8F8F">&quot;request&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;message&quot;</FONT></B>);
+      putHeader(msg, <B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>, hdr);
+
+      <I><FONT COLOR="#B22222">// Set our MIME type
+</FONT></I>      msg.setType(mimeType);
+      
+      <B><FONT COLOR="#A020F0">return</FONT></B> emit_down(msg);
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x)
+    {
+      log.exception(x);
+    }
+    <I><FONT COLOR="#B22222">// Tell the caller that we dropped the packet
+</FONT></I>    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">false</FONT></B>;
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels up the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> up(Message msg)
+  {
+    <B><FONT COLOR="#A020F0">try</FONT></B>
+    {
+      log.fine(<B><FONT COLOR="#BC8F8F">&quot;up: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+
+      <I><FONT COLOR="#B22222">// Get our header
+</FONT></I>      TypedMap hdr = getHeader(msg, <B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>);
+      <I><FONT COLOR="#B22222">// Get the request type
+</FONT></I>      String req = hdr.getString(<B><FONT COLOR="#BC8F8F">&quot;request&quot;</FONT></B>);
+      <B><FONT COLOR="#A020F0">if</FONT></B> (<B><FONT COLOR="#BC8F8F">&quot;message&quot;</FONT></B>.equals(req))
+      {
+         <I><FONT COLOR="#B22222">// Send an acknowledgement message
+</FONT></I>        TypedMap ack = <B><FONT COLOR="#A020F0">new</FONT></B> TypedMap();
+        ack.putString(<B><FONT COLOR="#BC8F8F">&quot;request&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;ack&quot;</FONT></B>);
+        Message ackMsg = <B><FONT COLOR="#A020F0">new</FONT></B> Message();
+        putHeader(ackMsg, <B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>, ack);
+        ackMsg.setType(mimeType);
+        sendReply(msg, ackMsg);
+      
+        <I><FONT COLOR="#B22222">// Restore the previous MIME type
+</FONT></I>        msg.setType(hdr.getString(<B><FONT COLOR="#BC8F8F">&quot;type&quot;</FONT></B>));
+        <B><FONT COLOR="#A020F0">return</FONT></B> emit_up(msg);
+      }
+      <B><FONT COLOR="#A020F0">else</FONT></B> <B><FONT COLOR="#A020F0">if</FONT></B> (<B><FONT COLOR="#BC8F8F">&quot;ack&quot;</FONT></B>.equals(req))
+      {
+         log.fine(<B><FONT COLOR="#BC8F8F">&quot;ack received&quot;</FONT></B>);
+         <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">true</FONT></B>;
+      }
+      log.warning(<B><FONT COLOR="#BC8F8F">&quot;received unknown request: &quot;</FONT></B>+req);
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x)
+    {
+      log.exception(x);
+    }
+    <I><FONT COLOR="#B22222">// Tell the caller that we dropped the packet
+</FONT></I>    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">false</FONT></B>;
+  }
+  
+  <B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> String mimeType = <B><FONT COLOR="#BC8F8F">&quot;message/sample4&quot;</FONT></B>;
+  <B><FONT COLOR="#A020F0">private</FONT></B> Logger log = Logger.getLogger(<B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>);
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Step_5:_Getting_information_about_routes"></a>  Step 5: Getting information about routes </h2>
+<p />
+A node can communicate with an arbitrary number of remote peers and it is often necessary to maintain per-peer state (packet sequence numbers, etc.). The ID of a remote node can be obtained as follows:
+<p /> <ul>
+<li> Use <code>getRoute(msg)</code> to obtain the route object.
+</li> <li> <code>getRoute(msg).remoteId</code> obtains the GUID of the remote node.
+</li> <li> (Note that MundoCore supports multiple routes between two nodes, e.g., one using TCP and one using UDP.)
+</li></ul> 
+The following example program shows how to get the destination or source node ID of a message.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.IMessageHandler;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Message;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Logger;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.TypedMap;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.ProtocolCoordinator;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.AbstractHandler;
+
+<I><FONT COLOR="#B22222">/**
+ * This handler demonstrates how to duplicate a packet.
+ */</FONT></I>
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> SampleHandler5 <B><FONT COLOR="#A020F0">extends</FONT></B> AbstractHandler
+{
+  <B><FONT COLOR="#A020F0">public</FONT></B> SampleHandler5()
+  {
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on initialization of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> init() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    <B><FONT COLOR="#A020F0">super</FONT></B>.init();
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;init&quot;</FONT></B>);
+    <I><FONT COLOR="#B22222">// Register our MIME Type with the protocol coordinator
+</FONT></I>    ProtocolCoordinator.register(mimeType, <B><FONT COLOR="#A020F0">this</FONT></B>);
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called on shutdown of the service.
+   */</FONT></I>
+  @Override
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> shutdown() <I><FONT COLOR="#B22222">// Service
+</FONT></I>  {
+    log.fine(<B><FONT COLOR="#BC8F8F">&quot;shutdown&quot;</FONT></B>);
+    <B><FONT COLOR="#A020F0">super</FONT></B>.shutdown();
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels down the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> down(Message msg)
+  {
+    <B><FONT COLOR="#A020F0">try</FONT></B>
+    {
+      log.fine(<B><FONT COLOR="#BC8F8F">&quot;down: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+
+      <I><FONT COLOR="#B22222">// It is often necessary to keep connection state. Such state
+</FONT></I>      <I><FONT COLOR="#B22222">// should be associated with the ID of the remote node.
+</FONT></I>      log.finest(<B><FONT COLOR="#BC8F8F">&quot;sending to node: &quot;</FONT></B>+getRoute(msg).remoteId);
+
+      <I><FONT COLOR="#B22222">// Add our own header to the message
+</FONT></I>      TypedMap hdr = <B><FONT COLOR="#A020F0">new</FONT></B> TypedMap();
+      <I><FONT COLOR="#B22222">// Store the current MIME type of the message in our header
+</FONT></I>      hdr.putString(<B><FONT COLOR="#BC8F8F">&quot;type&quot;</FONT></B>, msg.getType());
+      putHeader(msg, <B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>, hdr);
+
+      <I><FONT COLOR="#B22222">// Set our MIME type
+</FONT></I>      msg.setType(mimeType);
+      <B><FONT COLOR="#A020F0">return</FONT></B> emit_down(msg);
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x)
+    {
+      log.exception(x);
+    }
+    <I><FONT COLOR="#B22222">// Tell the caller that we dropped the packet
+</FONT></I>    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">false</FONT></B>;
+  }
+  <I><FONT COLOR="#B22222">/**
+   * Called when a packet travels up the stack.
+   */</FONT></I>
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> up(Message msg)
+  {
+    <B><FONT COLOR="#A020F0">try</FONT></B>
+    {
+      log.fine(<B><FONT COLOR="#BC8F8F">&quot;up: &quot;</FONT></B> + msg.getBlob(<B><FONT COLOR="#BC8F8F">&quot;all&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;bin&quot;</FONT></B>).size());
+
+      <I><FONT COLOR="#B22222">// It is often necessary to keep connection state. Such state
+</FONT></I>      <I><FONT COLOR="#B22222">// should be associated with the ID of the remote node.
+</FONT></I>      log.finest(<B><FONT COLOR="#BC8F8F">&quot;receiving from node: &quot;</FONT></B>+getRoute(msg).remoteId);
+
+      <I><FONT COLOR="#B22222">// Get our header
+</FONT></I>      TypedMap hdr = getHeader(msg, <B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>);
+      <I><FONT COLOR="#B22222">// Restore the previous MIME type
+</FONT></I>      msg.setType(hdr.getString(<B><FONT COLOR="#BC8F8F">&quot;type&quot;</FONT></B>));
+      
+      <B><FONT COLOR="#A020F0">return</FONT></B> emit_up(msg);
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B>(Exception x)
+    {
+      log.exception(x);
+    }
+    <I><FONT COLOR="#B22222">// Tell the caller that we dropped the packet
+</FONT></I>    <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">false</FONT></B>;
+  }
+  
+  <B><FONT COLOR="#A020F0">private</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> String mimeType = <B><FONT COLOR="#BC8F8F">&quot;message/sample5&quot;</FONT></B>;
+  <B><FONT COLOR="#A020F0">private</FONT></B> Logger log = Logger.getLogger(<B><FONT COLOR="#BC8F8F">&quot;sample&quot;</FONT></B>);
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+</div></div><!-- /patternContent-->
+</div></div></div></div></div></div></div></div>
+</body></html>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions">
+  <wsdl:types>
+    <xs:schema>
+      <xs:element name="MTObject" type="type_MTObject"></xs:element>
+      <xs:complexType name="type_MTObject">
+        <xs:element name="id" type="xsd:string"></xs:element>
+        <xs:element name="state" type="xsd:int"></xs:element>
+        <xs:element name="x" type="xsd:double"></xs:element>
+        <xs:element name="y" type="xsd:double"></xs:element>
+        <xs:element name="area" type="xsd:double"></xs:element>
+        <mc:constant name="MT_MOVE" type="xsd:int" value="1"></mc:constant>
+        <mc:constant name="MT_DOWN" type="xsd:int" value="2"></mc:constant>
+        <mc:constant name="MT_UP" type="xsd:int" value="3"></mc:constant>
+      </xs:complexType>
+    </xs:schema>
+  </wsdl:types>
+  <mc:serialization name="org.mundo.ui.multitouch.MTObject" element="MTObject"></mc:serialization>
+</wsdl:description>

@@ -1,0 +1,437 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+<title> ContentBasedPSTutorial &lt; Mundo &lt; Foswiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="alternate" href="http://127.0.0.1/foswiki/bin/edit/Mundo/ContentBasedPSTutorial?t=1295995545" type="application/x-wiki" title="edit ContentBasedPSTutorial" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<meta name="robots" content="noindex" /><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/foswiki/bin/view/Mundo/WebRss" />
+<style type="text/css" media="all">
+@import url('style/base.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/layout.css');
+@import url('style/style.css');
+@import url('style/colors.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/column_left.css');
+@import url('style/variant_foswiki_noframe.css');
+</style><style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .foswikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#efefef;
+	}
+	#patternTopBarContents { background-image:url(/foswiki/pub/System/PatternSkin/header5.gif); background-repeat:repeat-x;}
+#patternTopBarContents { background-color:#ffffff;}
+.patternBookView {
+	border-color:#efefef;
+}
+.patternPreviewPage #patternMain {
+	/* uncomment to set the preview image */
+	/*background-image:url("/foswiki/pub/System/PreviewBackground/preview2bg.gif");*/
+}
+</style>
+<style type="text/css" media="all">
+@import url('style/print.css');
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	height:1%;
+	overflow-x:auto;
+}
+.foswikiAttachments,
+.foswikiForm,
+.foswikiHelp,
+.foswikiPreviewArea,
+.patternPreviewPage .foswikiForm,
+.patternSigLine,
+.patternToolBar,
+.patternTop,
+.patternTopicAction,
+#patternSideBarContents .patternLeftBarPersonal,
+#patternSideBarContents h2,
+#patternSideBarContents li,
+#patternTopBarButtons ul {
+	height:1%;
+}
+#patternSideBarContents .patternLeftBarPersonal {
+	width:100%;
+}
+.foswikiFormStep {
+	height:100%;
+}
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border:2px solid #ccc;
+}
+</style><![endif]-->
+<!--[if gt IE 8 ]><style type="text/css" media="screen">
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	box-shadow: 0 0 10px #ccc;
+}
+</style><![endif]-->
+<meta name="foswiki.TWISTYANIMATIONSPEED" content="fast" /><!--TWISTYPLUGIN::META-->
+<style type="text/css" media="all">
+.foswikiTable {border-width:1px}
+.foswikiTable .tableSortIcon img {padding-left:.3em; vertical-align:text-bottom}
+.foswikiTable td {border-style:solid none; vertical-align:top}
+.foswikiTable th {border-style:none solid; vertical-align:top; background-color:#d6d3cf; color:#000000}
+.foswikiTable th a:link {color:#000000}
+.foswikiTable th a:visited {color:#000000}
+.foswikiTable th a:hover {color:#000000; background-color:#d6d3cf}
+.foswikiTable th.foswikiSortedCol {background-color:#c4c1ba}
+.foswikiTable tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td.foswikiSortedCol {background-color:#f0f0ee}
+</style><!--TABLEPLUGIN_default-->
+<meta name="foswiki.PUBURL" content="http://127.0.0.1/foswiki/pub" /> <!-- PUBURL -->
+<meta name="foswiki.PUBURLPATH" content="/foswiki/pub" /> <!-- PUBURLPATH -->
+<meta name="foswiki.SCRIPTSUFFIX" content="" /> <!-- SCRIPTSUFFIX -->
+<meta name="foswiki.SCRIPTURL" content="http://127.0.0.1/foswiki/bin" /> <!-- SCRIPTURL -->
+<meta name="foswiki.SCRIPTURLPATH" content="/foswiki/bin" /> <!-- SCRIPTURLPATH -->
+<meta name="foswiki.SERVERTIME" content="25%20Jan%202011%20-%2023:45" /> <!-- SERVERTIME -->
+<meta name="foswiki.SKIN" content="pattern" /> <!-- SKIN -->
+<meta name="foswiki.SYSTEMWEB" content="System" /> <!-- SYSTEMWEB -->
+<meta name="foswiki.TOPIC" content="ContentBasedPSTutorial" /> <!-- TOPIC -->
+<meta name="foswiki.USERNAME" content="guest" /> <!-- USERNAME -->
+<meta name="foswiki.USERSWEB" content="Main" /> <!-- USERSWEB -->
+<meta name="foswiki.WEB" content="Mundo" /> <!-- WEB -->
+<meta name="foswiki.WIKINAME" content="WikiGuest" /> <!-- WIKINAME -->
+<meta name="foswiki.WIKIUSERNAME" content="Main.WikiGuest" /> <!-- WIKIUSERNAME -->
+<meta name="foswiki.NAMEFILTER" content="%5b%5cs%5c*%3f~%5e%5c%24%40%25%60%22'%26%3b%7c%3c%3e%5c%5b%5c%5d%23%5cx00-%5cx1f%5d" /> <!-- NAMEFILTER --><!--JQUERYPLUGIN::FOSWIKI::META-->
+</head>
+<body class="patternViewPage patternPrintPage">
+<a name="PageTop"></a><div class="foswikiPage"><div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain">
+<div id="patternMainContents">
+<div class="patternContent"><div class="foswikiTopic"> <h1><a name="Content_45based_Publish_47Subscribe"></a>  Content-based Publish/Subscribe </h1>
+<p />
+With content-based subscriptions a client does not subscribe to a topic (a channel) but specifies the content of messages the client is interested in. The client specifies <strong>filters</strong> that are matched with messages that are send by services. Only messages that are <strong>covered</strong> by the filters are delivered to the clients. Consider a <code>Thermometer</code> service that send messages containing the actual temperature. A client could specify a filter to receive only temperatures that are greater or less a certain value.
+<p />
+<h2><a name="Building_Filters_with_MCC"></a>  Building Filters with MCC </h2>
+<p />
+Filters can automatically be build from Mundo-serializable objects by means of the MCC. Classes have to be tagged with <code>@mcSerialize</code> and <code>@mcFilter</code>. MCC creates a new class whereas the name of the new class is the name of the source class file with the string <code>Filter</code> appended. When the source file was <code>Temperature.java</code> the name of filter class is <code>TemperatureFilter.java</code>. The filter class is derived from the source class and contains for each <code>field</code> of the source class an additional field <code>_op_field</code>. This <code>op</code> field contains the operator for comparison and the inherited field contains the value that messages should be compared with. The listing shows an example for a <code>Temperature</code> event.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">package</FONT></B> thermometer;
+
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.annotation.*;
+
+@mcSerialize
+@mcFilter 
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> TemperatureEvent {	
+   <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">long</FONT></B> temp;
+ 
+   <B><FONT COLOR="#A020F0">public</FONT></B> TemperatureEvent() {
+      temp = 0;			
+   }	
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+The MCC creates a filter as the following listing shows.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><I><FONT COLOR="#B22222">// This file was generated by mcc. DO NOT EDIT THIS FILE!
+</FONT></I><I><FONT COLOR="#B22222">// classname: thermometer.TemperatureEvent
+</FONT></I><B><FONT COLOR="#A020F0">package</FONT></B> thermometer;
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> TemperatureEventFilter
+        <B><FONT COLOR="#A020F0">extends</FONT></B> TemperatureEvent
+        <B><FONT COLOR="#A020F0">implements</FONT></B> org.mundo.net.IFilter
+{
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">int</FONT></B> _op_temp = OP_IGNORE;
+  
+  <B><FONT COLOR="#A020F0">public</FONT></B> org.mundo.net.TypedMapFilter _getFilter() 
+  {
+    org.mundo.net.TypedMapFilter f=<B><FONT COLOR="#A020F0">new</FONT></B> org.mundo.net.TypedMapFilter();
+    f.putLong(<B><FONT COLOR="#BC8F8F">&quot;temp&quot;</FONT></B>, _op_temp, temp);
+    <B><FONT COLOR="#A020F0">return</FONT></B> f;
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> String toString()
+  {
+    <B><FONT COLOR="#A020F0">return</FONT></B> _getFilter().toString();
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+A filter that filters on temperature less than 0 is created by
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>TemperatureEventFilter fn = <B><FONT COLOR="#A020F0">new</FONT></B> TemperatureEventFilter();
+fn._op_temp = IFilterConstants.OP_LESS;
+fn.temp = 0;</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Classes_with_several_fields"></a>  Classes with several fields </h2>
+<p />
+Classes with more than one field get an individual operator per field. All operators have to match (AND) whereas operators with the value <code>OP_IGNORE</code> are ignored.
+<p />
+<h2><a name="Nested_Filters"></a>  Nested Filters </h2>
+<p />
+The examples so far only describe Java built-in data types. A class also can contain user defined (complex) classes. With nested filters it is possible to filter on the contend of these classes.
+<p />
+Consider a scenario where <code>Person</code> classes contain an <code>Address</code> field as shown in the following listings.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.annotation.*;
+
+@mcFilter
+@mcSerialize
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> Address
+{
+  <B><FONT COLOR="#A020F0">public</FONT></B> String  street;
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">int</FONT></B>     zip;
+  <B><FONT COLOR="#A020F0">public</FONT></B> String  city;
+  
+  <B><FONT COLOR="#A020F0">public</FONT></B> String toString(){
+   <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#BC8F8F">&quot;Address: &quot;</FONT></B> + street + <B><FONT COLOR="#BC8F8F">&quot;, &quot;</FONT></B> + zip + <B><FONT COLOR="#BC8F8F">&quot; &quot;</FONT></B> + city;	 
+  }
+}
+
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.annotation.*;
+
+@mcFilter
+@mcSerialize
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> Person
+{
+  <B><FONT COLOR="#A020F0">public</FONT></B> String   firstname;
+  <B><FONT COLOR="#A020F0">public</FONT></B> String   lastname;
+  <B><FONT COLOR="#A020F0">public</FONT></B> Address  address;
+  
+  <B><FONT COLOR="#A020F0">public</FONT></B> String toString(){
+   <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#BC8F8F">&quot;Person: &quot;</FONT></B> + firstname + <B><FONT COLOR="#BC8F8F">&quot; &quot;</FONT></B> + lastname + <B><FONT COLOR="#BC8F8F">&quot;, &quot;</FONT></B> + address;	 
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+With nested filtering it is possible to also filter on person objects with particular address objects. There are only two important things:
+<p /> <ul>
+<li> the nested filter has to on the right place in the object tree
+</li> <li> the <code>_op_</code> has to be set to <code>IFilterConstants.OP_FILTER</code>.
+</li></ul> 
+Point 1 means in our example that the <code>AddressFilter</code> has to be put into a <code>PersonFilter</code> to be able to filter on the address of persons. If the <code>AddressFilter</code> is applied directly to the Content Subscription, we only receive messages containing addresses but not messages containing persons with links to addresses.
+<p />
+Point 2 has to be done because the systems does not recognize filters automatically.
+<p />
+The code for our example looks like this:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>PersonFilter pf=<B><FONT COLOR="#A020F0">new</FONT></B> PersonFilter();   <I><FONT COLOR="#B22222">// Look for persons
+</FONT></I>pf.firstname=<B><FONT COLOR="#BC8F8F">&quot;Erwin&quot;</FONT></B>;                 <I><FONT COLOR="#B22222">// with firstname ``Erwin''
+</FONT></I>pf._op_firstname=OP_EQUAL;
+
+AddressFilter af=<B><FONT COLOR="#A020F0">new</FONT></B> AddressFilter(); <I><FONT COLOR="#B22222">// who lives
+</FONT></I>af.zip=64289;                         <I><FONT COLOR="#B22222">// in city with zip 64289
+</FONT></I>af._op_zip=OP_EQUAL;
+
+pf.address=af;                        <I><FONT COLOR="#B22222">// nest filters
+</FONT></I>pf._op_address=OP_FILTER;             <I><FONT COLOR="#B22222">// and tell system that address contains a filter
+</FONT></I></pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Filter_using_XQuery"></a>  Filter using XQuery </h2>
+<p />
+This is an advanced topic. Specifying filters using XQuery is an alternative to Java filters. Because XQuery works on the externalized objects it is recommended to read the chapter on serialization first. The usage is straight forward if you know content-based filtering. Create object from <code>XQuery</code> class. Call method <code>parse(string)</code> where the string contains a XQuery expression. Subscribe using the XQuery.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> init() {
+  ...
+  XQuery xq = <B><FONT COLOR="#A020F0">new</FONT></B> XQuery();
+
+  <B><FONT COLOR="#A020F0">try</FONT></B> {
+     xq.parse(<B><FONT COLOR="#BC8F8F">&quot;for $o in $msg/object where $o/firstname='XYZ' &quot;</FONT></B> +
+              <B><FONT COLOR="#BC8F8F">&quot;and $o/address/city='Darmstadt'&quot;</FONT></B>);
+     subscriber = ContentSubscription.subscribe(getSession(),xq.getMapFilter());
+     subscriber.setReceiver(IReceiver);
+     subscriber.enable();
+  } <B><FONT COLOR="#A020F0">catch</FONT></B> (Exception e){
+     e.printStackTrace();
+  }
+  ...
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Sending_messages"></a>  Sending messages </h2>
+<p />
+Before we can send messages, we have to <strong>advertise</strong> that we publish content-based. This is done by creating a <code>Publisher</code> object with the following call:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> init()
+{
+  ...
+  publisher = ContentSubscription.publish(getSession());
+  ...
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Now, our the application can send messages as described in previous chapters of the tutorial.
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>publisher.send(Message.fromObject(evnt));</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Receiving_messages"></a>  Receiving messages </h2>
+<p />
+To receive messages, we have to define a filter and then <strong>subscribe</strong> with this filter. <strong>Attention:</strong> There is one peculiarity that has to be taken into account. The filter has to be put into a <code>TypedMapFilter</code> with the key <code>object</code>. This <span class="foswikiNewLink">TypedMapFilter<a href="/foswiki/bin/edit/Mundo/TypedMapFilter?topicparent=Mundo.ContentBasedPSTutorial" rel="nofollow" title="Create this topic">?</a></span> than can be registered with the <code>ContentSubscription</code> as shown in listing.
+<p />
+This is done by creating a <code>Subscriber</code> object with the following call (whereas fn is a (nested) filter object):
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> init()
+{
+  ...
+  TypedMapFilter() tmf = <B><FONT COLOR="#A020F0">new</FONT></B> TypedMapFilter();
+  tmf.putObject(<B><FONT COLOR="#BC8F8F">&quot;object&quot;</FONT></B>, OP_FILTER, fn);
+  Subscriber subscriber = ContentSubscription.subscribe(getSession(), tmf);
+  subscriber.setReceiver(IReceiver);
+  subscriber.enable();
+  ...
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Once a message is received that is <strong>covered</strong> by the subscription, the callback-method <code>received</code> is called by the system.
+<p />
+<h2><a name="Custom_filtering"></a>  Custom filtering </h2>
+<p />
+Sometimes it is necessary to implement filtering with special semantics that can not be expressed with standard filters. Therefore it is possible to implement custom filters. The method explained in this section still works on passive (aka. externalized) objects. A custom filter extended from <code>AttributeFilter</code>. Several methods have to be overwritten:
+<p /> <ul>
+<li> <code>public abstract boolean covers(java.lang.Object o)</code>: tests if this attribute filter covers the specified attribute.
+</li> <li> <code>public abstract java.lang.Object getValue()</code>: returns the comparison value.
+</li> <li> <code>public int hashCode()</code> and
+</li> <li> <code>public boolean equals(java.lang.Object o)</code>
+</li></ul> 
+Further the filter may define custom operators. The following listings show essential parts of an custom filter implementation.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> MyBirthdayFilter <B><FONT COLOR="#A020F0">extends</FONT></B> AttributeFilter  {
+   <I><FONT COLOR="#B22222">/** A decent set of operator should be defined in an interface class... */</FONT></I>
+   <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> <B><FONT COLOR="#A020F0">int</FONT></B> OP_AFTER    = 0x50;   
+   <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> <B><FONT COLOR="#A020F0">int</FONT></B> OP_BEFORE   = 0x51;
+     <I><FONT COLOR="#B22222">/** Implementation compares to this date...*/</FONT></I>   
+   Date temp; 
+
+   <I><FONT COLOR="#B22222">/**
+    * Because I was lazy I do not pass a Birthday object
+    * but a Date. You see, with you own implementation
+    * you can do whatever you want ;-) 
+    */</FONT></I> 
+   <B><FONT COLOR="#A020F0">public</FONT></B> MyBirthdayFilter (<B><FONT COLOR="#A020F0">int</FONT></B> op, Date compareToDate){
+      <B><FONT COLOR="#A020F0">int</FONT></B> m=(op &amp; MASK_OP);
+      <B><FONT COLOR="#A020F0">if</FONT></B> (m!=OP_IGNORE &amp;&amp; m!=OP_AFTER &amp;&amp; m!=OP_BEFORE)
+      <B><FONT COLOR="#A020F0">throw</FONT></B> <B><FONT COLOR="#A020F0">new</FONT></B> IllegalArgumentException(<B><FONT COLOR="#BC8F8F">&quot;invalid operator&quot;</FONT></B>);   
+      <B><FONT COLOR="#A020F0">if</FONT></B> (compareToDate == <B><FONT COLOR="#A020F0">null</FONT></B>)
+      <B><FONT COLOR="#A020F0">throw</FONT></B> <B><FONT COLOR="#A020F0">new</FONT></B> IllegalArgumentException(<B><FONT COLOR="#BC8F8F">&quot;person must not be null&quot;</FONT></B>);   
+       <B><FONT COLOR="#A020F0">this</FONT></B>.op = op;   
+       temp = compareToDate;
+   }
+
+   <I><FONT COLOR="#B22222">/**
+    * Implements our sematic for the filter.
+    */</FONT></I>
+   <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> covers(Object obj)
+   {
+      <I><FONT COLOR="#B22222">/**
+       * obj is passive object. Because we know what object we expect
+       * we activate it and work on the object.
+       * Is is also possibe to work on the nested typedmap.
+       */</FONT></I>   
+      MetaBirthday mb = <B><FONT COLOR="#A020F0">new</FONT></B> MetaBirthday();
+      Birthday bi = <B><FONT COLOR="#A020F0">new</FONT></B> Birthday();
+      <B><FONT COLOR="#A020F0">try</FONT></B> {
+      mb.activate(bi, (TypedMap)obj, <B><FONT COLOR="#A020F0">null</FONT></B>);
+      } <B><FONT COLOR="#A020F0">catch</FONT></B> (Exception e){
+      <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">false</FONT></B>;
+      }       
+                     
+       <B><FONT COLOR="#A020F0">boolean</FONT></B> b;
+       <B><FONT COLOR="#A020F0">switch</FONT></B> (op &amp; MASK_OP) {       
+       <B><FONT COLOR="#A020F0">case</FONT></B> OP_BEFORE:
+          b= bi.getDate().compareTo(temp) &lt; 0;
+          <B><FONT COLOR="#A020F0">break</FONT></B>;
+       <B><FONT COLOR="#A020F0">case</FONT></B> OP_AFTER:       
+          b=bi.getDate().compareTo(temp) &gt; 0;
+          <B><FONT COLOR="#A020F0">break</FONT></B>;
+       <B><FONT COLOR="#A020F0">case</FONT></B> OP_IGNORE:
+          b=<B><FONT COLOR="#A020F0">true</FONT></B>;
+          <B><FONT COLOR="#A020F0">break</FONT></B>;
+       <B><FONT COLOR="#A020F0">default</FONT></B>:
+          <B><FONT COLOR="#A020F0">throw</FONT></B> <B><FONT COLOR="#A020F0">new</FONT></B> IllegalStateException(<B><FONT COLOR="#BC8F8F">&quot;invalid operator&quot;</FONT></B>);
+       }
+       <B><FONT COLOR="#A020F0">if</FONT></B> ((op &amp; OP_NOT)&gt;0)
+       b=!b;
+       <B><FONT COLOR="#A020F0">return</FONT></B>  b;    
+   }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Active_object_filtering"></a>  Active object filtering </h2>
+<p />
+The filter mechanism so far works on externalized objects. Advantages of this approach are that it can be efficiently implemented and there is much support through MundoCore and mcc to create filters. In most cases there should be no need for active object filtering (also called active filters) as described in this section. Active object filtering helps overcoming two issues: lack of custom operators and impossibility to filter on objects that can not be Mundo-serialized.
+<p />
+Active object filtering differs in several ways compared to normal filtering:
+<p /> <ul>
+<li> active object filters implement the <code>org.mundo.net.IActiveObjectFilter</code> interface,
+</li> <li> programmer has to handle nested objects,
+</li> <li> active object filters are evaluated on the client.
+</li></ul> 
+The interface <code>IActiveObjectFilter</code> has one method <code>boolean covers(java.lang.Object obj)</code>. The implementation of the method contains the logic whether the <code>obj</code> is covered by the filter ("is interesting to the client") or not. The following listing demonstrates the implementation of a filter that can compare the birthdate of a Person to a given date.
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">package</FONT></B> ga.tests.content;
+
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.net.IActiveObjectFilter;
+
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> MyPersonFilter <B><FONT COLOR="#A020F0">implements</FONT></B> IActiveObjectFilter {
+ <I><FONT COLOR="#B22222">// A decent set of operator should be defined in an interface class...
+</FONT></I> <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> <B><FONT COLOR="#A020F0">int</FONT></B> OP_AFTER       = 0x50;	
+ <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">final</FONT></B> <B><FONT COLOR="#A020F0">int</FONT></B> OP_BEFORE      = 0x51;
+ <B><FONT COLOR="#A020F0">int</FONT></B> op;
+ Person2 person;
+ 
+ <B><FONT COLOR="#A020F0">public</FONT></B> MyPersonFilter (){
+ <B><FONT COLOR="#A020F0">this</FONT></B>(OP_IGNORE, <B><FONT COLOR="#A020F0">new</FONT></B> Person2());		
+ }
+
+ <B><FONT COLOR="#A020F0">public</FONT></B> MyPersonFilter (<B><FONT COLOR="#A020F0">int</FONT></B> op, Person2 person){
+    <B><FONT COLOR="#A020F0">int</FONT></B> m=(op &amp; MASK_OP);
+    <B><FONT COLOR="#A020F0">if</FONT></B> (m!=OP_IGNORE &amp;&amp; m!=OP_AFTER &amp;&amp; m!=OP_BEFORE)
+       <B><FONT COLOR="#A020F0">throw</FONT></B> <B><FONT COLOR="#A020F0">new</FONT></B> IllegalArgumentException(<B><FONT COLOR="#BC8F8F">&quot;invalid operator&quot;</FONT></B>);	
+    <B><FONT COLOR="#A020F0">if</FONT></B> (person == <B><FONT COLOR="#A020F0">null</FONT></B>)
+   <B><FONT COLOR="#A020F0">throw</FONT></B> <B><FONT COLOR="#A020F0">new</FONT></B> IllegalArgumentException(<B><FONT COLOR="#BC8F8F">&quot;person must not be null&quot;</FONT></B>);	
+       <B><FONT COLOR="#A020F0">this</FONT></B>.op = op;		
+       <B><FONT COLOR="#A020F0">this</FONT></B>.person = person;
+ }
+ 
+ <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> covers(Object obj){  	
+       <B><FONT COLOR="#A020F0">if</FONT></B> (!(obj <B><FONT COLOR="#A020F0">instanceof</FONT></B> Person2)) {      
+          <B><FONT COLOR="#A020F0">return</FONT></B> <B><FONT COLOR="#A020F0">false</FONT></B>;
+       }    
+       Person2 p2 = (Person2)obj;           
+       <B><FONT COLOR="#A020F0">boolean</FONT></B> b;
+       <B><FONT COLOR="#A020F0">switch</FONT></B> (op &amp; MASK_OP) {          
+          <B><FONT COLOR="#A020F0">case</FONT></B> OP_BEFORE:
+             b=p2.birthdate.compareTo(person.birthdate) &lt; 0;
+             <B><FONT COLOR="#A020F0">break</FONT></B>;
+          <B><FONT COLOR="#A020F0">case</FONT></B> OP_AFTER:        	  
+        	  b=p2.birthdate.compareTo(person.birthdate) &gt; 0;
+             <B><FONT COLOR="#A020F0">break</FONT></B>;
+          <B><FONT COLOR="#A020F0">case</FONT></B> OP_IGNORE:
+             b=<B><FONT COLOR="#A020F0">true</FONT></B>;
+             <B><FONT COLOR="#A020F0">break</FONT></B>;
+          <B><FONT COLOR="#A020F0">default</FONT></B>:
+             <B><FONT COLOR="#A020F0">throw</FONT></B> <B><FONT COLOR="#A020F0">new</FONT></B> IllegalStateException(<B><FONT COLOR="#BC8F8F">&quot;invalid operator&quot;</FONT></B>);
+       }
+       <B><FONT COLOR="#A020F0">if</FONT></B> ((op &amp; OP_NOT)&gt;0)
+          b=!b;
+       <B><FONT COLOR="#A020F0">return</FONT></B>  b;       
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+</div></div><!-- /patternContent-->
+</div></div></div></div></div></div></div></div>
+</body></html>

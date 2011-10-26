@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en_US" lang="en_US">
+<head>
+<title> PubSubTutorial &lt; Mundo &lt; Foswiki</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<link rel="icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="shortcut icon" href="/foswiki/pub/System/ProjectLogos/favicon.ico" type="image/x-icon" />
+<link rel="alternate" href="http://127.0.0.1/foswiki/bin/edit/Mundo/PubSubTutorial?t=1295995543" type="application/x-wiki" title="edit PubSubTutorial" />
+<meta name="TEXT_NUM_TOPICS" content="Number of topics:" />
+<meta name="TEXT_MODIFY_SEARCH" content="Modify search" />
+<meta name="robots" content="noindex" /><link rel="alternate" type="application/rss+xml" title="RSS Feed" href="/foswiki/bin/view/Mundo/WebRss" />
+<style type="text/css" media="all">
+@import url('style/base.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/layout.css');
+@import url('style/style.css');
+@import url('style/colors.css');
+</style>
+<style type="text/css" media="all">
+@import url('style/column_left.css');
+@import url('style/variant_foswiki_noframe.css');
+</style><style type="text/css" media="all">
+	/* Styles that are set using variables */
+	.patternBookView .foswikiTopRow,
+	.patternWebIndicator a img,
+	.patternWebIndicator a:hover img {
+		background-color:#efefef;
+	}
+	#patternTopBarContents { background-image:url(/foswiki/pub/System/PatternSkin/header5.gif); background-repeat:repeat-x;}
+#patternTopBarContents { background-color:#ffffff;}
+.patternBookView {
+	border-color:#efefef;
+}
+.patternPreviewPage #patternMain {
+	/* uncomment to set the preview image */
+	/*background-image:url("/foswiki/pub/System/PreviewBackground/preview2bg.gif");*/
+}
+</style>
+<style type="text/css" media="all">
+@import url('style/print.css');
+</style>
+<!--[if IE]><style type="text/css" media="screen">
+pre {
+	height:1%;
+	overflow-x:auto;
+}
+.foswikiAttachments,
+.foswikiForm,
+.foswikiHelp,
+.foswikiPreviewArea,
+.patternPreviewPage .foswikiForm,
+.patternSigLine,
+.patternToolBar,
+.patternTop,
+.patternTopicAction,
+#patternSideBarContents .patternLeftBarPersonal,
+#patternSideBarContents h2,
+#patternSideBarContents li,
+#patternTopBarButtons ul {
+	height:1%;
+}
+#patternSideBarContents .patternLeftBarPersonal {
+	width:100%;
+}
+.foswikiFormStep {
+	height:100%;
+}
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	border:2px solid #ccc;
+}
+</style><![endif]-->
+<!--[if gt IE 8 ]><style type="text/css" media="screen">
+#foswikiLogin,
+.patternShadow {
+	border:10px solid #fff;
+	margin-top:10px;
+	margin-bottom:10px;
+	box-shadow: 0 0 10px #ccc;
+}
+</style><![endif]-->
+<meta name="foswiki.TWISTYANIMATIONSPEED" content="fast" /><!--TWISTYPLUGIN::META-->
+<style type="text/css" media="all">
+.foswikiTable {border-width:1px}
+.foswikiTable .tableSortIcon img {padding-left:.3em; vertical-align:text-bottom}
+.foswikiTable td {border-style:solid none; vertical-align:top}
+.foswikiTable th {border-style:none solid; vertical-align:top; background-color:#d6d3cf; color:#000000}
+.foswikiTable th a:link {color:#000000}
+.foswikiTable th a:visited {color:#000000}
+.foswikiTable th a:hover {color:#000000; background-color:#d6d3cf}
+.foswikiTable th.foswikiSortedCol {background-color:#c4c1ba}
+.foswikiTable tr.foswikiTableRowdataBg0 td {background-color:#ffffff}
+.foswikiTable tr.foswikiTableRowdataBg0 td.foswikiSortedCol {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td {background-color:#f7f7f6}
+.foswikiTable tr.foswikiTableRowdataBg1 td.foswikiSortedCol {background-color:#f0f0ee}
+</style><!--TABLEPLUGIN_default-->
+<meta name="foswiki.PUBURL" content="http://127.0.0.1/foswiki/pub" /> <!-- PUBURL -->
+<meta name="foswiki.PUBURLPATH" content="/foswiki/pub" /> <!-- PUBURLPATH -->
+<meta name="foswiki.SCRIPTSUFFIX" content="" /> <!-- SCRIPTSUFFIX -->
+<meta name="foswiki.SCRIPTURL" content="http://127.0.0.1/foswiki/bin" /> <!-- SCRIPTURL -->
+<meta name="foswiki.SCRIPTURLPATH" content="/foswiki/bin" /> <!-- SCRIPTURLPATH -->
+<meta name="foswiki.SERVERTIME" content="25%20Jan%202011%20-%2023:45" /> <!-- SERVERTIME -->
+<meta name="foswiki.SKIN" content="pattern" /> <!-- SKIN -->
+<meta name="foswiki.SYSTEMWEB" content="System" /> <!-- SYSTEMWEB -->
+<meta name="foswiki.TOPIC" content="PubSubTutorial" /> <!-- TOPIC -->
+<meta name="foswiki.USERNAME" content="guest" /> <!-- USERNAME -->
+<meta name="foswiki.USERSWEB" content="Main" /> <!-- USERSWEB -->
+<meta name="foswiki.WEB" content="Mundo" /> <!-- WEB -->
+<meta name="foswiki.WIKINAME" content="WikiGuest" /> <!-- WIKINAME -->
+<meta name="foswiki.WIKIUSERNAME" content="Main.WikiGuest" /> <!-- WIKIUSERNAME -->
+<meta name="foswiki.NAMEFILTER" content="%5b%5cs%5c*%3f~%5e%5c%24%40%25%60%22'%26%3b%7c%3c%3e%5c%5b%5c%5d%23%5cx00-%5cx1f%5d" /> <!-- NAMEFILTER --><!--JQUERYPLUGIN::FOSWIKI::META-->
+</head>
+<body class="patternViewPage patternPrintPage">
+<a name="PageTop"></a><div class="foswikiPage"><div id="patternScreen">
+<div id="patternPageShadow">
+<div id="patternPage">
+<div id="patternOuter">
+<div id="patternFloatWrap">
+<div id="patternMain">
+<div id="patternMainContents">
+<div class="patternContent"><div class="foswikiTopic"> <h1><a name="Publish_47Subscribe"></a>  Publish/Subscribe </h1>
+<p />
+A publish/subscribe system consists of <em>publishers</em>, <em>subscribers</em>, and an <em>event service</em>. Publishers produce event notifications and pass them to the event service. Subscribers express their interest in certain events by defining stateless message filters, called <em>subscriptions</em>, and issue them to the event service. The event service is a message broker responsible for distributing messages arriving from multiple publishers to its multiple subscribers.
+<p />
+Most services use the channel-based publish/subscribe abstraction of MundoCore for communication. This example shows how to use the publish/subscribe system at the lowest API level, i.e., directly working with passive message objects.
+<p />
+In the following example, all instances of the chat client use the channel <code>chattest</code> for communication. The zone name <code>lan</code> defines the local area network as scope for the channel.
+<p />
+<h2><a name="Sending_messages"></a>  Sending messages </h2>
+<p />
+Before we can send messages, we have to <strong>advertise</strong> to which channel we plan to publish. This is done by creating a <code>Publisher</code> object with the following call:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> init() {
+  ...
+  publisher = getSession().publish(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;chattest&quot;</FONT></B>);
+  ...
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Now, our chat application can read user input from <code>System.in</code>, create a <code>Message</code> object, and send it:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'>BufferedReader r = <B><FONT COLOR="#A020F0">new</FONT></B> BufferedReader(<B><FONT COLOR="#A020F0">new</FONT></B> InputStreamReader(System.in));
+String ln;
+<B><FONT COLOR="#A020F0">while</FONT></B> ( (ln=r.readLine())!=<B><FONT COLOR="#A020F0">null</FONT></B> &amp;&amp; !ln.equals(<B><FONT COLOR="#BC8F8F">&quot;.&quot;</FONT></B>) ) {
+  TypedMap map = <B><FONT COLOR="#A020F0">new</FONT></B> TypedMap();
+  map.putString(<B><FONT COLOR="#BC8F8F">&quot;ln&quot;</FONT></B>, ln);
+  publisher.send(<B><FONT COLOR="#A020F0">new</FONT></B> Message(map));
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Receiving_messages"></a>  Receiving messages </h2>
+<p />
+To receive messages, we <strong>subscribe</strong> to the corresponding channel. This is done by creating a <code>Subscriber</code> object with the following call:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">boolean</FONT></B> init() {
+  ...
+  subscriber = getSession().subscribe(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;chattest&quot;</FONT></B>, <B><FONT COLOR="#A020F0">this</FONT></B>);
+  ...
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+Once a message is received that matches the subscription, the callback-method <code>received</code> is called:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> received(Message msg, MessageContext ctx) {
+  System.out.println(msg.getMap().getString(<B><FONT COLOR="#BC8F8F">&quot;ln&quot;</FONT></B>));
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Sessions"></a>  Sessions </h2>
+<p />
+As shown above, <strong>publisher</strong> and <strong>subscriber</strong> objects are obtained from the <strong>session</strong> object. The session concept provides the following functionalities: <ul>
+<li> In each session, messages are delivered sequentially to the <code>received</code> methods, and never concurrently. Hence, sessions implement a synchronization concept.
+</li> <li> There is no message loopback in the same session: If a subscriber S subscribes to a channel C and a publisher P publishes to a channel C, and P and S are from the same session, then S will not receive messages sent by P.
+</li> <li> Every service comes with a default session. It is possible to create additional sessions for a service, but this is barely needed. For example, advanced routing/brokering services need additional sessions.
+</li></ul> 
+<p />
+<h2><a name="Putting_everything_together"></a>  Putting everything together </h2>
+<p />
+Some additional code is needed to set up and shut down the node properly, and to create and register the Chat service. The <code>main</code>-method of the program is shown below:
+<p />
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> main(String args[]) {
+  Mundo.init();
+
+  ChatService cs = <B><FONT COLOR="#A020F0">new</FONT></B> ChatService();
+  Mundo.registerService(cs);
+  cs.run();
+
+  Mundo.shutdown();
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<code>Mundo.init</code> must be run at the beginning of the program. It starts up basic services that provide e.g. discovery, message transport and message routing.
+<p />
+Before the program terminates. <code>Mundo.shutdown</code> should be called whenever possible. When the basic services are shut down properly, they tell our neighbour nodes that we are shutting down and are then no longer available. If a node does not shut down properly, other nodes can not be sure if the node crashed or the network link is just down temporarily and will try to reconnect a few times. This way, shutting down nodes properly will reduce network traffic.
+<p />
+<h2><a name="Running_Chat"></a>  Running Chat </h2>
+<p />
+Now, you can run multiple instances of <code>Chat</code> on the same machine. The processes will automatically discover each other and distribute chat messages typed in to all other processes.
+<p />
+You may have noticed that the shutdown sometimes takes several seconds. Because MundoCore guarantees the delivery of messages also in presence of some network propagation delays, the routing service does not shut down before all messages to export have expired.
+<p />
+<h2><a name="The_full_Chat_program"></a>  The full Chat program </h2>
+<p />
+<code><b>samples/chat/pubsub/src/Chat.java</b></code>
+<p />
+<!-- SyntaxHighlightingPlugin --><pre class='syntaxHighlightingPlugin'><B><FONT COLOR="#A020F0">import</FONT></B> java.io.BufferedReader;
+<B><FONT COLOR="#A020F0">import</FONT></B> java.io.InputStreamReader;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.IReceiver;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Message;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.MessageContext;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Mundo;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Publisher;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.Service;
+<B><FONT COLOR="#A020F0">import</FONT></B> org.mundo.rt.TypedMap;
+
+<B><FONT COLOR="#A020F0">class</FONT></B> ChatService <B><FONT COLOR="#A020F0">extends</FONT></B> Service <B><FONT COLOR="#A020F0">implements</FONT></B> IReceiver {
+  <B><FONT COLOR="#A020F0">private</FONT></B> Publisher publisher;
+
+  ChatService() {
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> init() {
+    publisher = getSession().publish(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;chattest&quot;</FONT></B>);
+    getSession().subscribe(<B><FONT COLOR="#BC8F8F">&quot;lan&quot;</FONT></B>, <B><FONT COLOR="#BC8F8F">&quot;chattest&quot;</FONT></B>, <B><FONT COLOR="#A020F0">this</FONT></B>);
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> run() {
+    <B><FONT COLOR="#A020F0">try</FONT></B> {
+      BufferedReader r=<B><FONT COLOR="#A020F0">new</FONT></B> BufferedReader(<B><FONT COLOR="#A020F0">new</FONT></B> InputStreamReader(System.in));
+      String ln;
+      <B><FONT COLOR="#A020F0">while</FONT></B> ( (ln=r.readLine())!=<B><FONT COLOR="#A020F0">null</FONT></B> &amp;&amp; !ln.equals(<B><FONT COLOR="#BC8F8F">&quot;.&quot;</FONT></B>) ) {
+        TypedMap map=<B><FONT COLOR="#A020F0">new</FONT></B> TypedMap();
+        map.putString(<B><FONT COLOR="#BC8F8F">&quot;ln&quot;</FONT></B>, ln);
+        publisher.send(<B><FONT COLOR="#A020F0">new</FONT></B> Message(map));
+      }
+    }
+    <B><FONT COLOR="#A020F0">catch</FONT></B> (Exception x) {
+      x.printStackTrace();
+    }
+  }
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> received(Message msg, MessageContext ctx) {
+    System.out.println(msg.getMap().getString(<B><FONT COLOR="#BC8F8F">&quot;ln&quot;</FONT></B>));
+  }
+}
+
+<B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">class</FONT></B> Chat {
+  <B><FONT COLOR="#A020F0">public</FONT></B> <B><FONT COLOR="#A020F0">static</FONT></B> <B><FONT COLOR="#A020F0">void</FONT></B> main(String args[]) <B><FONT COLOR="#A020F0">throws</FONT></B> Exception {
+    Mundo.init();
+    ChatService cs = <B><FONT COLOR="#A020F0">new</FONT></B> ChatService();
+    Mundo.registerService(cs);
+    cs.run();
+    Mundo.shutdown();
+  }
+}</pre><!-- end SyntaxHighlightingPlugin -->
+<p />
+<h2><a name="Sending_and_receiving_messages_on_the_same_channel"></a>  Sending and receiving messages on the same channel </h2>
+<p />
+According to the definition of publish/subscribe, a program should receive all messages it subscribed to that were published. Usually, this would also include messages published by the program itself. You may have noticed that <span class="foswikiNewLink">SimpleChat<a href="/foswiki/bin/edit/Mundo/SimpleChat?topicparent=Mundo.PubSubTutorial" rel="nofollow" title="Create this topic">?</a></span> program does have this behaviour and does not not echo back the messages you sent on the <code>chattest</code> channel, even though you subscribed to the channel as well.
+<p />
+This is caused by a feature of MundoCore that automatically depresses messages you sent. Usually this is also the behaviour desired by the programmer. For those rare cases when you actually want to get a notification for messages you sent as well, you must enable this explicitly by calling the Publisher's <code>enableLocalLoopback</code> method.
+<p />
+<h2><a name="A_note_on_channel_naming"></a>  A note on channel naming </h2>
+<p />
+Channels are identified by names, that have to be defined by the application programmer. The concept of zones is used to create separate namespaces to limit the visibility and accessibility of channels to certain domains. For point-to-point-links, channels are often named simply by using GUIDs. When writing applications, you typically want to define some access points to your application by using well-defined channel names, other temporary links can be assigned randomly with GUIDs. If you have no idea for a well-defined channel name, a reasonable choice is the package and/or class name you publish your channel in.
+<p />
+</div></div><!-- /patternContent-->
+</div></div></div></div></div></div></div></div>
+</body></html>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<wsdl:description xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:wsdl="http://www.w3.org/2004/08/wsdl" xmlns:mc="http://www.mundo.org/2005/wsdl-extensions">
+  <wsdl:types>
+    <xs:schema>
+      <xs:complexType name="type_speakRequest:s,l,s">
+        <xs:element name="p0" type="xsd:string" description="text"></xs:element>
+        <xs:element name="p1" type="xsd:long" description="id"></xs:element>
+        <xs:element name="p2" type="xsd:string" description="channel"></xs:element>
+      </xs:complexType>
+      <xs:element name="speakRequest:s,l,s" type="type_speakRequest:s,l,s"></xs:element>
+      <xs:element name="speakResponse:s,l,s" type="void"></xs:element>
+      <xs:complexType name="type_speakSSMLRequest:s,l,s">
+        <xs:element name="p0" type="xsd:string" description="ssml"></xs:element>
+        <xs:element name="p1" type="xsd:long" description="id"></xs:element>
+        <xs:element name="p2" type="xsd:string" description="channel"></xs:element>
+      </xs:complexType>
+      <xs:element name="speakSSMLRequest:s,l,s" type="type_speakSSMLRequest:s,l,s"></xs:element>
+      <xs:element name="speakSSMLResponse:s,l,s" type="void"></xs:element>
+      <xs:complexType name="type_cancelRequest"></xs:complexType>
+      <xs:element name="cancelRequest" type="type_cancelRequest"></xs:element>
+      <xs:element name="cancelResponse" type="void"></xs:element>
+    </xs:schema>
+  </wsdl:types>
+  <wsdl:interface name="org.mundo.ui.speech.spi.SynthesizerService">
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="speak">
+      <wsdl:input element="speakRequest:s,l,s"></wsdl:input>
+      <wsdl:output element="speakResponse:s,l,s"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="speakSSML">
+      <wsdl:input element="speakSSMLRequest:s,l,s"></wsdl:input>
+      <wsdl:output element="speakSSMLResponse:s,l,s"></wsdl:output>
+    </operation>
+    <operation pattern="http://www.w3.org/2004/08/wsdl/in-out" name="cancel">
+      <wsdl:input element="cancelRequest"></wsdl:input>
+      <wsdl:output element="cancelResponse"></wsdl:output>
+    </operation>
+  </wsdl:interface>
+  <wsdl:service name="%SERVICE_INSTANCE_NAME%" interface="org.mundo.ui.speech.spi.SynthesizerService">
+    <wsdl:endpoint name="org.mundo.ui.speech.spi.SynthesizerServiceEndpoint" address="%SERVICE_CHANNEL_NAME%"></wsdl:endpoint>
+  </wsdl:service>
+</wsdl:description>

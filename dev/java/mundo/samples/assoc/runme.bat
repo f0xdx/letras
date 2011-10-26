@@ -1,1 +1,0 @@
-java -cp bin;..\..\lib\mundocore.jar TestME %1

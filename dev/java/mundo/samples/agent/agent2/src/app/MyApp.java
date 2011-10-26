@@ -3,7 +3,6 @@ package app;
 import org.mundo.rt.Mundo;
 import org.mundo.rt.Service;
 import org.mundo.agent.Agent;
-import org.mundo.agent.IMobility;
 import org.mundo.agent.DoIMobility;
 
 import api.DoIMyAgent;
