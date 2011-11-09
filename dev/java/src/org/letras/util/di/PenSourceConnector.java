@@ -44,9 +44,11 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 		super(source, model);
 		this.source = new DoIPen(source);
 		this.penId = this.source.penId();
-		if (!this.getModel().hasPenData(this.penId))
-			this.getModel().storePenData(this.penId, new DigitalInkStructure());
-		this.di = this.getModel().getPenData(this.penId);
+		if (model != null) {
+			if (!this.getModel().hasPenData(this.penId))
+				this.getModel().storePenData(this.penId, new DigitalInkStructure());
+			this.di = this.getModel().getPenData(this.penId);
+		}
 	}
 
 	// INTERFACE METHODS
@@ -79,7 +81,7 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 			}
 			else if (evt.state() == IPenState.UP ){
 				// Trace somehow ended
-				di.add(this.currentTrace);
+				if (di != null) di.add(this.currentTrace);
 				this.notifyTraceEnded(this.penId, this.currentTrace);
 			}
 		}

@@ -23,7 +23,7 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 
 	// MEMBERS
 
-	private ISourceObserver observer;
+	private IDigitalInkSourceObserver observer;
 
 	private Subscriber sub;
 	private DigitalInkModel model;
@@ -37,7 +37,7 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 	 * 
 	 * @return 
 	 */
-	public ISourceObserver getObserver() {
+	public IDigitalInkSourceObserver getObserver() {
 		return observer;
 	}
 
@@ -47,7 +47,7 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 	 * 
 	 * @param observer 
 	 */
-	public void setObserver(ISourceObserver observer) {
+	public void setObserver(IDigitalInkSourceObserver observer) {
 		this.observer = observer;
 	}
 	
@@ -151,7 +151,7 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 	 * @author Felix Heinrichs <felix.heinrichs@cs.tu-darmstadt.de>
 	 * @version 0.3.0
 	 */
-	public static interface ISourceObserver {
+	public static interface IDigitalInkSourceObserver {
 
 		public void traceStarted(String pen, Trace trace);
 

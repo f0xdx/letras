@@ -110,9 +110,11 @@ public class RegionSourceConnector extends DigitalInkSourceConnector {
 		 */
 		public PenProcessor(String penId, DigitalInkModel model) {
 			this.penId = penId;
-			if (!model.hasPenData(this.penId))
-				model.storePenData(this.penId, new DigitalInkStructure());
-			this.di = model.getPenData(this.penId);
+			if (model != null) {
+				if (!model.hasPenData(this.penId))
+					model.storePenData(this.penId, new DigitalInkStructure());
+				this.di = model.getPenData(this.penId);
+			}
 		}
 
 		
@@ -124,7 +126,7 @@ public class RegionSourceConnector extends DigitalInkSourceConnector {
 				notifyTraceStarted(this.penId, this.currentTrace);
 			}
 			else if (evt.traceEnd()) {
-				this.di.add(this.currentTrace);
+				if (this.di != null) this.di.add(this.currentTrace);
 				notifyTraceEnded(this.penId, this.currentTrace);
 			}
 		}
