@@ -126,4 +126,12 @@ public class DigitalInkProcessor {
 		}
 		else return false;
 	}
+
+	public DigitalInkSourceConnector getSourceConnectorFor(DoObject key) {
+		return sourceConnectors.get(key);
+	}
+
+	public boolean hasSourceConnectorFor(DoObject key) {
+		return sourceConnectors.containsKey(key);
+	}
 }
