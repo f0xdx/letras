@@ -49,8 +49,10 @@ public class RegionSourceConnector extends DigitalInkSourceConnector {
 	 */
 	private PenProcessor getPenProcessor(String pen) {
 		PenProcessor pp = this.penProcessors.get(pen);
-		if (pp == null) 
-			pp = this.penProcessors.put(pen, new PenProcessor(pen, this.getModel()));
+		if (pp == null) {
+			pp = new PenProcessor(pen, this.getModel());
+			this.penProcessors.put(pen, pp);
+		}
 		return pp;
 	}
 	
