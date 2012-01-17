@@ -7,7 +7,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.letras.util.di.DigitalInkSourceConnector.IDigitalInkSourceObserver;
 
 /**
- * Convenience class in clase if multiple {@link DigitalInkSourceObserver} objects
+ * Convenience class in clase if multiple {@link IDigitalInkSourceObserver} objects
  * should be connected to a single {@link DigitalInkSourceConnector} instance.
  * The standard mechanism is to inform only a single observer for the sake of
  * efficiency. There are, however, cases where multiple observers are required,
