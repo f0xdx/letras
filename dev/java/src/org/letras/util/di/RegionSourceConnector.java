@@ -8,6 +8,7 @@ import org.letras.psi.iregion.DoIRegion;
 import org.letras.psi.iregion.RegionEvent;
 import org.letras.psi.iregion.RegionSample;
 import org.mundo.rt.DoObject;
+import org.mundo.rt.GUID;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;
 
@@ -124,7 +125,7 @@ public class RegionSourceConnector extends DigitalInkSourceConnector {
 		
 		public void process(RegionEvent evt) {
 			if (evt.traceStart()) {
-				this.currentTrace = new Trace();
+				this.currentTrace = new Trace(evt.getGuid().toString());
 				notifyTraceStarted(this.penId, this.currentTrace);
 			}
 			else if (evt.traceEnd()) {

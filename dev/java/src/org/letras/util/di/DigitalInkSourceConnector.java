@@ -95,7 +95,7 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 	 * @param channel 
 	 */
 	public void connect(String zone, String channel) {
-		this.disconnect();
+		if (this.sub != null) this.disconnect();
 		this.sub = ServiceManager.getInstance().getSession().subscribe(zone, channel, this);
 	}
 
@@ -104,6 +104,7 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 	 */
 	public void disconnect() {
 		if (this.sub != null) this.sub.unsubscribe();
+		this.sub = null;
 	}
 
 	/**

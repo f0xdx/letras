@@ -6,6 +6,7 @@ package org.letras.util.di;
 import java.util.ArrayList;
 import org.letras.util.geom.Math2d;
 import org.letras.util.geom.Rectangle2d;
+import org.mundo.rt.GUID;
 
 /**
  * Represents a  trace in the tree-like digital ink data structure. This is
@@ -37,8 +38,13 @@ public class Trace extends DigitalInk {
 	private Rectangle2d bb;
 	private long[] tf;
 	private double pathLength;
-
+	private String guid;
+			
 	// getters & setters
+
+	public String getGuid() {
+		return guid;
+	}
 
 	/**
 	 * Get the samples of this trace. The returned {@link ArrayList} is considered
@@ -60,10 +66,15 @@ public class Trace extends DigitalInk {
 	// constructors
 	
 	public Trace() {
+		this((new GUID()).toString());
+	}
+
+	public Trace(String guid) {
 		this.samples = new ArrayList<Sample>(DEFAULT_CAPACITY);
 		this.tf = new long[2];
 		this.bb = new Rectangle2d();
 		this.pathLength = 0.0;
+		this.guid = guid;
 	}
 
 	// interface methods

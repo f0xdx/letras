@@ -6,6 +6,7 @@ package org.letras.util.di;
 import org.letras.psi.ipen.DoIPen;
 import org.letras.psi.ipen.IPenState;
 import org.letras.psi.ipen.PenEvent;
+import org.letras.psi.ipen.PenSample;
 import org.mundo.rt.DoObject;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;
