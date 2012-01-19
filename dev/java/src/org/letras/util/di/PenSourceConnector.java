@@ -52,6 +52,12 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 		}
 	}
 
+	public PenSourceConnector(DoObject source) {
+		super(source);
+		this.source = new DoIPen(source);
+		this.penId = this.source.penId();
+	}
+
 	// INTERFACE METHODS
 
 	@Override

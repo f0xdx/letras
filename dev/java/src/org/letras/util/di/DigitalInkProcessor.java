@@ -66,6 +66,10 @@ public class DigitalInkProcessor {
 				new HashMap<DoObject, DigitalInkSourceConnector>(INITIAL_CAPACITY);
 	}
 
+	public DigitalInkProcessor() {
+		this.sourceConnectors = 
+				new HashMap<DoObject, DigitalInkSourceConnector>(INITIAL_CAPACITY);
+	}
 
 	// METHODS
 

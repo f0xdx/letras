@@ -8,7 +8,6 @@ import org.letras.psi.iregion.DoIRegion;
 import org.letras.psi.iregion.RegionEvent;
 import org.letras.psi.iregion.RegionSample;
 import org.mundo.rt.DoObject;
-import org.mundo.rt.GUID;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;
 
@@ -38,6 +37,13 @@ public class RegionSourceConnector extends DigitalInkSourceConnector {
 		this.source = new DoIRegion(source);
 		this.penProcessors = new HashMap<String, PenProcessor>(INITIAL_CAPACITY);
 	}
+
+	public RegionSourceConnector(DoObject source) {
+		super(source);
+		this.source = new DoIRegion(source);
+		this.penProcessors = new HashMap<String, PenProcessor>(INITIAL_CAPACITY);
+	}
+	
 
 	// METHODS
 

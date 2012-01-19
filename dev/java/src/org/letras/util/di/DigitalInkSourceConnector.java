@@ -75,6 +75,10 @@ public abstract class DigitalInkSourceConnector implements IReceiver{
 		this.source = source;
 	}
 
+	public DigitalInkSourceConnector(DoObject source) {
+		this.source = source;
+	}
+
 
 	// METHODS
 	
