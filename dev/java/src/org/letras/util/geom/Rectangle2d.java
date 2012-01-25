@@ -4,12 +4,15 @@
 
 package org.letras.util.geom;
 
+import org.letras.psi.iregion.shape.Bounds;
+import org.letras.psi.iregion.shape.IShape;
+
 /**
  * A simple rectangle geometry class that does not depend on the AWT classes.
  *
  * @author felix_h
  */
-public class Rectangle2d {
+public class Rectangle2d implements IShape {
 
 	public double x;
 	public double y;
@@ -263,5 +266,12 @@ public class Rectangle2d {
 		Rectangle2d clone = new Rectangle2d();
 		clone.init(this);
 		return clone;
+	}
+
+	// INTERFACE METHODS
+
+	@Override
+	public Bounds getBounds() {
+		return new Bounds(this.x, this.y, this.w, this.h);
 	}
 }
