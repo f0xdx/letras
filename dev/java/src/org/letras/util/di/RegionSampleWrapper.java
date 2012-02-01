@@ -60,4 +60,8 @@ public class RegionSampleWrapper extends Sample {
 	public String sampleType() {
 		return this.sample.getClass().getName();
 	}
+
+	public RegionSample getOriginalSample() {
+		return this.sample;
+	}
 }

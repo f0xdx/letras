@@ -60,4 +60,8 @@ public class PenSampleWrapper extends Sample {
 	public String sampleType() {
 		return this.sample.getClass().getName();
 	}
+
+	public PenSample getOriginalSample() {
+		return this.sample;
+	}
 }
