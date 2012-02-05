@@ -89,10 +89,8 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 			else if (evt.state() == IPenState.UP ){
 				// Trace somehow ended
 				if (this.currentTrace == null) return;
-				if (di != null) {
-					di.add(this.currentTrace);
-					this.notifyTraceEnded(this.penId, this.currentTrace);
-				}
+				if (di != null) di.add(this.currentTrace);
+				this.notifyTraceEnded(this.penId, this.currentTrace);
 			}
 		}
 		else {
