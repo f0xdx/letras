@@ -131,7 +131,7 @@ public class RegionSourceConnector extends DigitalInkSourceConnector {
 		
 		public void process(RegionEvent evt) {
 			if (evt.traceStart()) {
-				this.currentTrace = new Trace(evt.getGuid().toString());
+				this.currentTrace = new Trace(evt.getGuid().toString(), this.penId);
 				notifyTraceStarted(this.penId, this.currentTrace);
 			}
 			else if (evt.traceEnd()) {

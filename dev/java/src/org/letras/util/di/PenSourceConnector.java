@@ -83,7 +83,7 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 			PenEvent evt = (PenEvent) obj;
 			if (evt.state() == IPenState.DOWN) {
 				// Trace started
-				this.currentTrace = new Trace();
+				this.currentTrace = new Trace(this.penId);
 				this.notifyTraceStarted(this.penId, this.currentTrace);
 			}
 			else if (evt.state() == IPenState.UP ){

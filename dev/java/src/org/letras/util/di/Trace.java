@@ -39,6 +39,7 @@ public class Trace extends DigitalInk {
 	private long[] tf;
 	private double pathLength;
 	private String guid;
+    private String pen;
 			
 	// getters & setters
 
@@ -62,19 +63,28 @@ public class Trace extends DigitalInk {
 		this.computeTimeFrame();
 		this.computePathLength();
 	}
+
+    public String getPen() {
+        return pen;
+    }
+
+    public void setPen(String pen) {
+        this.pen = pen;
+    }
 	
 	// constructors
 	
-	public Trace() {
-		this((new GUID()).toString());
+	public Trace(String pen) {
+		this((new GUID()).toString(), pen);
 	}
 
-	public Trace(String guid) {
+	public Trace(String guid, String pen) {
 		this.samples = new ArrayList<Sample>(DEFAULT_CAPACITY);
 		this.tf = new long[2];
 		this.bb = new Rectangle2d();
 		this.pathLength = 0.0;
 		this.guid = guid;
+        this.pen = pen;
 	}
 
 	// interface methods
