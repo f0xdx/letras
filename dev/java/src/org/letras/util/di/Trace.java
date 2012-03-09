@@ -106,6 +106,47 @@ public class Trace extends DigitalInk {
 
 	// methods
 
+    /**
+     * Compute the enclosing region in pattern space coordinates (PSC).
+     * 
+     * @return 
+     */
+    public Rectangle2d computeEnclosingRegion() {
+        synchronized (lock) {
+            if (this.samples.isEmpty() || 
+                    !(this.samples.get(0) instanceof RegionSampleWrapper)) return this.bb;
+            
+            // assumption: if the first sample is a region sample wrapper, all
+            // others will be as well
+
+            Rectangle2d region = new Rectangle2d();
+
+            ((RegionSampleWrapper) this.samples.get(0)).setNrc(false);
+            double xmin = this.samples.get(0).getX();
+            double ymin = this.samples.get(0).getY();
+            double xmax = this.samples.get(0).getX();
+            double ymax = this.samples.get(0).getY();
+            ((RegionSampleWrapper) this.samples.get(0)).setNrc(true);
+
+            // NOTE for syntax here is optimized to relieve the garbage
+            // collector on some virtual machines (e.g. Android / Dalvik)
+
+            int size = this.samples.size();
+            for (int i = 1; i < size; i++) {
+                RegionSampleWrapper s = (RegionSampleWrapper) this.samples.get(i);
+                s.setNrc(false);
+                xmin = (s.getX() < xmin) ? s.getX() : xmin;
+                ymin = (s.getY() < ymin) ? s.getY() : ymin;
+                xmax = (s.getX() > xmax) ? s.getX() : xmax;
+                ymax = (s.getY() > ymax) ? s.getY() : ymax;
+                s.setNrc(true);
+            }
+
+            region.init(xmin, ymin, xmax - xmin, ymax - ymin);
+            return region;
+        }
+    }
+
 	/**
 	 * Method to recompute the bounding box. This will cause a traversal over
 	 * all samples of this trace. As a side effect of calling this method, the
