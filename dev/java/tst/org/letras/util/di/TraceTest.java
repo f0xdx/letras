@@ -42,7 +42,7 @@ public class TraceTest {
 	 */
 	@Test
 	public void testGetSamples() {
-		Trace instance = new Trace();
+		Trace instance = new Trace("testPen");
 		assertNotNull(instance.getSamples());
 	}
 

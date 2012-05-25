@@ -43,7 +43,7 @@
     </path>
 
     <path id="compile.tst.classpath">
-        <pathelement location="${tst}" />
+        <pathelement location="${bin}" />
         <pathelement location="${tst}/junit/junit-4.7.jar" />
         <fileset dir="${lib}">
             <include name="**/*.jar" />
@@ -159,7 +159,6 @@
             description="Compiles the projects junit test sources">
     
         <echo>[compiling junit tests]</echo>
-        
         <javac srcdir="${tst}" 
                destdir="${bin}" 
                failonerror="true" 
