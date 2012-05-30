@@ -4,12 +4,15 @@
 
 package org.letras.util.geom;
 
+import org.letras.psi.iregion.shape.Bounds;
+import org.letras.psi.iregion.shape.IShape;
+
 /**
  * A simple rectangle geometry class that does not depend on the AWT classes.
  *
  * @author felix_h
  */
-public class Rectangle2d {
+public class Rectangle2d implements IShape {
 
 	public double x;
 	public double y;
@@ -111,20 +114,33 @@ public class Rectangle2d {
 	 * @param v
 	 * @return
 	 */
-	public boolean contains(Vector2d v) {
+	public boolean contains(IVector2d v) {
 		assert (v!=null);
-		return contains(v.x, v.y);
+		return contains(v.getX(), v.getY());
 	}
 
 	/**
-	 * This computes the center point of the rectangle 2d.
+	 * This computes the center point of the rectangle 2d. The result will
+	 * be stored in a new {@link Vector2d}.
 	 *
 	 * @return a {@link Vector2d} describing the center point
 	 */
-	public Vector2d center() {
+	public Vector2d ncenter() {
 		return new Vector2d(this.x + (this.w / 2.0), this.y + (this.h / 2.0));
 	}
 
+	/**
+	 * This computes the center point of the rectangle 2d. The result will
+	 * be stored in the provided {@link Vector2d}.
+	 *
+	 * @return a {@link Vector2d} describing the center point
+	 */
+	public IVector2d center(IVector2d v) {
+		v.setX(this.x + (this.w / 2.0));
+		v.setY(this.y + (this.h / 2.0));
+		return v;
+	}
+	
 	/**
 	 * Inserts a new point into this rectangle, such that the resulting
 	 * rectangle will provide the smallest axis aligned bounding box enclosing
@@ -171,8 +187,8 @@ public class Rectangle2d {
 	 * @param v
 	 * @return
 	 */
-	public Rectangle2d insert(Vector2d v) {
-		return this.insert(v.x, v.y);
+	public Rectangle2d insert(IVector2d v) {
+		return this.insert(v.getX(), v.getY());
 	}
 
 	/**
@@ -183,8 +199,8 @@ public class Rectangle2d {
 	 * @param v
 	 * @return
 	 */
-	public Rectangle2d ninsert(Vector2d v) {
-		return this.ninsert(v.x, v.y);
+	public Rectangle2d ninsert(IVector2d v) {
+		return this.ninsert(v.getX(), v.getY());
 	}
 
 	/**
@@ -243,5 +259,19 @@ public class Rectangle2d {
 		hash = 73 * hash + (int) (Double.doubleToLongBits(this.w) ^ (Double.doubleToLongBits(this.w) >>> 32));
 		hash = 73 * hash + (int) (Double.doubleToLongBits(this.h) ^ (Double.doubleToLongBits(this.h) >>> 32));
 		return hash;
+	}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		Rectangle2d clone = new Rectangle2d();
+		clone.init(this);
+		return clone;
+	}
+
+	// INTERFACE METHODS
+
+	@Override
+	public Bounds getBounds() {
+		return new Bounds(this.x, this.y, this.w, this.h);
 	}
 }

@@ -295,7 +295,7 @@ public class PenRecorder extends JFrame implements IPositionListener {
 
 	protected void openRecording() {
 		if (closeCurrentRecording()) {
-			JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+			JFileChooser chooser = (recordingFile != null) ? new JFileChooser(recordingFile.getParent()) : new JFileChooser(System.getProperty("user.dir"));
 			chooser.setFileFilter(penFileFilter);
 			if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 				recording = new PenRecording(chooser.getSelectedFile());

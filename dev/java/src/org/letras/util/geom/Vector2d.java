@@ -49,6 +49,17 @@ public class Vector2d implements IVector2d {
 		this.x = s.getX();
 		this.y = s.getY();
 	}
+
+	/**
+	 * Constructor to create a new vector initialized to hold the values of the
+	 * provided {@link IVector2d}.
+	 * 
+	 * @param v 
+	 */
+	public Vector2d(IVector2d v) {
+		this.x = v.getX();
+		this.y = v.getY();
+	}
 	
 	
 	// METHODS
@@ -70,8 +81,8 @@ public class Vector2d implements IVector2d {
 	 *
 	 * @param v
 	 */
-	public void init(Vector2d v) {
-		this.init(v.x, v.y);
+	public void init(IVector2d v) {
+		this.init(v.getX(), v.getY());
 	}
 
 	/**

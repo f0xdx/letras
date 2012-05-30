@@ -43,7 +43,7 @@
     </path>
 
     <path id="compile.tst.classpath">
-        <pathelement location="${tst}" />
+        <pathelement location="${bin}" />
         <pathelement location="${tst}/junit/junit-4.7.jar" />
         <fileset dir="${lib}">
             <include name="**/*.jar" />
@@ -159,13 +159,13 @@
             description="Compiles the projects junit test sources">
     
         <echo>[compiling junit tests]</echo>
-        
         <javac srcdir="${tst}" 
                destdir="${bin}" 
                failonerror="true" 
                listfiles="false" 
                debug="${letras.debug}" 
-               debuglevel="${letras.debuglevel}">
+               debuglevel="${letras.debuglevel}"
+			   includeantruntime="false">
             <classpath refid="compile.tst.classpath" />
             <compilerarg value="-Xlint:unchecked" />
         </javac>
@@ -289,7 +289,7 @@
 
 
     <target name="create_drivers" 
-            depends="compile,cr_drv_nokia,cr_drv_logitech,cr_drv_adp201,cr_drv_adp301" 
+            depends="compile,cr_drv_nokia,cr_drv_logitech,cr_drv_adp301" 
             description="Creates and copies used drivers">
 	<echo>[creating pen drivers]</echo>
         <mkdir dir="${bin}/rdps/drivers" />

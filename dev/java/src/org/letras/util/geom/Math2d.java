@@ -189,4 +189,223 @@ public class Math2d {
 	public static double dot(double vx, double vy, double ux, double uy) {
 		return (vx * ux) + (vy * uy);
 	}
+
+	/**
+	 * Returns a new vector in polar coordinates matching the provided
+	 * vector in cartesian coordinates. Thereby, the <i>x</i> value of the new
+	 * vector corresponds to <i>r</i> and the <i>y</i> value of the new vector
+	 * to <i>theta</i>.
+	 * 
+	 * @param v
+	 * @return 
+	 */
+	public static Vector2d npolar(IVector2d v) {
+		return npolar(v.getX(), v.getY());
+	}
+
+	/**
+	 * Returns a new vector in polar coordinates matching the provided
+	 * vector in cartesian coordinates. Thereby, the <i>x</i> value of the new
+	 * vector corresponds to <i>r</i> and the <i>y</i> value of the new vector
+	 * to <i>theta</i>.
+	 * 
+	 * @param vx
+	 * @param vy
+	 * @return 
+	 */
+	public static Vector2d npolar(double vx, double vy) {
+		return new Vector2d(norm(vx,vy), Math.atan2(vy, vx));
+	}
+
+	/**
+	 * Transforms the provided vector v into matching polar coordinates.
+	 * Thereby, the <i>x</i> value of the
+	 * returned vector corresponds to <i>r</i> and the <i>y</i> value of the 
+	 * new vector to <i>theta</i>.
+	 * 
+	 * @param v
+	 * @return 
+	 */
+	public static IVector2d polar(IVector2d v) {
+		return polar(v, v);
+	}
+
+	/**
+	 * Returns the provided vector r in polar coordinates matching the 
+	 * vector v in cartesian coordinates. Thereby, the <i>x</i> value of the
+	 * returned vector corresponds to <i>r</i> and the <i>y</i> value of the 
+	 * new vector to <i>theta</i>.
+	 * 
+	 * @param v
+	 * @param r
+	 * @return 
+	 */
+	public static IVector2d polar(IVector2d v, IVector2d r) {
+		return polar(v.getX(), v.getY(), r);
+	}
+
+	/**
+	 * Returns the provided vector r in polar coordinates matching the 
+	 * vector v in cartesian coordinates. Thereby, the <i>x</i> value of the
+	 * returned vector corresponds to <i>r</i> and the <i>y</i> value of the 
+	 * new vector to <i>theta</i>.
+	 * 
+	 * @param vx
+	 * @param vy
+	 * @param r
+	 * @return 
+	 */
+	public static IVector2d polar(double vx, double vy, IVector2d r) {
+		r.setX(norm(vx, vy));
+		r.setY(Math.atan2(vy, vx));
+		return r;
+	}
+
+	/**
+	 * Funktion to obtain the <i>r</i> component of this vector in polar coordinates.
+	 * 
+	 * @param v
+	 * @return 
+	 */
+	public static double polarR(IVector2d v) {
+		return polarR(v.getX(), v.getY());
+	}
+
+	/**
+	 * Funktion to obtain the <i>r</i> component of this vector in polar coordinates.
+	 * 
+	 * @param vx
+	 * @param vy
+	 * @return 
+	 */
+	public static double polarR(double vx, double vy) {
+		return norm(vx, vy);
+	}
+
+	/**
+	 * Funktion to obtain the <i>theta</i> component of this vector in polar 
+	 * coordinates.
+	 * 
+	 * @param v
+	 * @return 
+	 */
+	public static double polarTheta(IVector2d v) {
+		return polarTheta(v.getX(), v.getY());
+	}
+
+	/**
+	 * Funktion to obtain the <i>theta</i> component of this vector in polar 
+	 * coordinates.
+	 * 
+	 * @param vx
+	 * @param vy
+	 * @return 
+	 */
+	public static double polarTheta(double vx, double vy) {
+		return Math.atan2(vy, vx);
+	}
+
+	/**
+	 * Returns a new vector in cartesian coordinates matching the provided
+	 * vector in polar coordinates.
+	 * 
+	 * @param v
+	 * @return 
+	 */
+	public static Vector2d ncartesian(IVector2d v) {
+		return ncartesian(v.getX(), v.getY());
+	}
+
+	/**
+	 * Returns a new vector in cartesian coordinates matching the provided
+	 * vector in polar coordinates.
+	 * 
+	 * @param vx
+	 * @param vy
+	 * @return 
+	 */
+	public static Vector2d ncartesian(double vx, double vy) {
+		return new Vector2d(vx * Math.cos(vy), vx * Math.sin(vy));
+	}
+
+	/**
+	 * Transforms the provided vector v into matching cartesian coordinates.
+	 * 
+	 * @param v
+	 * @return 
+	 */
+	public static IVector2d cartesian(IVector2d v) {
+		return cartesian(v, v);
+	}
+
+	/**
+	 * Transforms the provided vector v into matching cartesian coordinates.
+	 * 
+	 * @param v
+	 * @param r
+	 * @return 
+	 */
+	public static IVector2d cartesian(IVector2d v, IVector2d r) {
+		return cartesian(v.getX(), v.getY(), r);
+	}
+
+	/**
+	 * Transforms the provided vector v into matching cartesian coordinates.
+	 * 
+	 * @param vx
+	 * @param vy
+	 * @param r
+	 * @return 
+	 */
+	public static IVector2d cartesian(double vx, double vy, IVector2d r) {
+		r.setX(vx * Math.cos(vy));
+		r.setY(vx * Math.sin(vy));
+		return r;
+	}
+
+	/**
+	 * Funktion to obtain the <i>x</i> component of this vector in cartesian coordinates.
+	 * (assuming it is in polar coordinates).
+	 * 
+	 * @param v
+	 * @return 
+	 */
+	public static double cartesianX(IVector2d v) {
+		return cartesianX(v.getX(), v.getY());
+	}
+
+	/**
+	 * Funktion to obtain the <i>x</i> component of this vector in cartesian coordinates.
+	 * (assuming it is in polar coordinates).
+	 * 
+	 * @param vx
+	 * @param vy
+	 * @return 
+	 */
+	public static double cartesianX(double vx, double vy) {
+		return vx * Math.cos(vy);
+	}
+
+	/**
+	 * Funktion to obtain the <i>y</i> component of this vector in cartesian coordinates.
+	 * (assuming it is in polar coordinates).
+	 * 
+	 * @param v
+	 * @return 
+	 */
+	public static double cartesianY(IVector2d v) {
+		return cartesianY(v.getX(), v.getY());
+	}
+
+	/**
+	 * Funktion to obtain the <i>y</i> component of this vector in cartesian coordinates.
+	 * (assuming it is in polar coordinates).
+	 * 
+	 * @param vx
+	 * @param vy
+	 * @return 
+	 */
+	public static double cartesianY(double vx, double vy) {
+		return vx * Math.sin(vy);
+	}
 }

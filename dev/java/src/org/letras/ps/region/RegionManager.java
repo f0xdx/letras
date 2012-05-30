@@ -89,21 +89,21 @@ public class RegionManager implements IRegionManager {
 		if (lastIntersectingRegionInfo == null) {
 			lastIntersectingRegionTreeNode = model;
 		} else {
-			lastIntersectingRegionTreeNode = regionToTreeNode.get(regionToTreeNode);
+			lastIntersectingRegionTreeNode = regionToTreeNode.get(lastIntersectingRegionInfo);
 			if (lastIntersectingRegionTreeNode == null) {
 				lastIntersectingRegionTreeNode = model;
 			}
 		}
 		RegionTreeNode intersectingRegionTreeNode = lastIntersectingRegionTreeNode.getIntersectingRegion(sample.getX(), sample.getY());
+
 		if (intersectingRegionTreeNode == model) {
 			modelLock.readLock().unlock();
 			if (retrieveRegionAt(sample.getX(), sample.getY())) {
 				return getIntersectingRegionInfos(lastIntersectingRegionInfo, sample);
 			} else {
-				return Collections.emptyList();
+				modelLock.readLock().lock();
 			}
 		}
-
 		RegionTreeNode currentRegionTreeNode = intersectingRegionTreeNode;
 		List<IRegion> intersectedRegions = new LinkedList<IRegion>();
 		while (currentRegionTreeNode != null) {

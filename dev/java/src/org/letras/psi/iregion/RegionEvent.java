@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.letras.psi.iregion;
 
+import org.letras.psi.iregion.msg.RegionMessageProcessor;
+import org.letras.psi.iregion.msg.RegionMessage;
 import org.mundo.annotation.mcSerialize;
 import org.mundo.rt.GUID;
 
@@ -254,14 +256,11 @@ public class RegionEvent implements RegionMessage {
 	@Override
 	public String toString() {
 		StringBuilder builder = new StringBuilder("event(");
-		if (penDown())
-			builder.append("PEN_DOWN, ");
-		else if (penUp())
-			builder.append("PEN_UP, ");
-		else if (traceStart())
-			builder.append("TRACE_START, ");
-		else if (traceEnd())
-			builder.append("TRACE_END, ");
+		if (penDown()) builder.append("PEN_DOWN, ");
+		if (penUp()) builder.append("PEN_UP, ");
+		if (traceStart()) builder.append("TRACE_START, ");
+		if (traceEnd()) builder.append("TRACE_END, ");
+		builder.append("GUID=");
 		builder.append(guid);
 		builder.append(", ");
 		if (continues(guid))

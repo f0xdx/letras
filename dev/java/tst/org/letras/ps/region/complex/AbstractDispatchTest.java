@@ -42,7 +42,7 @@ import org.letras.ps.region.RegionProcessor;
 import org.letras.psi.iregion.IDigitalInkConsumer;
 import org.letras.psi.iregion.IRegion;
 import org.letras.psi.iregion.RegionEvent;
-import org.letras.psi.iregion.RegionMessage;
+import org.letras.psi.iregion.msg.RegionMessage;
 import org.letras.psi.iregion.RegionSample;
 import org.letras.tools.penrecorder.PenRecording;
 import org.letras.tools.penrecorder.PenRecordingPlayer;

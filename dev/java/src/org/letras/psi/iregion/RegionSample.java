@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.letras.psi.iregion;
 
+import org.letras.psi.iregion.msg.RegionMessageProcessor;
+import org.letras.psi.iregion.msg.RegionMessage;
 import org.letras.psi.ipen.PenSample;
 import org.letras.psi.iregion.shape.Bounds;
 import org.letras.psi.iregion.shape.IShape;

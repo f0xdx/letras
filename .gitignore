@@ -1,6 +1,7 @@
-/dev/java/.launch/
-/dev/java/bin/
-/dev/java/doc/
-/dev/java/gen/
-/dev/java/ifc/
-/dev/java/nbproject/private/
+dev/java/.launch/
+dev/java/bin/
+dev/java/doc/
+dev/java/gen/
+dev/java/ifc/
+dev/java/dist/
+dev/java/nbproject/private/

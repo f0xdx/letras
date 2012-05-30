@@ -9,7 +9,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  * 
- * The Original Code is Letras (Java).
+ * The Original Code is MundoCore Java.
  * 
  * The Initial Developer of the Original Code is Telecooperation Group,
  * Department of Computer Science, Technische Universität Darmstadt.
@@ -21,12 +21,20 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.tools.ui;
+package org.letras.psi.iregion.msg;
 
-import java.util.List;
-
-import org.mundo.service.ServiceInfo;
-
-public interface IPenDiscoveryListener {
-	public void availablePensChanged(List<ServiceInfo> penServiceInfos);
+/**
+ * Interface for RegionMessages. Allows disambiguating {@link RegionEvent}s and 
+ * {@link RegionSample}s (this means you don't have to cast when processing 
+ * {@link RegionMessage}s).
+ * 
+ * @author jannik
+ *
+ */
+public interface RegionMessage {
+	/**
+	 * Perform a double-dispatch with this {@link RegionMessage} and processor
+	 * @param processor
+	 */
+	public void accept(RegionMessageProcessor processor);
 }

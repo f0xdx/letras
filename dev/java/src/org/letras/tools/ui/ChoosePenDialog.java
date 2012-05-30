@@ -9,7 +9,7 @@
  * for the specific language governing rights and limitations under the
  * License.
  * 
- * The Original Code is MundoCore Java.
+ * The Original Code is Letras (Java).
  * 
  * The Initial Developer of the Original Code is Telecooperation Group,
  * Department of Computer Science, Technische Universität Darmstadt.
