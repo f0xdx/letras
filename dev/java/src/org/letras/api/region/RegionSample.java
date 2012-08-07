@@ -21,13 +21,12 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.iregion;
+package org.letras.api.region;
 
-import org.letras.psi.iregion.msg.RegionMessageProcessor;
-import org.letras.psi.iregion.msg.RegionMessage;
-import org.letras.psi.ipen.PenSample;
-import org.letras.psi.iregion.shape.Bounds;
-import org.letras.psi.iregion.shape.IShape;
+import org.letras.api.pen.PenSample;
+import org.letras.api.region.shape.Bounds;
+import org.letras.api.region.shape.IShape;
+import org.letras.psi.iregion.IRegion;
 import org.letras.util.geom.IVector2d;
 import org.mundo.annotation.mcSerialize;
 
@@ -47,7 +46,7 @@ import org.mundo.annotation.mcSerialize;
  * @version 0.1
  */
 @mcSerialize
-public class RegionSample implements RegionMessage, IVector2d {
+public class RegionSample implements IVector2d {
 	
 	// members
 
@@ -209,10 +208,6 @@ public class RegionSample implements RegionMessage, IVector2d {
 	 */
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
-	}
-
-	public void accept(RegionMessageProcessor processor) {
-		processor.process(this);
 	}
 	
 	/**

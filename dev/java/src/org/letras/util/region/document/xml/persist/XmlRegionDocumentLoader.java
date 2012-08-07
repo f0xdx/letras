@@ -29,12 +29,12 @@ import java.util.List;
 
 import javax.xml.bind.JAXB;
 
+import org.letras.api.region.RegionData;
+import org.letras.api.region.shape.IShape;
 import org.letras.ps.region.document.xml.CircularShape;
 import org.letras.ps.region.document.xml.RectangularShape;
 import org.letras.ps.region.document.xml.Region;
 import org.letras.ps.region.document.xml.ShapeChoice;
-import org.letras.psi.iregion.RegionData;
-import org.letras.psi.iregion.shape.IShape;
 import org.letras.util.region.document.RegionDocument;
 
 public class XmlRegionDocumentLoader {
@@ -67,11 +67,11 @@ public class XmlRegionDocumentLoader {
 	private static IShape convert(ShapeChoice shape) {
 		if (shape.getShape() instanceof RectangularShape) {
 			RectangularShape rectangle = (RectangularShape) shape.getShape();
-			return new org.letras.psi.iregion.shape.RectangularShape(rectangle.getLeft(), 
+			return new org.letras.api.region.shape.RectangularShape(rectangle.getLeft(), 
 					rectangle.getTop(), rectangle.getWidth(), rectangle.getHeight());
 		} else if (shape.getShape() instanceof CircularShape) {
 			CircularShape circle = (CircularShape) shape.getShape();
-			return new org.letras.psi.iregion.shape.CircularShape(circle.getCenterx(),
+			return new org.letras.api.region.shape.CircularShape(circle.getCenterx(),
 					circle.getCentery(), circle.getRadius());
 		} else {
 			throw new IllegalArgumentException("Invalid shape type "

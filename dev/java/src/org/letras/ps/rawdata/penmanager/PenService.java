@@ -26,10 +26,10 @@ package org.letras.ps.rawdata.penmanager;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.pen.IPenState;
+import org.letras.api.pen.PenEvent;
+import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.IPen;
-import org.letras.psi.ipen.IPenState;
-import org.letras.psi.ipen.PenEvent;
-import org.letras.psi.ipen.PenSample;
 import org.mundo.rt.Message;
 import org.mundo.rt.Publisher;
 import org.mundo.rt.Service;
@@ -79,7 +79,7 @@ public class PenService extends Service implements IPen {
 
 	/**
 	 * Sets the state of the pen to <code>state</code>. State takes values as defined
-	 * in {@link org.letras.psi.ipen.IPenState}.
+	 * in {@link org.letras.api.pen.IPenState}.
 	 * 
 	 * @param state		the new pen state
 	 */

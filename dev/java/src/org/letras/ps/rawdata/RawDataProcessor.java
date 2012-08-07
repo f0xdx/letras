@@ -136,6 +136,8 @@ public class RawDataProcessor extends Service implements IConfigure {
 	
 	private File driverDirectory;
 	
+	private PenManager penManager;
+	
 	private PenDriverManager driverManager;
 
 	/**
@@ -150,14 +152,6 @@ public class RawDataProcessor extends Service implements IConfigure {
 	 */
 	public void setDriverDirectory(File driverDirectory) {
 		this.driverDirectory = driverDirectory;
-	}
-
-	public PenDriverManager getDriverManager() {
-		return driverManager;
-	}
-
-	public void setDriverManager(PenDriverManager driverManager) {
-		this.driverManager = driverManager;
 	}
 
 	// constructors
@@ -180,8 +174,10 @@ public class RawDataProcessor extends Service implements IConfigure {
 			// check availability with console.isAvailable())
 			this.console = new RdpConsole();
 			
+			this.penManager = new PenManager();
+			
 			// build a pen driver manager
-			this.driverManager = new PenDriverManager();
+			this.driverManager = new PenDriverManager(penManager);
 			
 			// set the default directory
 			try {
@@ -226,9 +222,6 @@ public class RawDataProcessor extends Service implements IConfigure {
 		}
 		
 		this.driverManager.init();
-		
-		// initialize the pen manager: register the the singleton as a service at the mundo node
-		Mundo.registerService(PenManager.getInstance());
 	}
 	
 	/**
@@ -242,7 +235,7 @@ public class RawDataProcessor extends Service implements IConfigure {
 		
 		// shutdown the driver manager and all the currently loaded drivers
 		this.driverManager.shutdown();
-		
+		this.penManager.shutdown();
 		super.shutdown();
 	}
 	
@@ -315,8 +308,10 @@ public class RawDataProcessor extends Service implements IConfigure {
 			logger.logp(Level.WARNING, "RawDataProcessor", "setServiceConfig",
 					"driver directory not available");
 		
-		// configure the pen manager also (manually)
-		PenManager.getInstance().setServiceConfig(options);
+		// configure the pen manager also
+		String papZone = (options.containsKey("pap-zone")) ?
+				options.getString("pap-zone") : null;
+		if (papZone != null) penManager.setPenZone(papZone);
 	}
 
 	/**

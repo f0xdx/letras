@@ -23,9 +23,9 @@
  ******************************************************************************/
 package org.letras.ps.region;
 
+import org.letras.api.region.RegionData;
 import org.letras.psi.iregion.DoIRegionSetListener;
 import org.letras.psi.iregion.IRegionSet;
-import org.letras.psi.iregion.RegionData;
 import org.mundo.rt.DoObject;
 import org.mundo.rt.Publisher;
 import org.mundo.rt.Service;

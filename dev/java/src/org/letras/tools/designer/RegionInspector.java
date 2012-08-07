@@ -40,9 +40,9 @@ import javax.swing.SwingUtilities;
 import javax.swing.border.LineBorder;
 import javax.swing.border.TitledBorder;
 
+import org.letras.api.region.RegionData;
 import org.letras.ps.region.RegionTreeNode;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionData;
 
 public class RegionInspector extends JPanel implements ItemListener {
 

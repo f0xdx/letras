@@ -76,7 +76,7 @@ public class LogitechPenDriver implements IPenDriver, IConfigure {
 	// methods
 	
 	@Override
-	public void inject(IPenAdapterFactory factory) {
+	public void setPenAdapterFactory(IPenAdapterFactory factory) {
 		this.factory = factory;
 	}
 	

@@ -25,9 +25,9 @@ package org.letras.tools.regionmonitor.ink.model;
 
 import java.util.HashMap;
 
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionEvent;
-import org.letras.psi.iregion.RegionSample;
 import org.mundo.rt.GUID;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Message;

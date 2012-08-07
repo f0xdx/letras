@@ -34,7 +34,7 @@ import java.awt.geom.CubicCurve2D.Double;
 import java.util.Hashtable;
 import java.util.ListIterator;
 
-import org.letras.psi.iregion.RegionSample;
+import org.letras.api.region.RegionSample;
 import org.letras.tools.regionmonitor.ink.model.IStrokeObserver;
 import org.letras.tools.regionmonitor.ink.model.Stroke;
 

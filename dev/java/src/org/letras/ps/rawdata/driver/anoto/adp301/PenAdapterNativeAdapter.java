@@ -23,9 +23,9 @@
  ******************************************************************************/
 package org.letras.ps.rawdata.driver.anoto.adp301;
 
+import org.letras.api.pen.IPenState;
+import org.letras.api.pen.PenSample;
 import org.letras.ps.rawdata.IPenAdapter;
-import org.letras.psi.ipen.IPenState;
-import org.letras.psi.ipen.PenSample;
 
 /**
  * The PenAdapterNativeAdapter is an adapter to ease communication between

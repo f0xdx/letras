@@ -30,14 +30,14 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.pen.IPenState;
+import org.letras.api.pen.PenSample;
 import org.letras.ps.region.RegionManager;
 import org.letras.ps.region.RegionSampleProcessor;
 import org.letras.ps.region.RegionTreeNode;
 import org.letras.ps.region.broker.simple.SimpleRegionBroker;
 import org.letras.ps.region.penconnector.PenConnection;
 import org.letras.psi.ipen.IPen;
-import org.letras.psi.ipen.IPenState;
-import org.letras.psi.ipen.PenSample;
 import org.letras.psi.iregion.IRegion;
 import org.mundo.rt.Mundo;
 

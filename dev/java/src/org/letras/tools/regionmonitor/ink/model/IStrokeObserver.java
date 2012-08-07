@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.letras.tools.regionmonitor.ink.model;
 
-import org.letras.psi.iregion.RegionSample;
+import org.letras.api.region.RegionSample;
 
 /**
  * This interface defines the methods a stroke observer needs to

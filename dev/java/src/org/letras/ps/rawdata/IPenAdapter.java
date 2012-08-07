@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.letras.ps.rawdata;
 
-import org.letras.psi.ipen.PenSample;
+import org.letras.api.pen.PenSample;
 
 /**
  * Pen adapters are used by a pen driver to access the logical pen 
@@ -77,14 +77,14 @@ public interface IPenAdapter {
 	
 	/**
 	 * Sets the referenced pen into the specified state. Potential states are represented
-	 * in the {@link org.letras.psi.ipen.IPenState} interface. Such states can be
+	 * in the {@link org.letras.api.pen.IPenState} interface. Such states can be
 	 * <ul>
 	 *  <li> OFF: For a turned off pen
 	 *  <li> ON: For a pen that is turned on
 	 *  <li> UP: For a pen which is currently UP, meaning it is not sending data samples
 	 * </ul> DOWN: For a pen which is currently down, i.e. sending data samples
 	 * 
-	 * @param state a state as defined in {@link org.letras.psi.ipen.IPenState}
+	 * @param state a state as defined in {@link org.letras.api.pen.IPenState}
 	 */
 	public void penState(int state);
 }

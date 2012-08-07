@@ -39,12 +39,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
+import org.letras.api.region.shape.Bounds;
 import org.letras.ps.region.RegionTreeNode;
 import org.letras.psi.iregion.IDigitalInkConsumer;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionEvent;
-import org.letras.psi.iregion.RegionSample;
-import org.letras.psi.iregion.shape.Bounds;
 import org.letras.tools.regionmonitor.ink.model.Stroke;
 import org.letras.tools.regionmonitor.ink.view.DigitalInkRenderer;
 import org.letras.tools.regionmonitor.ink.view.LineStroke;

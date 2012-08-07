@@ -4,9 +4,10 @@
 package org.letras.util.di;
 
 import java.util.HashMap;
+
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
 import org.letras.psi.iregion.DoIRegion;
-import org.letras.psi.iregion.RegionEvent;
-import org.letras.psi.iregion.RegionSample;
 import org.mundo.rt.DoObject;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;

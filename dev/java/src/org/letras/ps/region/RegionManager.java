@@ -33,11 +33,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.pen.PenSample;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.ps.region.broker.IRegionBroker;
 import org.letras.ps.region.broker.IRegionManager;
-import org.letras.psi.ipen.PenSample;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.shape.RectangularShape;
 
 /**
  * The {@link RegionManager} owns the node's {@link RegionTreeNode} model.

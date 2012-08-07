@@ -25,7 +25,7 @@ package org.letras.tools.regionmonitor.ink.view;
 
 import java.awt.Shape;
 
-import org.letras.psi.iregion.RegionSample;
+import org.letras.api.region.RegionSample;
 import org.letras.tools.regionmonitor.ink.model.Stroke;
 
 /**

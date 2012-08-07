@@ -26,8 +26,8 @@ package org.letras.ps.rawdata.driver.logitech;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.pen.PenSample;
 import org.letras.ps.rawdata.IPenAdapter;
-import org.letras.psi.ipen.PenSample;
 
 /**
  * The IO2StreamConverter class converts the byte stream coming from 

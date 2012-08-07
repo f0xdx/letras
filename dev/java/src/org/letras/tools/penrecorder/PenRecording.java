@@ -33,8 +33,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.letras.psi.ipen.PenEvent;
-import org.letras.psi.ipen.PenSample;
+import org.letras.api.pen.PenEvent;
+import org.letras.api.pen.PenSample;
 
 public class PenRecording {
 	private List<Object> messages = new ArrayList<Object>();

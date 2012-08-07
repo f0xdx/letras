@@ -33,9 +33,9 @@ import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
+import org.letras.api.region.RegionData;
 import org.letras.ps.region.RegionTreeNode;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionData;
 import org.letras.util.region.document.IRegionDocumentListener;
 import org.letras.util.region.document.RegionDocument;
 

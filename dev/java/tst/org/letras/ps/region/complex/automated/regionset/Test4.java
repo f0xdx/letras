@@ -25,8 +25,8 @@ package org.letras.ps.region.complex.automated.regionset;
 
 import java.io.File;
 
+import org.letras.api.region.RegionEvent;
 import org.letras.ps.region.complex.AbstractDispatchTest;
-import org.letras.psi.iregion.RegionEvent;
 import org.letras.util.region.document.RegionDocumentRegionSet;
 import org.letras.util.region.document.RegionDocument;
 

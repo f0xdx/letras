@@ -29,11 +29,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.letras.api.region.shape.Bounds;
+import org.letras.api.region.shape.IShape;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.ps.region.broker.simple.LocalRegion;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.shape.Bounds;
-import org.letras.psi.iregion.shape.IShape;
-import org.letras.psi.iregion.shape.RectangularShape;
 
 public class LocalRegionTest {
 

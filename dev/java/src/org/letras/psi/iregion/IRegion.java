@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.letras.psi.iregion;
 
-import org.letras.psi.iregion.shape.IShape;
+import org.letras.api.region.shape.IShape;
 import org.mundo.annotation.mcMethod;
 import org.mundo.annotation.mcRemote;
 
@@ -46,7 +46,7 @@ public interface IRegion {
 	
 	/**
 	 * Used to obtain the shape of this region. For convenience the
-	 * provided shapes in {@link org.letras.psi.iregion.shape} should
+	 * provided shapes in {@link org.letras.api.region.shape} should
 	 * be used by implementing classes.
 	 * 
 	 * @return 	the {@link IShape} describing the interactive regions

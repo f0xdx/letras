@@ -21,13 +21,13 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.ipen;
+package org.letras.api.pen;
 
 /**
  * This interface specifies constants used as flags to determine a pen's state.
  *
  * @author felix_h
- * @version 0.0.1
+ * @version 0.3
  */
 public interface IPenState {
 	
@@ -58,10 +58,12 @@ public interface IPenState {
 	
 	/**
 	 * Used to set the pen into state: EXCEPTION. Note that this
-	 * state is used to define that the pen is probably in a state
+	 * state alone is used to define that the pen is probably in a state
 	 * where auto-recovery is impossible. A user interface should
 	 * inform the user when the pen is entering this state to allow
-	 * manual recovery.
+	 * manual recovery. When additional states are active such as 
+	 * OUT_OF_REACH or DOWN this indicates that it is a pen-specific
+	 * error and could be temporary.
 	 */
 	public static final int EXCEPTION = 4;
 	
@@ -75,5 +77,6 @@ public interface IPenState {
 	 * change from state OUT_OF_REACH to state OFF or to state EXCEPTION.
 	 */
 	public static final int OUT_OF_REACH = 5;
+	
 	
 }

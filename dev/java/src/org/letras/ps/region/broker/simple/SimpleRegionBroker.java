@@ -32,11 +32,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.region.shape.Bounds;
 import org.letras.ps.region.RegionManager;
 import org.letras.ps.region.broker.IRegionBroker;
 import org.letras.ps.region.broker.IRegionManager;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.shape.Bounds;
 import org.mundo.rt.Mundo;
 import org.mundo.rt.Service;
 import org.mundo.rt.TypedMap;

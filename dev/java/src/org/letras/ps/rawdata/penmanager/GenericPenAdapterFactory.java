@@ -47,7 +47,13 @@ public class GenericPenAdapterFactory implements IPenAdapterFactory {
 	
 	// members
 
+	private PenManager penManager;
+
 	// constructors
+	
+	public GenericPenAdapterFactory(PenManager penManager) {
+		this.penManager = penManager;
+	}
 
 	// methods
 	
@@ -61,7 +67,7 @@ public class GenericPenAdapterFactory implements IPenAdapterFactory {
 		String penId = PenManager.penId(driver.getClass().getName(), token);
 		
 		// now obtain the appropriate pen service (for this id)
-		PenService ps = PenManager.getInstance().penService(penId);
+		PenService ps = penManager.penService(penId);
 
 		logger.logp(Level.FINE, "GenericPenAdapterFactory", "create",
 				String.format("creating pen adapter (id=%s/service=%s)", penId, ps));

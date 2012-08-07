@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.ipen;
+package org.letras.api.pen;
 
 import org.mundo.annotation.mcSerialize;
 
@@ -38,13 +38,55 @@ public class PenSample {
 
 	// members
 	
+	/**
+	 * The x-coordinate in the global Anoto Pattern Space. One integer corresponds to around 0.3mm on paper.
+	 */
 	protected double x;
 	
+	/**
+	 * The y-coordinate in the global Anoto Pattern Space. One integer corresponds to around 0.3mm on paper.
+	 */
 	protected double y;
 	
+	/**
+	 * The force inflicted on the pen's tip when the sample was read. Higher value means more pressure
+	 */
 	protected int force;
 	
+	/**
+	 * Time when this sample was read or created.
+	 */
 	protected long timestamp;
+	
+
+	// constructors
+	
+	/**
+	 * No-argument constructor for serialization. Note that this constructor
+	 * does not initialize the class members with meaningful values. It should
+	 * be used by the serialization mechanism ONLY, use the constructor taking
+	 * values for the class members instead. 
+	 */
+	public PenSample() {
+		this(0.0d,0.0d,0,System.currentTimeMillis());
+	}
+	
+	/**
+	 * Most specific constructor for setting all members
+	 * 
+	 * @param xCoord the x-coordinate in global Anoto Coordinates
+	 * @param yCoord the y-coordinate in global Anoto Coordinates
+	 * @param force the pen pressure on the tip
+	 * @param timestamp of the pen sample
+	 */
+	public PenSample(double xCoord, double yCoord, int force, long timestamp) {
+		this.x = xCoord;
+		this.y = yCoord;
+		this.force = force;
+		this.timestamp = timestamp;
+	}
+
+	// methods
 	
 	public double getX() {
 		return x;
@@ -77,28 +119,4 @@ public class PenSample {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-
-	// constructors
-	
-	/**
-	 * No-argument constructor for serialization. Note that this constructor
-	 * does not initialize the class members with meaningful values. It should
-	 * be used by the serialization mechanism ONLY, use the constructor taking
-	 * values for the class members instead. 
-	 */
-	public PenSample() {
-		this.x = 0.0d;
-		this.y = 0.0d;
-		this.force = 0;
-		this.timestamp = 0l; // EPOCH ?
-	}
-	
-	public PenSample(double xCoord, double yCoord, int force, long timestamp) {
-		this.x = xCoord;
-		this.y = yCoord;
-		this.force = force;
-		this.timestamp = timestamp;
-	}
-
-	// methods
 }

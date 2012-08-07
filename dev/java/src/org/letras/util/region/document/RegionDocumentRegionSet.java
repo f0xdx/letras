@@ -23,9 +23,9 @@
  ******************************************************************************/
 package org.letras.util.region.document;
 
+import org.letras.api.region.RegionData;
 import org.letras.ps.region.AbstractRegionSet;
 import org.letras.psi.iregion.IRegionSet;
-import org.letras.psi.iregion.RegionData;
 import org.letras.util.TypedArrayIdiom;
 import org.mundo.rt.GUID;
 import org.mundo.rt.TypedArray;

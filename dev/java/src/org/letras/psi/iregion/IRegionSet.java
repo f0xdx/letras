@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.letras.psi.iregion;
 
+import org.letras.api.region.RegionData;
 import org.mundo.annotation.mcMethod;
 import org.mundo.annotation.mcRemote;
 import org.mundo.rt.TypedArray;

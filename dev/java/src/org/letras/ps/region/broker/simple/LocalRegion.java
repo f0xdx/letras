@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.letras.ps.region.broker.simple;
 
+import org.letras.api.region.shape.IShape;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.shape.IShape;
 
 /**
  * A LocalRegion is an adapter as well as a proxy for the remote {@link IRegion}

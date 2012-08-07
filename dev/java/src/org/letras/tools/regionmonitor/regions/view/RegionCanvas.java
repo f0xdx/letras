@@ -41,8 +41,8 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 
+import org.letras.api.region.shape.Bounds;
 import org.letras.ps.region.RegionTreeNode;
-import org.letras.psi.iregion.shape.Bounds;
 
 public class RegionCanvas extends JPanel {
 	private static final long serialVersionUID = 7756632067656219738L;

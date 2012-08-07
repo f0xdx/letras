@@ -26,18 +26,16 @@ package org.letras.util.region.document;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
 import org.letras.psi.iregion.IDigitalInkConsumer;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionEvent;
-import org.letras.psi.iregion.msg.RegionMessage;
-import org.letras.psi.iregion.msg.RegionMessageProcessor;
-import org.letras.psi.iregion.RegionSample;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;
 import org.mundo.rt.Subscriber;
 
-public class RegionAdapter implements IReceiver, RegionMessageProcessor {
+public class RegionAdapter implements IReceiver {
 	protected List<IDigitalInkConsumer> consumers;
 	private IRegion region;
 	private String channel;
@@ -85,18 +83,18 @@ public class RegionAdapter implements IReceiver, RegionMessageProcessor {
 	
 	@Override
 	public void received(Message msg, MessageContext ctx) {
-		if (msg.getObject() instanceof RegionMessage) {
-			((RegionMessage) msg.getObject()).accept(this);
-		}
+		if (msg.getObject() instanceof RegionSample) {
+			process((RegionSample) msg.getObject());
+		} else if (msg.getObject() instanceof RegionEvent) {
+			process((RegionEvent) msg.getObject());
+		} 
 	}
 	
-	@Override
 	public void process(RegionEvent regionEvent) {
 		for (IDigitalInkConsumer consumer: consumers)
 			consumer.consume(region, regionEvent);
 	}
 	
-	@Override
 	public void process(RegionSample regionSample) {
 		for (IDigitalInkConsumer consumer: consumers)
 			consumer.consume(region, regionSample);

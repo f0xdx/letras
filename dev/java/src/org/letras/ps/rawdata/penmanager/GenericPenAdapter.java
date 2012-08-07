@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.letras.ps.rawdata.penmanager;
 
+import org.letras.api.pen.PenSample;
 import org.letras.ps.rawdata.IPenAdapter;
-import org.letras.psi.ipen.PenSample;
 
 /**
  * Generic implementation of the <code>IPenAdapter</code> interface. This is

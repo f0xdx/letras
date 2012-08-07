@@ -23,9 +23,9 @@
  ******************************************************************************/
 package org.letras.tools.penrecorder;
 
+import org.letras.api.pen.IPenState;
+import org.letras.api.pen.PenEvent;
 import org.letras.psi.ipen.IPen;
-import org.letras.psi.ipen.IPenState;
-import org.letras.psi.ipen.PenEvent;
 import org.mundo.annotation.mcRemote;
 import org.mundo.rt.GUID;
 

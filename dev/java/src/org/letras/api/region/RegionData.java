@@ -21,14 +21,16 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.iregion;
+package org.letras.api.region;
 
-import org.letras.psi.iregion.shape.IShape;
+import org.letras.api.region.shape.IShape;
+import org.letras.psi.iregion.IRegion;
+import org.letras.psi.iregion.IRegionSet;
 import org.mundo.annotation.mcSerialize;
 
 /**
  * The RegionData class represents Data Transfer Objects for Regions. This 
- * is useful when transfering a set of regions and can greatly reduce the
+ * is useful when transferring a set of regions and can greatly reduce the
  * reduce the number of necessary remote method calls. This class is used
  * in the {@link IRegionSet}-Interfaces.
  * @author niklas

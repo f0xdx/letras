@@ -3,7 +3,7 @@
  */
 package org.letras.util.di;
 
-import org.letras.psi.ipen.PenSample;
+import org.letras.api.pen.PenSample;
 
 /**
  * Sample that wraps a {@link PenSample}. The coordinates (x and y) of this

@@ -46,7 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.border.BevelBorder;
 import javax.swing.filechooser.FileFilter;
 
-import org.letras.psi.iregion.RegionData;
+import org.letras.api.region.RegionData;
 import org.letras.tools.designer.pagecalibration.IPageCalibrationListener;
 import org.letras.tools.designer.pagecalibration.PageCalibrationService;
 import org.letras.tools.ui.ChoosePenDialog;

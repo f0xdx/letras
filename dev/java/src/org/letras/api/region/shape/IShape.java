@@ -21,20 +21,27 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.iregion.msg;
+package org.letras.api.region.shape;
+
+
+
 
 /**
- * Interface for RegionMessages. Allows disambiguating {@link RegionEvent}s and 
- * {@link RegionSample}s (this means you don't have to cast when processing 
- * {@link RegionMessage}s).
- * 
+ * A shape in the Region Model. Shapes need to be able to perform a point test and compute their minimal bounding box.
  * @author jannik
  *
  */
-public interface RegionMessage {
+public interface IShape {
+	
 	/**
-	 * Perform a double-dispatch with this {@link RegionMessage} and processor
-	 * @param processor
+	 * @return the guaranteed-minimal bounding box of this shape.
 	 */
-	public void accept(RegionMessageProcessor processor);
+	public Bounds getBounds();
+	
+	/**
+	 * @param x
+	 * @param y
+	 * @return true iff the point (x,y) is inside the shape or on the boundary of the shape
+	 */
+	public boolean contains(double x, double y);
 }

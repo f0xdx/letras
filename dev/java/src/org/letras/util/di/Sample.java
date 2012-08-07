@@ -3,8 +3,8 @@
  */
 package org.letras.util.di;
 
-import org.letras.psi.ipen.PenSample;
-import org.letras.psi.iregion.RegionSample;
+import org.letras.api.pen.PenSample;
+import org.letras.api.region.RegionSample;
 import org.letras.util.geom.IVector2d;
 
 /**

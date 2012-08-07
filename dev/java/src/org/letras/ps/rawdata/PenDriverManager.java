@@ -69,6 +69,8 @@ public class PenDriverManager implements IPluginMonitor.IPluginHandler {
 	// members
 
 	private HashMap<String, IPenDriver> drivers;
+
+	private PenManager penManager;
 	
 	public HashMap<String, IPenDriver> getDrivers() {
 		return drivers;
@@ -81,10 +83,11 @@ public class PenDriverManager implements IPluginMonitor.IPluginHandler {
 	// constructors
 
 	/**
-	 * No-argument constructor.
+	 * 
 	 */
-	public PenDriverManager() {
+	public PenDriverManager(PenManager penManager) {
 		
+		this.penManager = penManager;
 		this.drivers = new HashMap<String, IPenDriver>();
 		
 	}
@@ -159,7 +162,7 @@ public class PenDriverManager implements IPluginMonitor.IPluginHandler {
 		this.drivers.put(driver.getClass().getName(), driver);
 		
 		// select the appropriate pen adapter factory for this driver from the pen manager in use
-		driver.inject(PenManager.getInstance().selectPenAdapterFactory(driver));
+		driver.setPenAdapterFactory(penManager.selectPenAdapterFactory(driver));
 		
 		// initialize the driver
 		driver.init();

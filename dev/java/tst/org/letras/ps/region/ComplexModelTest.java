@@ -31,8 +31,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.letras.api.region.RegionData;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionData;
 import org.letras.util.region.document.RegionDocument;
 
 public class ComplexModelTest {

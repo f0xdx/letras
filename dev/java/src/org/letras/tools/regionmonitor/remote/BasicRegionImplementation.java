@@ -25,9 +25,9 @@ package org.letras.tools.regionmonitor.remote;
 
 import java.awt.geom.Rectangle2D;
 
+import org.letras.api.region.shape.IShape;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.shape.IShape;
-import org.letras.psi.iregion.shape.RectangularShape;
 import org.mundo.rt.Service;
 
 /**

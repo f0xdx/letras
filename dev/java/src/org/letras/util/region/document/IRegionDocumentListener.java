@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.letras.util.region.document;
 
-import org.letras.psi.iregion.RegionData;
+import org.letras.api.region.RegionData;
 
 
 public interface IRegionDocumentListener {

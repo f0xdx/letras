@@ -59,7 +59,7 @@ public interface IPen {
 	/**
 	 * This method can be used to determine the current state of a pen.
 	 * 
-	 * @return state of the pen as defined in {@link org.letras.psi.ipen.IPenState}
+	 * @return state of the pen as defined in {@link org.letras.api.pen.IPenState}
 	 */
 	@mcMethod
 	public int penState();

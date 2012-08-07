@@ -26,11 +26,11 @@ package org.letras.ps.region.penconnector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.pen.IPenState;
+import org.letras.api.pen.PenEvent;
+import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.DoIPen;
 import org.letras.psi.ipen.IPen;
-import org.letras.psi.ipen.IPenState;
-import org.letras.psi.ipen.PenEvent;
-import org.letras.psi.ipen.PenSample;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;

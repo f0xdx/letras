@@ -1,7 +1,7 @@
 package org.letras.util.geom;
 
-import org.letras.psi.ipen.PenSample;
-import org.letras.psi.iregion.RegionSample;
+import org.letras.api.pen.PenSample;
+import org.letras.api.region.RegionSample;
 
 /**
  * A simple vector class not based on the AWT geom stuff.

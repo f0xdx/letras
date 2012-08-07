@@ -38,12 +38,11 @@ import java.util.concurrent.TimeUnit;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
 import org.letras.ps.region.RegionProcessor;
 import org.letras.psi.iregion.IDigitalInkConsumer;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionEvent;
-import org.letras.psi.iregion.msg.RegionMessage;
-import org.letras.psi.iregion.RegionSample;
 import org.letras.tools.penrecorder.PenRecording;
 import org.letras.tools.penrecorder.PenRecordingPlayer;
 import org.letras.util.region.document.RegionDocumentRegionSet;
@@ -62,11 +61,11 @@ public abstract class AbstractDispatchTest implements IDigitalInkConsumer {
 	private PenRecording penRecording;
 	private static Logger log; 
 	
-	private class SourceRegionMessage {
-		public RegionMessage message;
+	private class SourceRegionMessage<T> {
+		public T message;
 		public IRegion source;
 		
-		public SourceRegionMessage(RegionMessage message, IRegion source) {
+		public SourceRegionMessage(T message, IRegion source) {
 			this.message = message;
 			this.source = source;
 		}
@@ -74,13 +73,24 @@ public abstract class AbstractDispatchTest implements IDigitalInkConsumer {
 		@Override
 		public String toString() {
 			return source.channel() + " <= " + message;
+		}	
+	}
+	
+	private class RegionSampleMessage extends SourceRegionMessage<RegionSample> {
+		public RegionSampleMessage(RegionSample message, IRegion source) {
+			super(message, source);
 		}
-		
+	}
+	
+	private class RegionEventMessage extends SourceRegionMessage<RegionEvent> {
+		public RegionEventMessage(RegionEvent message, IRegion source) {
+			super(message, source);
+		}
 	}
 	
 	private interface MessageConsumer {
 		boolean isSatisified();
-		boolean consume(SourceRegionMessage message);
+		boolean consume(SourceRegionMessage<?> message);
 	}
 	
 	private class SamplesConsumer implements MessageConsumer {
@@ -97,8 +107,8 @@ public abstract class AbstractDispatchTest implements IDigitalInkConsumer {
 		}
 
 		@Override
-		public boolean consume(SourceRegionMessage message) {
-			if (!(message.message instanceof RegionSample))
+		public boolean consume(SourceRegionMessage<?> message) {
+			if (!(message instanceof RegionSampleMessage))
 				return false;
 			String region = message.source.channel();
 			Integer sampleCount = sampleCounts.get(region);
@@ -160,10 +170,10 @@ public abstract class AbstractDispatchTest implements IDigitalInkConsumer {
 		}
 		
 		@Override
-		public boolean consume(SourceRegionMessage message) {
-			if (!(message.message instanceof RegionEvent))
+		public boolean consume(SourceRegionMessage<?> message) {
+			if (!(message instanceof RegionEventMessage))
 				return false;
-			RegionEvent event = (RegionEvent) message.message;
+			RegionEvent event = ((RegionEventMessage) message).message;
 			if ((event.getType() & (~RegionEvent.CONTINUES)) != type)
 				return false;
 			if (event.continues(event.getGuid()) && continuesRegions.contains(message.source.channel())) {
@@ -312,7 +322,7 @@ public abstract class AbstractDispatchTest implements IDigitalInkConsumer {
 	@Override
 	public void consume(IRegion source, RegionSample regionSample) {
 		try {
-			messages.put(new SourceRegionMessage(regionSample, source));
+			messages.put(new RegionSampleMessage(regionSample, source));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -322,7 +332,7 @@ public abstract class AbstractDispatchTest implements IDigitalInkConsumer {
 	@Override
 	public void consume(IRegion source, RegionEvent regionEvent) {
 		try {
-			messages.put(new SourceRegionMessage(regionEvent, source));
+			messages.put(new RegionEventMessage(regionEvent, source));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);

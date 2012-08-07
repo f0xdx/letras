@@ -27,7 +27,7 @@ import java.awt.Shape;
 import java.awt.geom.CubicCurve2D;
 import java.awt.geom.Point2D;
 
-import org.letras.psi.iregion.RegionSample;
+import org.letras.api.region.RegionSample;
 import org.letras.tools.regionmonitor.ink.model.Stroke;
 
 /**

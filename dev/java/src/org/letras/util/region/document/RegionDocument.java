@@ -30,9 +30,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.letras.psi.iregion.RegionData;
-import org.letras.psi.iregion.shape.Bounds;
-import org.letras.psi.iregion.shape.RectangularShape;
+import org.letras.api.region.RegionData;
+import org.letras.api.region.shape.Bounds;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.util.region.document.xml.persist.XmlRegionDocumentLoader;
 import org.letras.util.region.document.xml.persist.XmlRegionDocumentPersister;
 

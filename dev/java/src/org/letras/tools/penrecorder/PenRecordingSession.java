@@ -23,9 +23,9 @@
  ******************************************************************************/
 package org.letras.tools.penrecorder;
 
+import org.letras.api.pen.PenEvent;
+import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.DoIPen;
-import org.letras.psi.ipen.PenEvent;
-import org.letras.psi.ipen.PenSample;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;

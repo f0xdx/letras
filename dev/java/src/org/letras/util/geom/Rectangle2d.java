@@ -4,8 +4,8 @@
 
 package org.letras.util.geom;
 
-import org.letras.psi.iregion.shape.Bounds;
-import org.letras.psi.iregion.shape.IShape;
+import org.letras.api.region.shape.Bounds;
+import org.letras.api.region.shape.IShape;
 
 /**
  * A simple rectangle geometry class that does not depend on the AWT classes.

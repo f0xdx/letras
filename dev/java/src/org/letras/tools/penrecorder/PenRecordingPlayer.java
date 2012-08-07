@@ -27,8 +27,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.IPen;
-import org.letras.psi.ipen.PenSample;
 import org.mundo.annotation.mcRemote;
 import org.mundo.rt.GUID;
 

@@ -25,10 +25,10 @@ package org.letras.ps.region;
 
 import java.util.List;
 
+import org.letras.api.pen.PenSample;
+import org.letras.api.region.RegionEvent;
 import org.letras.ps.region.penconnector.IPenConnection;
-import org.letras.psi.ipen.PenSample;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionEvent;
 import org.mundo.rt.GUID;
 import org.mundo.rt.Logger;
 import org.mundo.rt.Mundo;

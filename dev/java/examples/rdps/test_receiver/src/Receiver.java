@@ -22,7 +22,7 @@
  * Jannik Jochem
  ******************************************************************************/
 import org.letras.psi.ipen.DoIPen;
-import org.letras.psi.ipen.PenSample;
+import org.letras.api.pen.PenSample;
 import org.mundo.rt.Mundo;
 import org.mundo.rt.DoObject;
 import org.mundo.rt.IReceiver;

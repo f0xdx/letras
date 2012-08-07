@@ -28,8 +28,8 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.ps.region.RegionTreeNode;
-import org.letras.psi.iregion.shape.RectangularShape;
 
 public class RegionModelTest {
 	

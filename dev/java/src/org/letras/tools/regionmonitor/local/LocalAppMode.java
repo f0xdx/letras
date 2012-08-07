@@ -43,10 +43,10 @@ import javax.swing.JOptionPane;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JToggleButton;
 
+import org.letras.api.region.shape.IShape;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.ps.region.RegionTreeNode;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.shape.IShape;
-import org.letras.psi.iregion.shape.RectangularShape;
 import org.letras.tools.regionmonitor.ApplicationMode;
 import org.letras.tools.regionmonitor.regions.model.RegionJTreeModel;
 

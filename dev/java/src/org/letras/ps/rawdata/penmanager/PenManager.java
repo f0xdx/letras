@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.letras.ps.rawdata.penmanager;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -30,20 +31,13 @@ import java.util.logging.Logger;
 import org.letras.ps.rawdata.IPenAdapterFactory;
 import org.letras.ps.rawdata.IPenDriver;
 import org.mundo.rt.Mundo;
-import org.mundo.rt.Service;
-import org.mundo.rt.TypedMap;
-import org.mundo.service.IConfigure;
 
 /**
  * The pen manager service is the main class in the pen manager component.
  * It maintains the currently used <code>IPenAdapterFactory</code> implementations
  * and provides an appropriate method for retrieving the factory to use
- * for a specific driver (c.f. <code>selectPenAdapterFactory()</code>. Additionally
- * it sets up the pen discovery protocol functionality.
+ * for a specific driver (c.f. <code>selectPenAdapterFactory()</code>.
  * <P>
- * The pen manager is implemented as a singleton, therefore its instance can only
- * be obtained using the <code>getInstance()</code> method. It takes the following 
- * configuration options (no runtime reconfiguration)
  * <ol>
  *  <li> <i>pap-zone</i>: the zone in which pen services hosted will be visible, this will
  *  also be the zone for the individual pen data channels
@@ -52,7 +46,7 @@ import org.mundo.service.IConfigure;
  * @author felix_h
  * @version 0.0.1
  */
-public class PenManager extends Service implements IConfigure {
+public class PenManager {
 
 	// logger
 
@@ -64,30 +58,10 @@ public class PenManager extends Service implements IConfigure {
 	private static final String DEFAULT_ZONE = "rt";
 	private static final String ID_FORMAT = "%s.%s";
 	
-	// singleton
-
-	private static PenManager instance;
-
-	/**
-	 * Method to retrieve the singleton instance of <code>PenManager</code>.
-	 */
-	public static PenManager getInstance() {
-		try {
-			return (instance == null) ? (instance = new PenManager())
-					: instance;
-		} catch (IllegalAccessException e) {
-			// should never happen !!!
-			logger.logp(Level.SEVERE, "PenManager", "getInstance",
-					"message from the OTHER side...", e);
-			return null;
-		}
-	}
 	
 	// members
 
 	private IPenAdapterFactory factory;
-	
-	private TypedMap config;
 	
 	private String zone;
 	
@@ -105,19 +79,16 @@ public class PenManager extends Service implements IConfigure {
 	 * @throws IllegalAccessException If this class has already been instantiated (instance != null),
 	 * this should never happen, since the contract is to use the <code>getInstance()</code> method
 	 */
-	public PenManager() throws IllegalAccessException {
-		if (instance == null) {
-			// initialize a new factory
-			this.factory = new GenericPenAdapterFactory();
-			this.zone = DEFAULT_ZONE;
+	public PenManager() {
+		this(DEFAULT_ZONE);
+	}
+	
+	public PenManager(String penZone) {
+		// initialize a new factory
+		this.factory = new GenericPenAdapterFactory(this);
+		this.zone = penZone;
 			
-			this.pens = new Hashtable<String, PenService>();
-			
-			// set the singleton instance (NOTE ugly but needed by Mundo)
-			// this will set the instance the first time a raw data processor is created
-			instance = this;
-		}
-		else throw new IllegalAccessException("Tried to access Singleton constructor");
+		this.pens = new Hashtable<String, PenService>();
 	}
 	
 	// methods
@@ -130,7 +101,7 @@ public class PenManager extends Service implements IConfigure {
 	 * @return			a <code>IPenAdapterFactory</code> suitable for the provided driver
 	 */
 	public IPenAdapterFactory selectPenAdapterFactory(IPenDriver driver) {
-		// Note: currently (0.x.y, x <= 1) only a generic factory is used. This might change
+		// Note: currently (0.x.y, x <= 3) only a generic factory is used. This might change
 		// in the future.
 		logger.logp(Level.FINE, "PenManager", "selectPenAdapterFactory",
 				String.format("adapter factory selected for driver: %s (factory) / %s (driver)",
@@ -208,68 +179,27 @@ public class PenManager extends Service implements IConfigure {
 		}
 		else return false;
 	}
-	
-	/**
-	 * Overwritten method from {@link org.mundo.rt.Service}
-	 */
-	@Override
-	public void init() {
-		super.init();
-		logger.logp(Level.FINE, "PenManager", "init", "initializing pen management");
-	}
+
 
 	/**
-	 * Overwritten method from {@link org.mundo.rt.Service}
+	 * Set the Mundo Service Zone for pens managed by this PenManager
 	 */
-	@Override
-	public void shutdown() {
-		logger.logp(Level.FINE, "PenManager", "shutdown", "shutting down pen management");
-		super.shutdown();
-	}
-
-	/**
-	 * Interface method from {@link org.mundo.service.IConfigure}. Used
-	 * for configuration of this service.
-	 */
-	@Override
-	public Object getServiceConfig() {
-		return this.config;
-	}
-
-	/**
-	 * Interface method from {@link org.mundo.service.IConfigure}. Used
-	 * for configuration of this service.
-	 */
-	@Override
-	public void setServiceConfig(Object cfg) {
+	public void setPenZone(String zone) {
 		
-		// check whether this service has already been initialized (or is currently
-		// being initialized)
-		if (this.getState() >= Service.STATE_INITIALIZED) {
-			logger.logp(Level.INFO, "PenManager", "setServiceConfig",
-					"no dynamic reconfiguration supported");
-			return;
-		}
-		
-		// check whether the passed object is a TypedMap
-		if ((cfg == null)||!(cfg instanceof TypedMap)) {
-			logger.logp(Level.WARNING, "PenManager", "setServiceConfig",
-					"configuration parameter must be a TypedMap");
-			return;
-		}
-
-		// obtain the typed map holding the configuration options
-		this.config = (TypedMap) cfg;
-		
-		String zne = (this.config.containsKey("pap-zone")) ?
-				this.config.getString("pap-zone") : null;
-		if (zne != null) this.zone = zne;
+		this.zone = zone;
 		
 		logger.logp(Level.CONFIG, "PenManager", "setServiceConfig",
 		String.format("configured parameters (zone=%s)", this.zone));
 		
-		this.setServiceZone(this.zone);
 	}
+	
+	public void shutdown() {
+		for (PenService penService : new ArrayList<PenService>(pens.values())) {
+			Mundo.unregisterService(penService);
+		}
+		pens.clear();
+	}
+	
 	
 	// static methods
 	

@@ -26,11 +26,11 @@ package org.letras.ps.region;
 import java.util.Map;
 import java.util.WeakHashMap;
 
+import org.letras.api.pen.PenSample;
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
 import org.letras.ps.region.penconnector.IPenConnection;
-import org.letras.psi.ipen.PenSample;
-import org.letras.psi.iregion.RegionEvent;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionSample;
 import org.mundo.rt.GUID;
 import org.mundo.rt.Message;
 import org.mundo.rt.Publisher;

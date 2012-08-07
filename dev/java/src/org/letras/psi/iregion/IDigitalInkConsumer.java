@@ -23,6 +23,9 @@
  ******************************************************************************/
 package org.letras.psi.iregion;
 
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
+
 
 
 /**

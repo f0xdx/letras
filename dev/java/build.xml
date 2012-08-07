@@ -240,27 +240,6 @@
         </jar>
     </target>
 
-
-    <target name="cr_drv_adp201"
-	    description="Creates the Anoto ADP-201 pen driver">
-
-        <echo>[packing Anoto ADP-201 driver]</echo>
-        <jar destfile="${bin}/rdps/drivers/Adp201PenDriver.jar" compress="true">
-			<metainf dir="${cnt}/rdps/driver/adp201">
-                <include name="plugin.xml" />
-            </metainf>
-            <fileset dir="${bin}">
-                <include name="org/letras/ps/rawdata/driver/anoto/adp201/**/*.class" />
-            </fileset>
-            <manifest>
-				<attribute name="Built-By" value="${built-by}" />
-		    	<attribute name="Implementation-Vendor" value="${vendor}" />
-            	<attribute name="Implementation-Title" value="Anoto ADP-201 Driver" />
-            </manifest>
-        </jar>
-    </target>
-
-
     <target name="cr_drv_adp301"
 	    description="Creates the Anoto ADP-301 pen driver">
         <echo>[packing Anoto ADP-301 driver]</echo>

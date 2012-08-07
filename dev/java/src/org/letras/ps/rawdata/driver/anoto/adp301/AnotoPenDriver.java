@@ -111,7 +111,7 @@ public class AnotoPenDriver implements IPenDriver {
 	}
 	
 	@Override
-	public void inject(IPenAdapterFactory factory) {
+	public void setPenAdapterFactory(IPenAdapterFactory factory) {
 		this.factory = factory;
 		
 	}

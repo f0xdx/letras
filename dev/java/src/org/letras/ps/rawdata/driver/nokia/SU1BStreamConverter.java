@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.letras.ps.rawdata.driver.nokia;
 
+import org.letras.api.pen.PenSample;
 import org.letras.ps.rawdata.IPenAdapter;
-import org.letras.psi.ipen.PenSample;
 
 /**
  * The SU1BStreamConverter class converts the byte stream coming from 

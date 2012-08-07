@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.letras.ps.region.complex.automated;
 
+import org.letras.api.region.RegionEvent;
 import org.letras.ps.region.complex.AbstractDispatchTest;
-import org.letras.psi.iregion.RegionEvent;
 
 public class Test2 extends AbstractDispatchTest {
 

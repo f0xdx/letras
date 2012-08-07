@@ -25,10 +25,10 @@ package org.letras.tools.penmonitor;
 
 import java.util.Observable;
 
+import org.letras.api.pen.IPenState;
+import org.letras.api.pen.PenEvent;
+import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.DoIPen;
-import org.letras.psi.ipen.IPenState;
-import org.letras.psi.ipen.PenEvent;
-import org.letras.psi.ipen.PenSample;
 import org.mundo.rt.GUID;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Message;
@@ -162,8 +162,8 @@ public class PenInformation extends Observable implements IReceiver{
 	/**
 	 * Method from interface {@link org.mundo.rt.IReceiver}
 	 * <br> 
-	 * Only messages containing {@link org.letras.psi.ipen.PenSample}s
-	 * or {@link org.letras.psi.ipen.PenEvent}s will be handled
+	 * Only messages containing {@link org.letras.api.pen.PenSample}s
+	 * or {@link org.letras.api.pen.PenEvent}s will be handled
 	 */
 	@Override
 	public void received(Message arg0, MessageContext arg1) {

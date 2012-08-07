@@ -23,12 +23,12 @@
  ******************************************************************************/
 package org.letras.tools.designer;
 
+import org.letras.api.region.RegionData;
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.psi.iregion.IDigitalInkConsumer;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionData;
-import org.letras.psi.iregion.RegionEvent;
-import org.letras.psi.iregion.RegionSample;
-import org.letras.psi.iregion.shape.RectangularShape;
 import org.letras.util.region.document.RegionDocument;
 import org.letras.util.region.document.RegionDocumentReceiver;
 

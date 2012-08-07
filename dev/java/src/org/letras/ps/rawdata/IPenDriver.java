@@ -23,6 +23,8 @@
  ******************************************************************************/
 package org.letras.ps.rawdata;
 
+import org.letras.ps.rawdata.penmanager.PenManager;
+
 /**
  * This interface must be provided by the main class of each pen driver. 
  * Its implementation has to be specified as pen driver main class in the 
@@ -59,7 +61,7 @@ package org.letras.ps.rawdata;
  * collector to set in.
  * 
  * @author felix_h
- * @version 0.0.1
+ * @version 0.3
  *
  */
 public interface IPenDriver {
@@ -77,7 +79,7 @@ public interface IPenDriver {
 	 * 
 	 * @param factory the pen adapter factory to use for obtaining pen adapters
 	 */
-	public void inject(IPenAdapterFactory factory);
+	public void setPenAdapterFactory(IPenAdapterFactory factory);
 	
 	/**
 	 * Called to initialize the pen driver. The contract is that this method will be

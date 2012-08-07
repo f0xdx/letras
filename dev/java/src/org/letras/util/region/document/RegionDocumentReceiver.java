@@ -23,11 +23,11 @@
  ******************************************************************************/
 package org.letras.util.region.document;
 
+import org.letras.api.region.RegionData;
+import org.letras.api.region.RegionEvent;
+import org.letras.api.region.RegionSample;
 import org.letras.psi.iregion.IDigitalInkConsumer;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.RegionData;
-import org.letras.psi.iregion.RegionEvent;
-import org.letras.psi.iregion.RegionSample;
 
 public class RegionDocumentReceiver implements IDigitalInkConsumer, IRegionDocumentListener {
 	

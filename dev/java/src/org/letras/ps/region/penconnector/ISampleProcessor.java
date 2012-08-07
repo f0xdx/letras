@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.letras.ps.region.penconnector;
 
-import org.letras.psi.ipen.PenSample;
+import org.letras.api.pen.PenSample;
 
 /**
  * The ISampleProcessor interface provides method that are to be implemented 

@@ -35,11 +35,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.region.RegionData;
 import org.letras.ps.region.RegionSet;
 import org.letras.psi.iregion.DoIRegionSet;
 import org.letras.psi.iregion.IRegion;
 import org.letras.psi.iregion.IRegionSetListener;
-import org.letras.psi.iregion.RegionData;
 import org.letras.util.TypedArrayIdiom;
 import org.mundo.rt.RMCException;
 import org.mundo.rt.Signal;

@@ -21,32 +21,31 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.ipen;
+package org.letras.api.pen;
 
 import org.mundo.annotation.mcSerialize;
 
 /**
- * Wrapper class for pen state changes. Communicated on the specific pen channels.
+ * Event message for pen state changes. Will be send on the pen's channel.
  * 
  * @author felix_h
- * @version 0.0.1
+ * @version 0.3
  */
 @mcSerialize
 public class PenEvent {
 	
-	protected int oldState;
-	
-	protected int newState;
-
-	public int getOldState() {
-		return oldState;
-	}
-
-	public int getNewState() {
-		return newState;
-	}
 	
 	// members
+	
+	/**
+	 * state before the change
+	 */
+	protected int oldState;
+	
+	/**
+	 * current state
+	 */
+	protected int newState;
 
 	// constructors
 
@@ -79,4 +78,13 @@ public class PenEvent {
 	public int state() {
 		return this.newState;
 	}
+	
+	public int getOldState() {
+		return oldState;
+	}
+
+	public int getNewState() {
+		return newState;
+	}
+	
 }

@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.iregion.shape;
+package org.letras.api.region.shape;
 
 import java.util.Locale;
 

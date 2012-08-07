@@ -26,7 +26,7 @@ package org.letras.tools.regionmonitor.ink.model;
 import java.util.Vector;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.letras.psi.iregion.RegionSample;
+import org.letras.api.region.RegionSample;
 
 /**
  * This represents a stroke consisting of several pen samples. Strokes

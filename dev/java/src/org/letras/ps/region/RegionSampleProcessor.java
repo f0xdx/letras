@@ -25,9 +25,9 @@ package org.letras.ps.region;
 
 import java.util.List;
 
+import org.letras.api.pen.PenSample;
 import org.letras.ps.region.penconnector.IPenConnection;
 import org.letras.ps.region.penconnector.ISampleProcessor;
-import org.letras.psi.ipen.PenSample;
 import org.letras.psi.iregion.IRegion;
 
 /**

@@ -21,10 +21,8 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.psi.iregion;
+package org.letras.api.region;
 
-import org.letras.psi.iregion.msg.RegionMessageProcessor;
-import org.letras.psi.iregion.msg.RegionMessage;
 import org.mundo.annotation.mcSerialize;
 import org.mundo.rt.GUID;
 
@@ -38,7 +36,7 @@ import org.mundo.rt.GUID;
  * @version 0.2
  */
 @mcSerialize
-public class RegionEvent implements RegionMessage {
+public class RegionEvent {
 
 	// defaults
 	
@@ -247,10 +245,6 @@ public class RegionEvent implements RegionMessage {
 	 */
 	public static RegionEvent createContinuingTraceEndEvent(GUID guid, String penId) {
 		return new RegionEvent(TRACE_END | CONTINUES , guid, penId);
-	}
-	
-	public void accept(RegionMessageProcessor processor) {
-		processor.process(this);
 	}
 	
 	@Override

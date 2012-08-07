@@ -46,8 +46,8 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.ps.region.RegionTreeNode;
-import org.letras.psi.iregion.shape.RectangularShape;
 import org.letras.tools.regionmonitor.regions.control.IViewportPositionDelegate;
 import org.letras.tools.regionmonitor.regions.control.ViewportPositionControllerBar;
 import org.letras.tools.regionmonitor.regions.model.RegionJTreeModel;

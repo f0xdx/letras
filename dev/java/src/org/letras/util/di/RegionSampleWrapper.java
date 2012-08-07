@@ -3,7 +3,7 @@
  */
 package org.letras.util.di;
 
-import org.letras.psi.iregion.RegionSample;
+import org.letras.api.region.RegionSample;
 
 /**
  * Sample that wraps a {@link RegionSample}. The coordinates (x and y) of this

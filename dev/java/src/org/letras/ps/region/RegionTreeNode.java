@@ -26,10 +26,10 @@ package org.letras.ps.region;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.region.shape.Bounds;
+import org.letras.api.region.shape.IShape;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.psi.iregion.IRegion;
-import org.letras.psi.iregion.shape.Bounds;
-import org.letras.psi.iregion.shape.IShape;
-import org.letras.psi.iregion.shape.RectangularShape;
 
 /**
  * A Region in the hierarchy.

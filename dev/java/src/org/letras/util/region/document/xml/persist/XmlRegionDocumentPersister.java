@@ -29,12 +29,12 @@ import java.util.List;
 
 import javax.xml.bind.JAXB;
 
+import org.letras.api.region.RegionData;
+import org.letras.api.region.shape.CircularShape;
+import org.letras.api.region.shape.IShape;
+import org.letras.api.region.shape.RectangularShape;
 import org.letras.ps.region.document.xml.Region;
 import org.letras.ps.region.document.xml.ShapeChoice;
-import org.letras.psi.iregion.RegionData;
-import org.letras.psi.iregion.shape.CircularShape;
-import org.letras.psi.iregion.shape.IShape;
-import org.letras.psi.iregion.shape.RectangularShape;
 import org.letras.util.region.document.RegionDocument;
 
 public class XmlRegionDocumentPersister {

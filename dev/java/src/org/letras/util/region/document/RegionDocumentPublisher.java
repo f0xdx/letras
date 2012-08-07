@@ -25,7 +25,7 @@ package org.letras.util.region.document;
 
 import java.util.HashMap;
 
-import org.letras.psi.iregion.RegionData;
+import org.letras.api.region.RegionData;
 import org.mundo.rt.Mundo;
 
 public class RegionDocumentPublisher implements IRegionDocumentListener  {
