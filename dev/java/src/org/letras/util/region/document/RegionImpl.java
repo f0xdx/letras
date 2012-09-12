@@ -44,19 +44,19 @@ import org.mundo.rt.Service;
 @mcSerialize
 public class RegionImpl extends Service implements IRegion {
 	public static final String DefaultServiceZone = "lan";
-	
+
 	protected RegionData data;
 
 	/**
 	 * Initializes a new Region.
 	 * @param channel the channel where the region receives events
-	 * @param hungry the hungry flag of the region 
+	 * @param hungry the hungry flag of the region
 	 * @param shape the shape of the region
 	 */
 	public RegionImpl(String uri, String channel, boolean hungry, IShape shape) {
 		data = new RegionData(uri, channel, hungry, shape);
 	}
-	
+
 	/**
 	 * Constructs a new Region that is a copy of another region.
 	 * @param region the region to copy
@@ -64,7 +64,7 @@ public class RegionImpl extends Service implements IRegion {
 	public RegionImpl(IRegion region) {
 		this(region.uri(), region.channel(), region.hungry(), region.shape());
 	}
-	
+
 	/**
 	 * Initializes a new Region. The channel is initialized to the shape's hash code in hex.
 	 * @param hungry the hungry flag of the region
@@ -73,14 +73,14 @@ public class RegionImpl extends Service implements IRegion {
 	public RegionImpl(String uri, boolean hungry, IShape shape) {
 		this(uri, uri, hungry, shape);
 	}
-	
+
 	/**
 	 * No-arg constructor for deserialization.
 	 */
 	protected RegionImpl() {
 		data = new RegionData();
 	}
-	
+
 	@Override
 	public String uri() {
 		return data.uri();
@@ -95,12 +95,12 @@ public class RegionImpl extends Service implements IRegion {
 	public boolean hungry() {
 		return data.hungry();
 	}
-	
+
 	@Override
 	public IShape shape() {
 		return data.shape();
 	}
-	
+
 	@Override
 	public String toString() {
 		return "region(" + data.uri() + ", " + data.channel() + ", " + data.hungry() + ", " + data.shape() + ")";
@@ -110,7 +110,7 @@ public class RegionImpl extends Service implements IRegion {
 	public int hashCode() {
 		return (data.uri() != null) ? data.uri().hashCode() : super.hashCode();
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -119,14 +119,14 @@ public class RegionImpl extends Service implements IRegion {
 			return false;
 		if (!(obj instanceof IRegion))
 			return false;
-		IRegion other = (IRegion) obj;
+		final IRegion other = (IRegion) obj;
 		return data.uri().equals(other.uri());
 	}
-	
+
 	public RegionData getRegionData() {
-		return this.data.copy();
+		return this.data;
 	}
-	
+
 	public boolean deepEquals(RegionImpl other) {
 		return data.deepEquals(other.getRegionData());
 	}

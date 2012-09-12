@@ -29,7 +29,7 @@ import org.letras.psi.iregion.IRegionSet;
 import org.mundo.annotation.mcSerialize;
 
 /**
- * The RegionData class represents Data Transfer Objects for Regions. This 
+ * The RegionData class represents Data Transfer Objects for Regions. This
  * is useful when transferring a set of regions and can greatly reduce the
  * reduce the number of necessary remote method calls. This class is used
  * in the {@link IRegionSet}-Interfaces.
@@ -61,15 +61,16 @@ public class RegionData implements IRegion {
 		this.hungry = hungry;
 		this.shape = shape;
 	}
-	
+
 	public RegionData(String uri, boolean hungry, IShape shape) {
 		this(uri,uri,hungry,shape);
 	}
-	
+
 	public RegionData() {
 
 	}
 
+	@Override
 	public String uri() {
 		return uri;
 	}
@@ -78,6 +79,7 @@ public class RegionData implements IRegion {
 		this.uri = uri;
 	}
 
+	@Override
 	public String channel() {
 		return channel;
 	}
@@ -86,6 +88,7 @@ public class RegionData implements IRegion {
 		this.channel = channel;
 	}
 
+	@Override
 	public boolean hungry() {
 		return hungry;
 	}
@@ -94,6 +97,7 @@ public class RegionData implements IRegion {
 		this.hungry = hungry;
 	}
 
+	@Override
 	public IShape shape() {
 		return shape;
 	}
@@ -105,9 +109,8 @@ public class RegionData implements IRegion {
 	public boolean deepEquals(RegionData other) {
 		return uri().equals(other.uri()) && channel().equals(other.channel()) && hungry() == other.hungry() && shape().equals(other.shape());
 	}
-	
-	public RegionData copy() {
-		//TODO shape is not yet a true copy
-		return new RegionData(this.uri,this.channel,this.hungry,this.shape);
+
+	public interface IRegionListener {
+
 	}
 }

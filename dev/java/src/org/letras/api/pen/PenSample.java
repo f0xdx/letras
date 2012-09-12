@@ -26,51 +26,50 @@ package org.letras.api.pen;
 import org.mundo.annotation.mcSerialize;
 
 /**
- * This class encapsulates all information transferred as part of a
- * raw data sample. Such samples are streamed on a Mundo channel for
- * each active pen.
+ * This class encapsulates all information transferred as part of a raw data sample. Such samples are streamed on a
+ * Mundo channel for each active pen.
  * 
  * @author felix_h
- * @version 0.0.1
+ * @version 0.3
  */
 @mcSerialize
 public class PenSample {
 
 	// members
-	
+
 	/**
 	 * The x-coordinate in the global Anoto Pattern Space. One integer corresponds to around 0.3mm on paper.
 	 */
 	protected double x;
-	
+
 	/**
 	 * The y-coordinate in the global Anoto Pattern Space. One integer corresponds to around 0.3mm on paper.
 	 */
 	protected double y;
-	
+
 	/**
 	 * The force inflicted on the pen's tip when the sample was read. Higher value means more pressure
 	 */
 	protected int force;
-	
+
 	/**
 	 * Time when this sample was read or created.
 	 */
 	protected long timestamp;
-	
+
 
 	// constructors
-	
+
 	/**
 	 * No-argument constructor for serialization. Note that this constructor
 	 * does not initialize the class members with meaningful values. It should
 	 * be used by the serialization mechanism ONLY, use the constructor taking
-	 * values for the class members instead. 
+	 * values for the class members instead.
 	 */
 	public PenSample() {
 		this(0.0d,0.0d,0,System.currentTimeMillis());
 	}
-	
+
 	/**
 	 * Most specific constructor for setting all members
 	 * 
@@ -87,7 +86,7 @@ public class PenSample {
 	}
 
 	// methods
-	
+
 	public double getX() {
 		return x;
 	}
