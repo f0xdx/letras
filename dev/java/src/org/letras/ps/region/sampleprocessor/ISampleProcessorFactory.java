@@ -23,13 +23,13 @@
  ******************************************************************************/
 package org.letras.ps.region.sampleprocessor;
 
-import org.letras.ps.region.penconnector.IPenConnection;
+import org.letras.api.pen.IPen;
 import org.letras.ps.region.penconnector.ISampleProcessor;
 
 /**
- * Interface for a factory, which creates instances of classes implementing the 
+ * Interface for a factory, which creates instances of classes implementing the
  * ISampleProcessor interface.
- * A class implementing ISampleProcessorFactory is needed by the PenAccessManager 
+ * A class implementing ISampleProcessorFactory is needed by the PenAccessManager
  * to create instances of a SampleProcessor for newly connected pens
  * @author niklas
  *
@@ -39,5 +39,5 @@ public interface ISampleProcessorFactory {
 	 * factory method returning an instance of ISampleProcessor
 	 * @return a new sample processor
 	 */
-	public ISampleProcessor createSampleProcessor(IPenConnection pen);
+	public ISampleProcessor createSampleProcessor(IPen pen);
 }

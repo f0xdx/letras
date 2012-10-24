@@ -29,7 +29,6 @@ import java.util.WeakHashMap;
 import org.letras.api.pen.PenSample;
 import org.letras.api.region.RegionEvent;
 import org.letras.api.region.RegionSample;
-import org.letras.ps.region.penconnector.IPenConnection;
 import org.letras.psi.iregion.IRegion;
 import org.mundo.rt.GUID;
 import org.mundo.rt.Message;
@@ -37,7 +36,7 @@ import org.mundo.rt.Publisher;
 import org.mundo.rt.Service;
 
 /**
- * The {@link DigitalInkDispatcher} sends {@link RegionSample}s and {@link RegionEvent}s to 
+ * The {@link DigitalInkDispatcher} sends {@link RegionSample}s and {@link RegionEvent}s to
  * the channels of {@link IRegion}s. It hides the Mundo middleware from the rest of the
  * RegionProcessingStage. Objects of this class are meant to be used by a single thread.
  * 
@@ -45,24 +44,23 @@ import org.mundo.rt.Service;
  *
  */
 public class DigitalInkDispatcher extends Service {
-	private Map<String, Publisher> channelToPublishers = new WeakHashMap<String, Publisher>();
-	private RegionManager regionManager;
-	private IPenConnection penConnection;
-	private String penId;
-	
-	public DigitalInkDispatcher(RegionManager regionManager, IPenConnection penConnection) {
+	private final Map<String, Publisher> channelToPublishers = new WeakHashMap<String, Publisher>();
+	private final RegionManager regionManager;
+	private final String penId;
+
+	public DigitalInkDispatcher(RegionManager regionManager, String penId) {
 		this.regionManager = regionManager;
-		this.penConnection = penConnection;
+		this.penId = penId;
 	}
-	
+
 	/**
 	 * Sends sample to the channel of region.
 	 * @param sample
 	 * @param target
 	 */
 	public void dispatchSample(PenSample sample, IRegion target) {
-		RegionSample normalizedSample = new RegionSample(sample, target.shape().getBounds(), getPenId());
-		Publisher publisher = getPublisherLazy(target.channel());
+		final RegionSample normalizedSample = new RegionSample(sample, target.shape().getBounds(), getPenId());
+		final Publisher publisher = getPublisherLazy(target.channel());
 		publisher.send(Message.fromObject(normalizedSample));
 	}
 
@@ -72,20 +70,20 @@ public class DigitalInkDispatcher extends Service {
 	 * @param guid the guid for the stroke (links connected pen down and pen up events)
 	 */
 	public void dispatchPenDown(IRegion region, GUID guid) {
-		RegionEvent event = RegionEvent.createPenDownEvent(guid, getPenId());
+		final RegionEvent event = RegionEvent.createPenDownEvent(guid, getPenId());
 		publishEvent(region, event);
 	}
-	
+
 	/**
 	 * Dispatches a pen up event to region
 	 * @param region the region to dispatch the event to
 	 * @param guid the guid for the stroke (links connected pen down and pen up events)
 	 */
 	public void dispatchPenUp(IRegion region, GUID guid) {
-		RegionEvent event = RegionEvent.createPenUpEvent(guid, getPenId());
+		final RegionEvent event = RegionEvent.createPenUpEvent(guid, getPenId());
 		publishEvent(region, event);
 	}
-	
+
 	/**
 	 * Dispatch a trace start event to region
 	 * @param region the region to dispatch the event to
@@ -93,7 +91,7 @@ public class DigitalInkDispatcher extends Service {
 	 * @param continues whether to create a continuing trace event
 	 */
 	public void dispatchTraceStart(IRegion region, GUID guid, boolean continues) {
-		RegionEvent event = continues ? RegionEvent.createContinuingTraceStartEvent(guid, getPenId()) 
+		final RegionEvent event = continues ? RegionEvent.createContinuingTraceStartEvent(guid, getPenId())
 				: RegionEvent.createTraceStartEvent(guid, getPenId());
 		publishEvent(region, event);
 	}
@@ -105,7 +103,7 @@ public class DigitalInkDispatcher extends Service {
 	 * @param continues whether to create a continuing trace event
 	 */
 	public void dispatchTraceEnd(IRegion region, GUID guid, boolean continues) {
-		RegionEvent event = continues ? RegionEvent.createContinuingTraceEndEvent(guid, getPenId())
+		final RegionEvent event = continues ? RegionEvent.createContinuingTraceEndEvent(guid, getPenId())
 				: RegionEvent.createTraceEndEvent(guid, getPenId());
 		publishEvent(region, event);
 	}
@@ -116,13 +114,11 @@ public class DigitalInkDispatcher extends Service {
 	 * @param event
 	 */
 	protected void publishEvent(IRegion region, RegionEvent event) {
-		Publisher publisher = getPublisherLazy(region.channel());
+		final Publisher publisher = getPublisherLazy(region.channel());
 		publisher.send(Message.fromObject(event));
 	}
 
 	private String getPenId() {
-		if (penId == null)
-			penId = penConnection.getPenId();
 		return penId;
 	}
 

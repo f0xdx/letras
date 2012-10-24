@@ -23,7 +23,7 @@
  ******************************************************************************/
 package org.letras.ps.region;
 
-import org.letras.ps.region.penconnector.IPenConnection;
+import org.letras.api.pen.IPen;
 import org.letras.ps.region.penconnector.ISampleProcessor;
 import org.letras.ps.region.sampleprocessor.ISampleProcessorFactory;
 
@@ -34,15 +34,15 @@ import org.letras.ps.region.sampleprocessor.ISampleProcessorFactory;
  *
  */
 public class RegionSampleProcessorFactory implements ISampleProcessorFactory {
-	private RegionManager regionManager;
+	private final RegionManager regionManager;
 
 	public RegionSampleProcessorFactory(RegionManager regionManager) {
 		this.regionManager = regionManager;
 	}
 
 	@Override
-	public ISampleProcessor createSampleProcessor(IPenConnection pen) {
-		RegionSampleProcessor regionSampleProcessor = new RegionSampleProcessor(regionManager, pen);
+	public ISampleProcessor createSampleProcessor(IPen pen) {
+		final RegionSampleProcessor regionSampleProcessor = new RegionSampleProcessor(regionManager, pen);
 		return regionSampleProcessor;
 	}
 

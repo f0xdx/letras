@@ -23,6 +23,10 @@
  ******************************************************************************/
 package org.letras.ps.region.penconnector;
 
+import java.util.HashSet;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -34,51 +38,64 @@ import org.letras.psi.ipen.IPen;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;
-import org.mundo.rt.Session;
 import org.mundo.rt.Subscriber;
 import org.mundo.service.ServiceInfo;
+import org.mundo.service.ServiceManager;
 
 /**
- * PenConnection implements all the basic functionality for receiving and delegating 
- * received samples as well as caching the state of the pen. Before a pen connection 
- * does this you have to activate it with a call to activatePen.
- * @author niklas
+ * Implements all the basic functionality for receiving and delegating received samples as well as caching the state of
+ * a pen.
+ * 
+ * @version 0.3
+ * @author Niklas Lochschmidt <nlochschmidt@gmail.com>
  */
-public class PenConnection implements IPenConnection, IReceiver{
+public class PenConnection implements org.letras.api.pen.IPen, IReceiver {
 
 	//logger
-	
-	private static Logger logger = Logger.getLogger("org.letras.ps.region.penconnector");
-	
+
+	private static Logger logger = Logger.getLogger("org.letras.api.pen");
+
 	//static methods
-	
+
 	/**
-	 * create a PenConnection by dissecting an instance of <code>ServiceInfo</code>
-	 * @return the created PenConnection
+	 * create a Pen instance by dissecting an instance of <code>ServiceInfo</code>
+	 * 
+	 * @return pen
 	 */
 	public static PenConnection createPenConnectionFromServiceInfo(ServiceInfo serviceInfo) {
-		return new PenConnection((IPen) new DoIPen(serviceInfo.doService), serviceInfo.zone);
+		return new PenConnection(new DoIPen(serviceInfo.doService), serviceInfo.zone);
 	}
-	
-	
+
+	// static members
+
+	public static Executor threadPool = Executors.newCachedThreadPool(new ThreadFactory() {
+		@Override
+		public Thread newThread(Runnable arg0) {
+			final Thread thread = new Thread(arg0);
+			thread.setDaemon(true);
+			return thread;
+		}
+	});
+
+
 	//members
-	
-	private IPen pen;
-	
-	private String zone;
-	
-	private String penId;
-	
-	private String channel;
-	
+
+	private final IPen pen;
+
+	private final String zone;
+
+	private final String penId;
+
+	private final String channel;
+
 	private int state;
-	
+
 	private Subscriber subscriber;
-	
-	private ISampleProcessor sampleDelegate;
-	
+
+	private final HashSet<IPenListener> listeners = new HashSet<IPenListener>();
+
 	//setter and getter
-	
+
 	/**
 	 * @return the zone
 	 */
@@ -89,6 +106,7 @@ public class PenConnection implements IPenConnection, IReceiver{
 	/**
 	 * @return the penId
 	 */
+	@Override
 	public String getPenId() {
 		return penId;
 	}
@@ -103,32 +121,20 @@ public class PenConnection implements IPenConnection, IReceiver{
 	/**
 	 * @return the state
 	 */
-	public int getState() {
+	@Override
+	public int getPenState() {
 		return state;
 	}
-	
+
 	/**
 	 * @return the pen service
 	 */
 	public IPen getPen() {
 		return pen;
 	}
-	
-	/**
-	 * sets the delegate to which received samples will be forwarded
-	 * @param delegate
-	 */
-	public void setSampleDelegate(ISampleProcessor delegate) {
-		this.sampleDelegate = delegate;
-	}
-
-	@Override
-	public boolean isActive() {
-		return subscriber != null;
-	}
 
 	//constructor
-	
+
 	public PenConnection(IPen pen, String zone) {
 		this.pen = pen;
 		this.zone = zone;
@@ -136,50 +142,71 @@ public class PenConnection implements IPenConnection, IReceiver{
 		this.channel = pen.channel();
 		this.state = pen.penState();
 	}
-	
+
 	/**
-	 * establish the connection to the appropriate Mundo channel, which 
+	 * establish the connection to the appropriate Mundo channel, which
 	 * allows the Pen Connection to receive samples from the pen
-	 * @param currentSession a session on which we will subscribe
-	 * @param iSampleProcessor 
 	 */
-	void activatePen(Session currentSession, ISampleProcessor iSampleProcessor) {
+	private void activatePen() {
 		if (subscriber == null) {
-			subscriber = currentSession.subscribe(zone, channel, this);
-			sampleDelegate = iSampleProcessor;
+			subscriber = ServiceManager.getInstance().getSession().subscribe(zone, channel, this);
 		} else logger.logp(Level.WARNING, "PenConnection", "activatePen", "pen was already active");
 	}
-	
+
 	/**
-	 * tear down the connection to the Mundo channel, which stops the receiving 
+	 * tear down the connection to the Mundo channel, which stops the receiving
 	 * of samples. The Pen Connection simulates a Pen up event at this point.
 	 */
-	void deactivatePen() {
+	private void deactivatePen() {
 		if (subscriber != null) {
 			subscriber.unsubscribe();
 			//we simulate a penUp event here
-			sampleDelegate.penUp();
+			synchronized (listeners) {
+				for (final IPenListener listener : this.listeners) {
+					listener.receivePenEvent(new PenEvent(state, state = IPenState.UP));
+				}
+			}
 			subscriber = null;
 		}
 	}
 
 	@Override
 	public void received(Message msg, MessageContext ctx) {
-		Object obj = msg.getObject();
+		final Object obj = msg.getObject();
 		if (obj instanceof PenSample) {
-			sampleDelegate.handleSample((PenSample) obj);
+			final PenSample penSample = (PenSample) obj;
+			synchronized (listeners) {
+				for (final IPenListener listener : listeners) {
+					listener.receivePenSample(penSample);
+				}
+			}
 		} else if (obj instanceof PenEvent) {
-			PenEvent event = (PenEvent) obj;
+			final PenEvent penEvent = (PenEvent) obj;
 			//save the state
-			state = event.getNewState();
-			//we treat every other event then IPenState.DOWN as IPenState.UP
-			if (state == IPenState.DOWN) {
-				sampleDelegate.penDown();
-			} else {
-				sampleDelegate.penUp();
+			state = penEvent.getNewState();
+			synchronized (listeners) {
+				for (final IPenListener listener : listeners) {
+					listener.receivePenEvent(penEvent);
+				}
 			}
 		}
 	}
 
+	@Override
+	public void registerPenListener(IPenListener penListener) {
+		synchronized (listeners) {
+			listeners.add(penListener);
+			if (subscriber == null)
+				activatePen();
+		}
+	}
 
+	@Override
+	public void unregisterPenListener(IPenListener penListener) {
+		synchronized (listeners) {
+			listeners.remove(listeners);
+			if (listeners.isEmpty())
+				deactivatePen();
+		}
+	}
 }

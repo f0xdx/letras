@@ -25,9 +25,9 @@ package org.letras.ps.region;
 
 import java.util.List;
 
+import org.letras.api.pen.IPen;
 import org.letras.api.pen.PenSample;
 import org.letras.api.region.RegionEvent;
-import org.letras.ps.region.penconnector.IPenConnection;
 import org.letras.psi.iregion.IRegion;
 import org.mundo.rt.GUID;
 import org.mundo.rt.Logger;
@@ -43,44 +43,44 @@ import org.mundo.rt.Mundo;
  *
  */
 public class DigitalInkProcessor {
-	
-	private DigitalInkDispatcher dispatcher;
+
+	private final DigitalInkDispatcher dispatcher;
 	/**
 	 * The {@link GUID} for the current pair of penDown / penUp events
 	 */
 	private GUID currentStroke = null;
-	
+
 	/**
 	 * The {@link GUID} for the current series of continuous trace events.
 	 */
 	private GUID currentTrace = null;
-	
+
 	private List<IRegion> previouslyIntersectedRegions = null;
-	
+
 	private static Logger log = Logger.getLogger(DigitalInkProcessor.class);
-	
+
 	/**
 	 * Simple functor for calling the actual dispatch methods in {@link DigitalInkDispatcher}
 	 */
 	protected abstract class DispatchFunction {
 		public abstract void dispatchTo(IRegion target);
 	}
-	
+
 	/**
 	 * Creates a new {@link DigitalInkProcessor} with an accompanying {@link DigitalInkDispatcher}.
 	 * Registers the dispatcher with Mundo.
-	 * @param regionManager 
+	 * @param regionManager
 	 * @param pen the pen connection for this processor
 	 */
-	public DigitalInkProcessor(RegionManager regionManager, IPenConnection pen) {
-		dispatcher = new DigitalInkDispatcher(regionManager, pen);
+	public DigitalInkProcessor(RegionManager regionManager, IPen pen) {
+		dispatcher = new DigitalInkDispatcher(regionManager, pen.getPenId());
 		Mundo.registerService(dispatcher);
 	}
 
 	/**
 	 * Takes a sample and a post-ordered list of regions that contain the sample and dispatches
-	 * the region-normalized sample to all those regions. Also, determines whether a region 
-	 * boundary was crossed between this sample and the last sample. If so, 
+	 * the region-normalized sample to all those regions. Also, determines whether a region
+	 * boundary was crossed between this sample and the last sample. If so,
 	 * {@link #processTraceCrossingRegionBorder(List, List)} is called in order to generate and
 	 * dispatch the necessary trace events.
 	 * 
@@ -92,9 +92,9 @@ public class DigitalInkProcessor {
 			log.warning("No Region to dispatch sample " + sample + " to.");
 			return;
 		}
-		if (previouslyIntersectedRegions != null 
-				&& (previouslyIntersectedRegions.isEmpty() ^ intersectedRegions.isEmpty() 
-				|| (!previouslyIntersectedRegions.get(0).equals(intersectedRegions.get(0))))) {
+		if (previouslyIntersectedRegions != null
+				&& (previouslyIntersectedRegions.isEmpty() ^ intersectedRegions.isEmpty()
+						|| (!previouslyIntersectedRegions.get(0).equals(intersectedRegions.get(0))))) {
 			processTraceCrossingRegionBorder(previouslyIntersectedRegions, intersectedRegions);
 		}
 		dispatchToLeafAndHungryRegions(intersectedRegions, new DispatchFunction() {
@@ -105,7 +105,7 @@ public class DigitalInkProcessor {
 		});
 		previouslyIntersectedRegions = intersectedRegions;
 	}
-	
+
 	/**
 	 * Dispatches a pen down event to all relevant regions and initiates a new (initially
 	 * non-continuous) trace.
@@ -124,7 +124,7 @@ public class DigitalInkProcessor {
 		});
 		processTraceStartNonContinuous(intersectedRegions);
 	}
-	
+
 	/**
 	 * Dispatches a pen up event to all relevant regions and closes the current trace
 	 * non-continuously.
@@ -162,7 +162,7 @@ public class DigitalInkProcessor {
 				dispatcher.dispatchTraceStart(target, currentTrace, false);
 			}
 		});
-		
+
 	}
 
 	/**
@@ -184,7 +184,7 @@ public class DigitalInkProcessor {
 		}
 		currentTrace = null;
 	}
-	
+
 	/**
 	 * This is called when the pen crosses a region border. The following steps are performed:
 	 * <ol>
@@ -205,7 +205,7 @@ public class DigitalInkProcessor {
 		});
 		try {
 			Thread.sleep(100);
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -218,15 +218,15 @@ public class DigitalInkProcessor {
 	}
 
 	/**
-	 * Calls dispatch function for the first element of intersectedRegions as well as any region element that is hungry (for more). 
+	 * Calls dispatch function for the first element of intersectedRegions as well as any region element that is hungry (for more).
 	 * @param intersectedRegions a post-ordered list of regions from the region model
 	 * @param dispatchFunction a functor to call for each region
 	 */
-	protected void dispatchToLeafAndHungryRegions(List<IRegion> intersectedRegions, 
+	protected void dispatchToLeafAndHungryRegions(List<IRegion> intersectedRegions,
 			DispatchFunction dispatchFunction) {
 		if (!intersectedRegions.isEmpty()) {
 			dispatchFunction.dispatchTo(intersectedRegions.get(0));
-			for (IRegion region: intersectedRegions.subList(1, intersectedRegions.size())) {
+			for (final IRegion region: intersectedRegions.subList(1, intersectedRegions.size())) {
 				if (region.hungry()) {
 					dispatchFunction.dispatchTo(region);
 				}

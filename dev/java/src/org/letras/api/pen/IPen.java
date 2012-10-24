@@ -28,19 +28,19 @@ public interface IPen {
 	public void unregisterPenListener(IPenListener penListener);
 
 	/**
-	 * get this pens penId
-	 * 
-	 * @return penId
-	 */
-	public String penId();
-
-	/**
 	 * get the current penState
 	 * 
 	 * @see {@link IPenState}
 	 * @return penState
 	 */
-	public int penState();
+	public int getPenState();
+
+	/**
+	 * get the penId of this pen
+	 * 
+	 * @return penId
+	 */
+	public String getPenId();
 
 	/**
 	 * Implement this interface and register it to an {@link IPen} to receive {@link PenSample}s and {@link PenEvent}s
@@ -61,4 +61,6 @@ public interface IPen {
 		 */
 		void receivePenSample(PenSample penSample);
 	}
+
+
 }

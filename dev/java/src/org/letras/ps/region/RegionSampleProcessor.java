@@ -25,8 +25,8 @@ package org.letras.ps.region;
 
 import java.util.List;
 
+import org.letras.api.pen.IPen;
 import org.letras.api.pen.PenSample;
-import org.letras.ps.region.penconnector.IPenConnection;
 import org.letras.ps.region.penconnector.ISampleProcessor;
 import org.letras.psi.iregion.IRegion;
 
@@ -41,21 +41,21 @@ import org.letras.psi.iregion.IRegion;
  */
 public class RegionSampleProcessor implements ISampleProcessor {
 	// members
-	
+
 	private IRegion lastIntersectingRegion;
 	private List<IRegion> lastIntersectingRegions;
-	private RegionManager regionManager;
-	private DigitalInkProcessor digitalInkProcessor;
+	private final RegionManager regionManager;
+	private final DigitalInkProcessor digitalInkProcessor;
 	private boolean penDownQueued;
-	
+
 	// constructors
-	
-	public RegionSampleProcessor(RegionManager regionManager, IPenConnection pen) {
+
+	public RegionSampleProcessor(RegionManager regionManager, IPen pen) {
 		this.regionManager = regionManager;
 		this.digitalInkProcessor = new DigitalInkProcessor(regionManager, pen);
 	}
 
-	/* 
+	/*
 	 * This queries the model for the region the sample is contained within.
 	 * Starts from the previously intersected region (i.e., "caching" is employed).
 	 * Calls doDispatch for all Regions with a non-null DispatchInfo.
@@ -64,7 +64,7 @@ public class RegionSampleProcessor implements ISampleProcessor {
 	 */
 	@Override
 	public void handleSample(final PenSample sample) {
-		List<IRegion> regions = regionManager.getIntersectingRegionInfos(lastIntersectingRegion, sample);
+		final List<IRegion> regions = regionManager.getIntersectingRegionInfos(lastIntersectingRegion, sample);
 
 		if (penDownQueued) {
 			digitalInkProcessor.processPenDown(regions);
@@ -81,9 +81,9 @@ public class RegionSampleProcessor implements ISampleProcessor {
 		}
 	}
 
-	/* 
+	/*
 	 * Calls doDispatchPenDown for all Regions on a path from the root node to
-	 * the last intersected region that have a non-null DispatchInfo. 
+	 * the last intersected region that have a non-null DispatchInfo.
 	 * (non-Javadoc)
 	 * @see org.letras.ps.region.penconnector.ISampleProcessor#penDown()
 	 */
@@ -94,9 +94,9 @@ public class RegionSampleProcessor implements ISampleProcessor {
 		penDownQueued = true;
 	}
 
-	/* 
+	/*
 	 * Calls doDispatchPenDown for all Regions on a path from the root node to
-	 * the last intersected region that have a non-null DispatchInfo. 
+	 * the last intersected region that have a non-null DispatchInfo.
 	 * (non-Javadoc)
 	 * @see org.letras.ps.region.penconnector.ISampleProcessor#penUp()
 	 */
@@ -108,7 +108,7 @@ public class RegionSampleProcessor implements ISampleProcessor {
 	}
 
 	@Override
-	public void setConnectedPen(IPenConnection pen) {
+	public void setConnectedPen(IPen pen) {
 		throw new UnsupportedOperationException("Cannot change the pen of the RegionSampleProcessor after initial setup. Use a new RegionSampleProcessor instead!");
 	}
 

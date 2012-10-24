@@ -23,7 +23,6 @@
  ******************************************************************************/
 package org.letras.ps.region;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,7 +59,7 @@ public class RegionManager implements IRegionManager {
 	private IRegionBroker regionBroker;
 	protected ReadWriteLock modelLock;
 	
-	private Map<IRegion, RegionTreeNode> regionToTreeNode;
+	private final Map<IRegion, RegionTreeNode> regionToTreeNode;
 	private String serviceZone; 
 	
 	public RegionManager() {
@@ -94,7 +93,7 @@ public class RegionManager implements IRegionManager {
 				lastIntersectingRegionTreeNode = model;
 			}
 		}
-		RegionTreeNode intersectingRegionTreeNode = lastIntersectingRegionTreeNode.getIntersectingRegion(sample.getX(), sample.getY());
+		final RegionTreeNode intersectingRegionTreeNode = lastIntersectingRegionTreeNode.getIntersectingRegion(sample.getX(), sample.getY());
 
 		if (intersectingRegionTreeNode == model) {
 			modelLock.readLock().unlock();
@@ -105,7 +104,7 @@ public class RegionManager implements IRegionManager {
 			}
 		}
 		RegionTreeNode currentRegionTreeNode = intersectingRegionTreeNode;
-		List<IRegion> intersectedRegions = new LinkedList<IRegion>();
+		final List<IRegion> intersectedRegions = new LinkedList<IRegion>();
 		while (currentRegionTreeNode != null) {
 			if (currentRegionTreeNode.getRegion() != null)
 				intersectedRegions.add(currentRegionTreeNode.getRegion());
@@ -126,13 +125,13 @@ public class RegionManager implements IRegionManager {
 	 * @return true iff a Region was retrieved and added to the model
 	 */
 	protected boolean retrieveRegionAt(double x, double y) {
-		List<IRegion> regionsAtCoordinate = regionBroker.requestRegionsAtCoordinate(x, y);
+		final List<IRegion> regionsAtCoordinate = regionBroker.requestRegionsAtCoordinate(x, y);
 		if (regionsAtCoordinate.isEmpty()) {
 			return false;
 		} else {
 			modelLock.writeLock().lock();
-			for (IRegion region: regionsAtCoordinate) {
-				RegionTreeNode newNode = new RegionTreeNode(region);
+			for (final IRegion region: regionsAtCoordinate) {
+				final RegionTreeNode newNode = new RegionTreeNode(region);
 				model.add(newNode);
 				regionToTreeNode.put(region, newNode);
 			}
@@ -145,7 +144,7 @@ public class RegionManager implements IRegionManager {
 	public void addRegion(IRegion regionToAdd) {
 		modelLock.writeLock().lock();
 		try {
-			RegionTreeNode newNode = new RegionTreeNode(regionToAdd);
+			final RegionTreeNode newNode = new RegionTreeNode(regionToAdd);
 			model.add(newNode);
 			regionToTreeNode.put(regionToAdd, newNode);
 		} finally {
@@ -157,7 +156,7 @@ public class RegionManager implements IRegionManager {
 	public void deleteRegion(IRegion regionToDelete) {
 		modelLock.writeLock().lock();
 		try {
-			RegionTreeNode node = regionToTreeNode.remove(regionToDelete);
+			final RegionTreeNode node = regionToTreeNode.remove(regionToDelete);
 			if (node != null)
 				model.remove(node);
 			else
