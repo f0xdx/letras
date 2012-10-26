@@ -47,23 +47,23 @@ class BluetoothConnectionHandler extends Thread {
 	
 	//members
 	
-	private StreamConnection connection;
+	private final StreamConnection connection;
 
 	/**
 	 * Route the received bytes and pen on/off state to this converter
 	 */
-	private ByteStreamConverter converter;
+	private final ByteStreamConverter converter;
 	
 	/**
 	 * reference to the bluetooth connector in case the handler needs to be shut down
 	 */
-	private BluetoothConnector connector;
+	private final BluetoothConnector connector;
 	
 	/**
 	 * The String which has been given to the IPenAdapterFactory on creating a new instance of IPenAdapter
 	 * For debugging purposes only.
 	 */
-	private String token;
+	private final String token;
 	
 	private boolean streaming;
 	
@@ -114,7 +114,7 @@ class BluetoothConnectionHandler extends Thread {
 			
 			
 				
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.logp(Level.WARNING, "BluetoothConnectionHandler", "run", String.format("could not read from stream. I will try to shutdown: %s", e.getMessage()));
 			e.printStackTrace();
 			connector.disconnectHandler(this);
@@ -140,7 +140,7 @@ class BluetoothConnectionHandler extends Thread {
 		try {
 			this.connection.close();
 			this.stream.close();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			logger.logp(Level.WARNING, "BluetoothConnectionHandler", "shutdown", String.format("could not close connection: %s", e.getMessage()));
 			e.printStackTrace();
 		}

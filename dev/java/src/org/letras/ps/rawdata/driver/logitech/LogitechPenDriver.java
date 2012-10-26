@@ -43,68 +43,68 @@ import org.mundo.service.IConfigure;
 public class LogitechPenDriver implements IPenDriver, IConfigure {
 
 	// logger
-	
+
 	Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
-	
+
 	// members
-	
+
 	/**
-	 * The PenAdapterFactory for acquiring new IPenAdapter 
+	 * The PenAdapterFactory for acquiring new IPenAdapter
 	 */
 	private IPenAdapterFactory factory;
-	
+
 	/**
 	 * The BluetoothConnector which handles bluetooth connections
 	 */
-	private BluetoothConnector bluetoothConnector;
-	
+	private final BluetoothConnector bluetoothConnector;
+
 	/**
 	 * The Thread in which the BluetoothConnector is waiting for connections
 	 */
-	private Thread bluetoothThread;
-	
+	private final Thread bluetoothThread;
+
 	// constructor
-	
+
 	/**
-	 * Nullary constructor 
+	 * Nullary constructor
 	 */
 	public LogitechPenDriver() {
 		bluetoothConnector = new BluetoothConnector(this);
 		bluetoothThread  = new Thread(bluetoothConnector);
 	}
-	
+
 	// methods
-	
+
 	@Override
 	public void inject(IPenAdapterFactory factory) {
 		this.factory = factory;
 	}
-	
+
 	@Override
 	public void shutdown() {
 		logger.logp(Level.INFO, "LogitechPenDriver", "shutdown",  "Shutting down logitech Pen Driver");
-		
+
 		bluetoothConnector.shutdown();
 		try {
 			bluetoothThread.join();
-		} catch (InterruptedException e) {
+		} catch (final InterruptedException e) {
 			logger.logp(Level.WARNING, "LogitechPenDriver", "shutdown",  String.format("thread interrupted while waiting for handler to shutdown: %s", e.getMessage()));
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void init() {
 		bluetoothThread.start();
 		logger.logp(Level.INFO, "LogitechPenDriver", "init", "Logitech Pen Driver up and running");
 	}
-	
+
 	/**
 	 * Callback method for the BluetoothConnector to get the appropriate IPenAdapter for the token
 	 * @param token to forward to the adapter factory (e.g. the bluetooth address)
 	 * @return IPenAdapter to be used by the handler
 	 */
-	IPenAdapter getPenAdapterForToken(String token) {	
+	IPenAdapter getPenAdapterForToken(String token) {
 		return factory.create(this, token);
 	}
 
@@ -122,17 +122,14 @@ public class LogitechPenDriver implements IPenDriver, IConfigure {
 
 	@Override
 	public void setServiceConfig(Object arg0) {
-		TypedMap map = (TypedMap) arg0;
-		IO2StreamConverter.xorigin = map.getInt("xorigin");
-		IO2StreamConverter.yorigin = map.getInt("yorigin");
-		logger.logp(Level.CONFIG, "LogitechPenDriver", "setServiceConfig", String.format("Successfully configured Logitech driver to use %d as xorigin and %d as yorigin", IO2StreamConverter.xorigin, IO2StreamConverter.yorigin));
-		
+
+
 	}
 
 	@Override
 	public void setServiceConfigMap(TypedMap arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 }

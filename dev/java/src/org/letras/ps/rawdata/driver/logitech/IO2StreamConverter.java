@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.letras.ps.rawdata.driver.logitech;
 
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,8 +31,8 @@ import org.letras.ps.rawdata.IPenAdapter;
 import org.letras.psi.ipen.PenSample;
 
 /**
- * The IO2StreamConverter class converts the byte stream coming from 
- * the Bluetooth Serial Port Profile into RawDataSamples by assuming that 
+ * The IO2StreamConverter class converts the byte stream coming from
+ * the Bluetooth Serial Port Profile into RawDataSamples by assuming that
  * the source is a Logitech IO2 digital pen.
  * <p>
  * @author niklas
@@ -42,21 +43,21 @@ class IO2StreamConverter extends ByteStreamConverter{
 
 	//logger
 	private static Logger logger = Logger.getLogger("org.letras.ps.rawdata.driver.logitech");
-	
+
 	//IO2 protocol specific values
-	
+
 	/**
 	 * States of the transmission.
 	 */
 	private static enum StreamingState {
 		HEADER, PAYLOAD
 	}
-	
+
 	/**
-	 * Identifier for new session 
+	 * Identifier for new session
 	 */
 	private static final byte ID_PEN_CONNECT = 0x02;
-	
+
 	/**
 	 * PenUP Event Identifier
 	 */
@@ -66,13 +67,6 @@ class IO2StreamConverter extends ByteStreamConverter{
 	 * Coord Event Identifier
 	 */
 	private static final byte ID_SIMPLE_COORD = 0x03;
-	
-	/**
-	 * coordinates of the origin of the page. This is only 
-	 * temporary until the origin can be computed from the page address
-	 */
-	
-	static int xorigin, yorigin;
 
 	//members
 
@@ -81,38 +75,43 @@ class IO2StreamConverter extends ByteStreamConverter{
 	 * time and pen external time
 	 */
 	private long timestampSessionBegin = 0;
-	
+
 	/**
-	 * field to temporarily store the page address 
+	 * field to temporarily store the page address
 	 */
 	private long pageAddressBuffer = 0L;
-	
+
 	/**
-	 * field to temporarily store the relative x coordinate in 1/8 of anoto coordinates 
+	 * hashmap for caching page address offsets
+	 */
+	private final HashMap<Long, int[]> pageAddressOffsets = new HashMap<Long, int[]>();
+
+	/**
+	 * field to temporarily store the relative x coordinate in 1/8 of anoto coordinates
 	 */
 	private int relx = 0;
-	
+
 	/**
-	 * field to temporarily store the relative y coordinate in 1/8 of anoto coordinates 
+	 * field to temporarily store the relative y coordinate in 1/8 of anoto coordinates
 	 */
 	private int rely = 0;
-	
+
 	/**
-	 * field to temporarily store the force value (between 0 and 255) 
+	 * field to temporarily store the force value (between 0 and 255)
 	 */
 	private int force = 0;
-	
+
 	/**
 	 * field to temporarily store the pen internal timestamp
 	 */
 	private long timestampBuffer = 0L;
-	
+
 	/**
 	 * pen internal penID
 	 * Not used yet
 	 */
 	private long penID = 0;
-	
+
 	/**
 	 * protocol version
 	 * Not used yet (for the IO2 version = 2)
@@ -139,7 +138,7 @@ class IO2StreamConverter extends ByteStreamConverter{
 	 * store the length of the packet which is currently received
 	 */
 	private int lengthBuffer = 0;
-	
+
 	/**
 	 * State of the pen. This is needed because the pen doesn't issue an explicit PenDown event.
 	 */
@@ -154,6 +153,7 @@ class IO2StreamConverter extends ByteStreamConverter{
 		currentProtocolState = StreamingState.HEADER;
 	}
 
+	@Override
 	public void handleByte(int currentByte) {
 		//check in which protocol state we are in (header or payload)
 		if (currentProtocolState == StreamingState.HEADER) {
@@ -181,7 +181,7 @@ class IO2StreamConverter extends ByteStreamConverter{
 				return;
 			default:
 				break;
-			} 
+			}
 			numBytesReceived++;
 		} else if (currentProtocolState == StreamingState.PAYLOAD) {
 			//receiving a byte of the payload
@@ -221,13 +221,13 @@ class IO2StreamConverter extends ByteStreamConverter{
 								//calculate the difference between real time and pen internal time;
 								timestampSessionBegin = System.currentTimeMillis() - timestampBuffer;
 								logger.logp(Level.FINE, "IO2StreamConverter", "handleByte", "received correct header");
-							} else 
+							} else
 								logger.logp(Level.FINE, "IO2StreamConverter", "handleByte", "pen uses wrong protocol version");
 						}
 					}
 				}
 				numBytesReceived++;
-			} 
+			}
 			if (numBytesReceived == lengthBuffer) {
 				//reset all fields
 				packetType = 0;
@@ -254,14 +254,32 @@ class IO2StreamConverter extends ByteStreamConverter{
 	/**
 	 * precalculated values for fraction bits
 	 */
-	private float[] fractionMap = {0.0f, 0.125f, 0.250f, 0.375f, 0.5f, 0.625f, 0.75f, 0.875f};
-	
+	private final float[] fractionMap = {0.0f, 0.125f, 0.250f, 0.375f, 0.5f, 0.625f, 0.75f, 0.875f};
+
 	/**
 	 * calculate the absolute position in anoto coordinate space for the x-coordinate
 	 * @return absolute x-coordinate
 	 */
 	private double calculateX() {
-		return (double) xorigin + (relx >> 3) + fractionMap[relx & 0x7];
+		try {
+			final int[] pageOffset = pageAddressOffsets.get(pageAddressBuffer);
+			return (double) pageOffset[0] + (relx >> 3) + fractionMap[relx & 0x7];
+		} catch (final NullPointerException npe) {
+			final int[] pageOffset = calculatePageAddressOffset(pageAddressBuffer);
+			pageAddressOffsets.put(pageAddressBuffer, calculatePageAddressOffset(pageAddressBuffer));
+			return (double) pageOffset[0] + (relx >> 3) + fractionMap[relx & 0x7];
+		}
+	}
+
+	private static int[] calculatePageAddressOffset(long pageAddress) {
+		// final int section = (int) ((pageAddress >> 52) & 0xFFF); //as of now unused
+		final int segment = (int) ((pageAddress >> 40) & 0xFFF);
+		final int shelf = (int) ((pageAddress >> 24) & 0xFFF);
+		final int book = (int) ((pageAddress >> 12) & 0xFFF);
+		final int page = (int) (pageAddress & 0xFFF);
+		final int[] result = new int[] { (0x800000 * (segment % 0x30)) + (book * 32 * 0x10A8) + page * 0x10A8,
+				(0x800000 * (segment / 0x30)) + (shelf * 0x1358) };
+		return result;
 	}
 
 	/**
@@ -269,7 +287,8 @@ class IO2StreamConverter extends ByteStreamConverter{
 	 * @return absolute y-coordinate
 	 */
 	private double calculateY() {
-		return (double) yorigin + (rely >> 3) + fractionMap[rely & 0x7] ;
+		final int[] pageOffset = pageAddressOffsets.get(pageAddressBuffer);
+		return (double) pageOffset[1] + (rely >> 3) + fractionMap[rely & 0x7];
 	}
 
 	/**
