@@ -35,6 +35,8 @@ import org.letras.api.pen.PenEvent;
 import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.DoIPen;
 import org.letras.psi.ipen.IPen;
+import org.letras.psi.ipen.MundoPenEvent;
+import org.letras.psi.ipen.MundoPenSample;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Message;
 import org.mundo.rt.MessageContext;
@@ -173,18 +175,20 @@ public class PenConnection implements org.letras.api.pen.IPen, IReceiver {
 	@Override
 	public void received(Message msg, MessageContext ctx) {
 		final Object obj = msg.getObject();
-		if (obj instanceof PenSample) {
-			final PenSample penSample = (PenSample) obj;
+		if (obj instanceof MundoPenSample) {
+			final MundoPenSample mundoPenSample = (MundoPenSample) obj;
 			synchronized (listeners) {
+				final PenSample penSample = mundoPenSample.getPenSample();
 				for (final IPenListener listener : listeners) {
 					listener.receivePenSample(penSample);
 				}
 			}
-		} else if (obj instanceof PenEvent) {
-			final PenEvent penEvent = (PenEvent) obj;
+		} else if (obj instanceof MundoPenEvent) {
+			final MundoPenEvent mundoPenEvent = (MundoPenEvent) obj;
 			//save the state
-			state = penEvent.getNewState();
+			state = mundoPenEvent.state;
 			synchronized (listeners) {
+				final PenEvent penEvent = mundoPenEvent.getPenEvent();
 				for (final IPenListener listener : listeners) {
 					listener.receivePenEvent(penEvent);
 				}

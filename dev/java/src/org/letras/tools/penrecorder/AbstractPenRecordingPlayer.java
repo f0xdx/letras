@@ -65,22 +65,22 @@ public class AbstractPenRecordingPlayer extends Service implements IPen {
 
 	protected void processMessage(Object message) {
 		if (message instanceof PenEvent) {
-			PenEvent event = (PenEvent) message;
+			final PenEvent event = (PenEvent) message;
 			processEvent(event);
 		}
 		else if (message instanceof PenSample) {
-			PenSample sample = (PenSample) message;
+			final PenSample sample = (PenSample) message;
 			processSample(sample);
 		}
 	}
 
 	protected void processEvent(PenEvent event) {
 		synchronized(this) {
-			state = event.getNewState();
+			state = event.state;
 		}
 		publisher.send(Message.fromObject(event));
 	}
-	
+
 	protected void processSample(PenSample sample) {
 		publisher.send(Message.fromObject(sample));
 	}

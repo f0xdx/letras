@@ -16,7 +16,7 @@ public class SampleProcessorAdapter implements IPenListener {
 	@Override
 	public void receivePenEvent(PenEvent penEvent) {
 		// For now we treat all events accept DOWN as UP events
-		if ((penEvent.getNewState() & IPenState.DOWN) == IPenState.DOWN)
+		if ((penEvent.state & IPenState.DOWN) == IPenState.DOWN)
 			sampleProcessor.penDown();
 		else
 			sampleProcessor.penUp();

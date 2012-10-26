@@ -41,17 +41,17 @@ import org.mundo.rt.MessageContext;
  */
 public class PenInformation extends Observable implements IReceiver{
 
-	private DoIPen doPen;
-	
-	private String nodeId;
-	
+	private final DoIPen doPen;
+
+	private final String nodeId;
+
 	private String penId = "";
 	private int penState = 0;
 	private int lastPenState = 0;
-	
+
 	private int currentSampleDelay = 0;
-	private PenSample currentSample; 
-	
+	private PenSample currentSample;
+
 	/**
 	 * Default Constructor
 	 * @param doPen the DoObject for the pen
@@ -60,19 +60,19 @@ public class PenInformation extends Observable implements IReceiver{
 		this.doPen = doPen;
 		this.nodeId = nodeID.toString();
 	}
-	
+
 	/**
 	 * get the penId. the penId will be cached.
-	 * @return the penId 
+	 * @return the penId
 	 */
 	public String getPenID() {
 		if (penId.equals("")) {
 			penId = doPen.penId();
 		}
 		return penId;
-		
+
 	}
-	
+
 	/**
 	 * get the nodeId from the node to which the pen is connected
 	 * @return
@@ -80,7 +80,7 @@ public class PenInformation extends Observable implements IReceiver{
 	public String getNodeId() {
 		return this.nodeId;
 	}
-	
+
 	/**
 	 * get the pens state in human readable form
 	 * @return pen state
@@ -88,7 +88,7 @@ public class PenInformation extends Observable implements IReceiver{
 	public String getPenState() {
 		return penStateAsString(penState);
 	}
-	
+
 	/**
 	 * get the pens last state in human readable form
 	 * @return last pen state
@@ -96,7 +96,7 @@ public class PenInformation extends Observable implements IReceiver{
 	public String getLastPenState() {
 		return penStateAsString(lastPenState);
 	}
-	
+
 	/**
 	 * get the x-coordinate of the pen based on the last received data sample.
 	 * @return x-coordinat in anoto pattern space
@@ -115,7 +115,7 @@ public class PenInformation extends Observable implements IReceiver{
 			return currentSample.getY();
 		else return 0;
 	}
-	
+
 	/**
 	 * get the tip force that's applied to the pen based on the last received data sample.
 	 * <br>
@@ -127,7 +127,7 @@ public class PenInformation extends Observable implements IReceiver{
 			return currentSample.getForce();
 		else return 0;
 	}
-	
+
 	/**
 	 * get the delay between the creation of the sample in the RDPS and the reception
 	 * @return delay in milliseconds
@@ -137,7 +137,7 @@ public class PenInformation extends Observable implements IReceiver{
 			return currentSampleDelay;
 		else return 0;
 	}
-	
+
 	/**
 	 * convert the pen state id to a string
 	 * @param penState probably retrived from a <code>PenEvent</code>
@@ -161,22 +161,22 @@ public class PenInformation extends Observable implements IReceiver{
 
 	/**
 	 * Method from interface {@link org.mundo.rt.IReceiver}
-	 * <br> 
+	 * <br>
 	 * Only messages containing {@link org.letras.api.pen.PenSample}s
 	 * or {@link org.letras.api.pen.PenEvent}s will be handled
 	 */
 	@Override
 	public void received(Message arg0, MessageContext arg1) {
-		Object obj = arg0.getObject();
+		final Object obj = arg0.getObject();
 		if (obj instanceof PenSample) {
 			currentSample = (PenSample) obj;
 			currentSampleDelay = (int) (System.currentTimeMillis() - currentSample.getTimestamp());
 		} else if (obj instanceof PenEvent) {
-			PenEvent event = (PenEvent) obj;
-			penState = event.getNewState();
-			lastPenState = event.getOldState();
+			final PenEvent event = (PenEvent) obj;
+			penState = event.state;
+			lastPenState = event.oldState;
 		}
-		
+
 		//notify observers
 		if (currentSample != null) {
 			setChanged();

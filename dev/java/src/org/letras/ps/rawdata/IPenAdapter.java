@@ -23,17 +23,16 @@
  ******************************************************************************/
 package org.letras.ps.rawdata;
 
-import org.letras.api.pen.PenSample;
 
 /**
- * Pen adapters are used by a pen driver to access the logical pen 
+ * Pen adapters are used by a pen driver to access the logical pen
  * representation. While the pen manager manages available pens and
- * allows for their retrieval, these pens provide only read access 
- * to a pen's data. On the other hand they support all the needed 
+ * allows for their retrieval, these pens provide only read access
+ * to a pen's data. On the other hand they support all the needed
  * methods for accessing a pens additional capabilities (if applicable).
  * <P>
  * To maintain a clear separation between the logical access to a pen
- * needed by other parts of the system, write-access in the class pen 
+ * needed by other parts of the system, write-access in the class pen
  * cannot be allowed. Therefore the pen driver needs to use a pen
  * adapter in order to publish samples etc. of a given pen.
  * <P>
@@ -59,13 +58,13 @@ public interface IPenAdapter {
 	 *  <li> set the pen state to DOWN, via a call to <code>penState(IPenState.DOWN)</code>
 	 *  <li> emit the pen data by publishing <code>RawDataSamples</code> via the
 	 *  <code>publishSample(sample)</code> method
-	 *  <li> set the pen state to UP, via a call to <code>penState(IPenState.UP)</code> 
+	 *  <li> set the pen state to UP, via a call to <code>penState(IPenState.UP)</code>
 	 * </ol>
 	 * 
 	 * @param sample the <code>PenSample</code> describing an obtained data sample
 	 */
-	public void publishSample(PenSample sample);
-	
+	public void publishSample(double x, double y, int force, long timestamp);
+
 	/**
 	 * Each pen adapter corresponds to a specific pen. This method can be used to
 	 * obtain the unique Id of this pen and can be used e.g. for management tasks
@@ -74,7 +73,7 @@ public interface IPenAdapter {
 	 * @return the pen Id of the pen this adapter references
 	 */
 	public String penId();
-	
+
 	/**
 	 * Sets the referenced pen into the specified state. Potential states are represented
 	 * in the {@link org.letras.api.pen.IPenState} interface. Such states can be

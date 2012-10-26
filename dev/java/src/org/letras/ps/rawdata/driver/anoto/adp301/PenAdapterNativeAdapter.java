@@ -24,7 +24,6 @@
 package org.letras.ps.rawdata.driver.anoto.adp301;
 
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenSample;
 import org.letras.ps.rawdata.IPenAdapter;
 
 /**
@@ -36,12 +35,12 @@ import org.letras.ps.rawdata.IPenAdapter;
  *
  */
 public class PenAdapterNativeAdapter {
-	
+
 	/**
 	 * the IPenAdapter to encapsulate
 	 */
-	private IPenAdapter penAdapter;
-	
+	private final IPenAdapter penAdapter;
+
 	/**
 	 * constructor needs the penAdapter that should be encapsulated
 	 * @param penAdapter
@@ -49,9 +48,9 @@ public class PenAdapterNativeAdapter {
 	public PenAdapterNativeAdapter(IPenAdapter penAdapter) {
 		this.penAdapter = penAdapter;
 	}
-	
+
 	/**
-	 * switch to pen-down state sending the pen-down event if necessary. This 
+	 * switch to pen-down state sending the pen-down event if necessary. This
 	 * should be called before calling sendSample().
 	 */
 	public void penDown() {
@@ -63,7 +62,7 @@ public class PenAdapterNativeAdapter {
 	public void penUp() {
 		penAdapter.penState(IPenState.UP);
 	}
-	
+
 	/**
 	 * change to the pen-disconnected state. This does not however shutdown
 	 * the PenService.
@@ -71,7 +70,7 @@ public class PenAdapterNativeAdapter {
 	public void penDisconnected() {
 		penAdapter.penState(IPenState.OFF);
 	}
-	
+
 	/**
 	 * change to the pen-connected state. This should be called prior to sending
 	 * pen-down or samples.
@@ -79,7 +78,7 @@ public class PenAdapterNativeAdapter {
 	public void penConnected() {
 		penAdapter.penState(IPenState.ON);
 	}
-	
+
 	/**
 	 * send a sample with the given coordinates and pen pressure. The current time will be
 	 * used as timestamp when creating the PenSample.
@@ -88,7 +87,6 @@ public class PenAdapterNativeAdapter {
 	 * @param force the pen pressure
 	 */
 	public void sendSample(double x, double y, int force) {
-		final PenSample sample = new PenSample(x, y, force, System.currentTimeMillis());
-		penAdapter.publishSample(sample);
+		penAdapter.publishSample(x, y, force, System.currentTimeMillis());
 	}
 }

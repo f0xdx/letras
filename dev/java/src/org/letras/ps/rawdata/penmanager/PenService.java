@@ -27,9 +27,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenEvent;
-import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.IPen;
+import org.letras.psi.ipen.MundoPenEvent;
+import org.letras.psi.ipen.MundoPenSample;
 import org.mundo.rt.Message;
 import org.mundo.rt.Publisher;
 import org.mundo.rt.Service;
@@ -40,41 +40,41 @@ import org.mundo.rt.Service;
  * @version 0.0.1
  */
 public class PenService extends Service implements IPen {
-	
+
 	// logger
 
 	private static final Logger logger = Logger
 			.getLogger("org.letras.ps.rawdata.penmanager");
-	
+
 	// defaults
-	
+
 	private static final String CHN_SCHEME = "%s.chn";
-	
+
 	// members
 
-	private String penId;
-	
+	private final String penId;
+
 	private int state;
-	
-	private String channel;
-	
+
+	private final String channel;
+
 	private Publisher pub;
-	
+
 	// constructors
 
 	public PenService(String penId) {
 		this.penId = penId;
-		
+
 		// set the pen id as user friendly id for the service
 		this.setServiceInstanceName(penId);
-		
+
 		// now generate the channel name
 		this.channel = String.format(CHN_SCHEME, this.penId);
-		
+
 		// set the state to off
 		this.state = IPenState.OFF;
 	}
-	
+
 	// methods
 
 	/**
@@ -84,15 +84,15 @@ public class PenService extends Service implements IPen {
 	 * @param state		the new pen state
 	 */
 	public void setPenState(int state) {
-		
-		PenEvent evt = new PenEvent(this.state, state);
-		
+
+		final MundoPenEvent evt = new MundoPenEvent(this.state, state);
+
 		this.state = state;
-		
+
 		// publish the event on our channel
 		pub.send(Message.fromObject(evt));
 	}
-	
+
 	/**
 	 * Publish a sample on the channel associated with this pen. Note: for sake
 	 * of efficiency no check for null samples is done here. The caller must make sure
@@ -100,10 +100,10 @@ public class PenService extends Service implements IPen {
 	 * 
 	 * @param sample	the <code>PenSample</code> to publish
 	 */
-	public void publishSample(PenSample sample) {
+	public void publishSample(MundoPenSample sample) {
 		pub.send(Message.fromObject(sample));
 	}
-	
+
 	/**
 	 * Interface method from {@link org.letras.psi.ipen.IPen}.
 	 */
@@ -130,17 +130,17 @@ public class PenService extends Service implements IPen {
 
 	@Override
 	public void init() {
-		logger.logp(Level.FINE, "PenService", "init", 
+		logger.logp(Level.FINE, "PenService", "init",
 				String.format("pen service started (%s)", this.penId));
 		super.init();
-		
+
 		// set up the publisher
 		this.pub = this.getSession().publish(this.getServiceZone(), this.channel);
 	}
 
 	@Override
 	public void shutdown() {
-		logger.logp(Level.FINE, "PenService", "shutdown", 
+		logger.logp(Level.FINE, "PenService", "shutdown",
 				String.format("pen service shut down (%s)", this.penId));
 		super.shutdown();
 	}

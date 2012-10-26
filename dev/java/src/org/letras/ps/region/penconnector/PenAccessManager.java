@@ -27,10 +27,10 @@ import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.Letras;
 import org.letras.api.pen.IPen;
 import org.letras.api.pen.IPen.IPenListener;
 import org.letras.api.pen.IPenDiscovery;
-import org.letras.ps.Letras;
 import org.letras.ps.region.sampleprocessor.ISampleProcessorFactory;
 import org.mundo.rt.TypedMap;
 

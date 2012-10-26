@@ -24,7 +24,6 @@
 package org.letras.ps.rawdata.driver.logitech;
 
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenSample;
 import org.letras.ps.rawdata.IPenAdapter;
 /**
  * The byte stream converter defines the interface for the pen model specific
@@ -40,9 +39,9 @@ abstract class ByteStreamConverter {
 
 	//members
 
-	private IPenAdapter penAdapter;
+	private final IPenAdapter penAdapter;
 
-	//constructors 
+	//constructors
 
 	/**
 	 * constructor to be used by the subclasses only
@@ -66,7 +65,7 @@ abstract class ByteStreamConverter {
 	void penDisconnected() {
 		penAdapter.penState(IPenState.OFF);
 	}
-	
+
 	/**
 	 * Call this method to signal the ByteStreamConverter that the pen has been lifted. This
 	 * also implies that the pen is ON.
@@ -74,29 +73,33 @@ abstract class ByteStreamConverter {
 	void penUp() {
 		penAdapter.penState(IPenState.UP);
 	}
-	
-	
+
+
 	/**
 	 * Call this method to signal the ByteStreamConverter that the pen is  pressed on the paper
 	 */
 	void penDown() {
 		penAdapter.penState(IPenState.DOWN);
 	}
-	
+
 	/**
-	 * Call this method to signal the ByteStreamConverter that the connector has 
+	 * Call this method to signal the ByteStreamConverter that the connector has
 	 * detected a pen-side error.
 	 */
 	void penError() {
 		penAdapter.penState(IPenState.EXCEPTION);
 	}
-	
+
 	/**
-	 * sends the sample to the pen adapter
-	 * @param sample to be relayed 
+	 * sends the sample data to the pen adapter
+	 * 
+	 * @param x
+	 * @param y
+	 * @param force
+	 * @param timestamp
 	 */
-	protected void sendSample(PenSample sample) {
-		penAdapter.publishSample(sample);
+	protected void sendSample(double x, double y, int force, long timestamp) {
+		penAdapter.publishSample(x, y, force, timestamp);
 	}
 
 	/**
@@ -105,6 +108,6 @@ abstract class ByteStreamConverter {
 	protected void penConnected() {
 		penAdapter.penState(IPenState.ON);
 	}
-	
-	
+
+
 }

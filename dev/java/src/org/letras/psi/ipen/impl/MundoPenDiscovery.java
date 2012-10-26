@@ -21,7 +21,7 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.api.pen.impl;
+package org.letras.psi.ipen.impl;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -43,7 +43,7 @@ import org.mundo.service.ServiceManager;
  * @author niklas
  * @version 0.0.1
  */
-public class PenDiscovery {
+public class MundoPenDiscovery {
 
 	//logger
 	private static Logger logger = Logger.getLogger("org.letras.api.pen");
@@ -66,7 +66,7 @@ public class PenDiscovery {
 	/**
 	 * nullary constructor
 	 */
-	public PenDiscovery() {
+	public MundoPenDiscovery() {
 
 	}
 

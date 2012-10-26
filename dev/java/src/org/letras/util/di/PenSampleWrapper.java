@@ -4,6 +4,7 @@
 package org.letras.util.di;
 
 import org.letras.api.pen.PenSample;
+import org.letras.psi.ipen.MundoPenSample;
 
 /**
  * Sample that wraps a {@link PenSample}. The coordinates (x and y) of this
@@ -16,11 +17,12 @@ public class PenSampleWrapper extends Sample {
 
 	// members
 
-	private PenSample sample;
+	private final MundoPenSample sample;
+
 
 	// constructors
 
-	public PenSampleWrapper(PenSample sample) {
+	public PenSampleWrapper(MundoPenSample sample) {
 		this.sample = sample;
 	}
 
@@ -61,7 +63,7 @@ public class PenSampleWrapper extends Sample {
 		return this.sample.getClass().getName();
 	}
 
-	public PenSample getOriginalSample() {
+	public MundoPenSample getOriginalSample() {
 		return this.sample;
 	}
 }

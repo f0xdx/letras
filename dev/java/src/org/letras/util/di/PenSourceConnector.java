@@ -5,7 +5,6 @@ package org.letras.util.di;
 
 import org.letras.api.pen.IPenState;
 import org.letras.api.pen.PenEvent;
-import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.DoIPen;
 import org.mundo.rt.DoObject;
 import org.mundo.rt.Message;
@@ -22,14 +21,14 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 
 	// MEMBERS
 
-	private DoIPen source;
+	private final DoIPen source;
 	private String penId;
 	private Trace currentTrace;
 	private DigitalInkStructure di;
 
 
 	// GETTERS & SETTERS
-	
+
 	public String getPenId() {
 		return penId;
 	}
@@ -68,25 +67,24 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 	/**
 	 * Received method processing the data as obtained by the pen service. This
 	 * implementation will regard any pen events apart from pen PEN_DOWN
-	 * (PEN_UP, OFF, ERROR, OUT_OF_REACH) as ending a trace and add samples 
+	 * (PEN_UP, OFF, ERROR, OUT_OF_REACH) as ending a trace and add samples
 	 * to the current trace whenever there is a current trace. In praxis that
 	 * means, that any samples on already started traces when this connector
 	 * connects to the source will be dropped.
 	 * 
 	 * @param msg
-	 * @param mc 
+	 * @param mc
 	 */
 	@Override
 	public void received(Message msg, MessageContext mc) {
-		Object obj = msg.getObject();
+		final Object obj = msg.getObject();
 		if (obj instanceof PenEvent) {
-			PenEvent evt = (PenEvent) obj;
-			if (evt.state() == IPenState.DOWN) {
+			final PenEvent evt = (PenEvent) obj;
+			if (evt.state == IPenState.DOWN) {
 				// Trace started
 				this.currentTrace = new Trace(this.penId);
 				this.notifyTraceStarted(this.penId, this.currentTrace);
-			}
-			else if (evt.state() == IPenState.UP ){
+			} else if (evt.state == IPenState.UP) {
 				// Trace somehow ended
 				if (this.currentTrace == null) return;
 				if (di != null) di.add(this.currentTrace);
@@ -96,7 +94,7 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 		else {
 			// check whether there is some trace at all
 			if (this.currentTrace == null) return;
-			Sample s = SampleFactory.createSample(obj);
+			final Sample s = SampleFactory.createSample(obj);
 			currentTrace.add(s);
 			this.notifySampleAdded(this.penId, s, this.currentTrace);
 		}

@@ -1,9 +1,9 @@
-package org.letras.ps;
+package org.letras;
 
 import org.letras.api.ILetras;
 import org.letras.api.pen.IPenDiscovery;
-import org.letras.api.pen.impl.PenDiscovery;
 import org.letras.api.region.IRegionHost;
+import org.letras.psi.ipen.impl.MundoPenDiscovery;
 
 public class Letras implements ILetras {
 
@@ -24,14 +24,14 @@ public class Letras implements ILetras {
 		return instance;
 	}
 
-	private PenDiscovery penDiscovery;
+	private MundoPenDiscovery penDiscovery;
 
 	@Override
 	public void registerPenDiscovery(IPenDiscovery penDiscoveryListener) {
 		if (penDiscovery == null) {
 			synchronized (creationLock) {
 				if (penDiscovery == null) {
-					penDiscovery = new PenDiscovery();
+					penDiscovery = new MundoPenDiscovery();
 					penDiscovery.start();
 				}
 			}
