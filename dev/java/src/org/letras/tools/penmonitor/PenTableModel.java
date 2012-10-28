@@ -24,11 +24,13 @@
 package org.letras.tools.penmonitor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Observable;
-import java.util.Observer;
 
 import javax.swing.table.AbstractTableModel;
+
+import org.letras.api.pen.IPen;
+import org.letras.api.pen.IPenDiscovery;
 
 /**
  * The PenTableModel manages access to information about the pens.
@@ -36,48 +38,52 @@ import javax.swing.table.AbstractTableModel;
  * 
  * @author niklas
  */
-public class PenTableModel extends AbstractTableModel implements Observer {
-	
+public class PenTableModel extends AbstractTableModel implements IPenDiscovery {
+
 	private static final long serialVersionUID = 9114463176138867675L;
-	
+
 	//Ids for the columns
 	public static final int PENID_COLUMN = 0;
 	public static final int STATE_COLUMN = 1;
-	public static final int NODE_COLUMN = 2;
-	
+
 	//column count
-	public static final int COLUMN_COUNT = 3;
-	
+	public static final int COLUMN_COUNT = 2;
+
 	/**
 	 * list of all the pens connected to the system and displayed in the pen table
 	 */
-	private List<PenInformation> pens = new ArrayList<PenInformation>();
-	
+	private final List<IPen> pens = new ArrayList<IPen>();
+
+	private final HashMap<IPen, PenInformation> listener = new HashMap<IPen, PenInformation>();
+
 	/**
-	 * add a bunch of discovered pens to the table
+	 * add a discovered pen to the table
 	 */
-	public void add(List<PenInformation> discoveredPens) {
-		for (PenInformation penInformation : discoveredPens) {
-			if (!pens.contains(penInformation)) {
-				int index = pens.size();
-				pens.add(penInformation);
-				penInformation.addObserver(this);
-				fireTableRowsInserted(index, index);
-			}
+	@Override
+	public void penConnected(final IPen ipen) {
+		if (!pens.contains(ipen)) {
+			final int index = pens.size();
+			pens.add(ipen);
+			final PenInformation listener = new PenInformation(ipen.getPenId());
+			ipen.registerPenListener(listener);
+			this.listener.put(ipen, listener);
+			fireTableRowsInserted(index, index);
 		}
 	}
 
 	/**
-	 * delete a disconnected pen from the table
+	 * delete a pen from the table
+	 * 
 	 * @param penInfo
 	 */
-	public void delete(PenInformation penInfo) {
-		penInfo.deleteObservers();
-		int index = pens.indexOf(penInfo);
-		pens.remove(penInfo);
+	@Override
+	public void penDisconnected(IPen pen) {
+		pen.unregisterPenListener(this.listener.get(pen));
+		final int index = pens.indexOf(pen);
+		pens.remove(pen);
 		fireTableRowsDeleted(index, index);
 	}
-	
+
 	@Override
 	public int getColumnCount() {
 		return COLUMN_COUNT;
@@ -90,35 +96,26 @@ public class PenTableModel extends AbstractTableModel implements Observer {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		PenInformation pen = pens.get(rowIndex);
+		final IPen pen = pens.get(rowIndex);
 		switch (columnIndex) {
 		case PENID_COLUMN:
-			return pen.getPenID();
+			return pen.getPenId();
 		case STATE_COLUMN:
 			return pen.getPenState();
-		case NODE_COLUMN:
-			return pen.getNodeId();
 		}
 		return null;
 	}
 
 	/**
 	 * retrive the penInformation instance associated with the index
+	 * 
 	 * @param index of the table row
-	 * @return penInformation instance
+	 * @return IPen instance
 	 */
 	public PenInformation getPenInformation(int index) {
 		if (index >= 0 && index < pens.size())
-			return pens.get(index);
+			return listener.get(pens.get(index));
 		else return null;
-	}
-
-	@Override
-	public void update(Observable o, Object arg) {
-		if (o instanceof PenInformation) {
-			final int index = pens.indexOf(o);
-			fireTableRowsUpdated(index, index);
-		}
 	}
 
 

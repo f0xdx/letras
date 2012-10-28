@@ -25,25 +25,17 @@ package org.letras.tools.penmonitor;
 
 import java.util.Observable;
 
+import org.letras.api.pen.IPen.IPenListener;
 import org.letras.api.pen.IPenState;
 import org.letras.api.pen.PenEvent;
 import org.letras.api.pen.PenSample;
-import org.letras.psi.ipen.DoIPen;
-import org.mundo.rt.GUID;
-import org.mundo.rt.IReceiver;
-import org.mundo.rt.Message;
-import org.mundo.rt.MessageContext;
 
 /**
  * The Pen Information class holds the DoObject and handles samples send from the pen.
  * 
  * @author niklas
  */
-public class PenInformation extends Observable implements IReceiver{
-
-	private final DoIPen doPen;
-
-	private final String nodeId;
+public class PenInformation extends Observable implements IPenListener {
 
 	private String penId = "";
 	private int penState = 0;
@@ -52,13 +44,8 @@ public class PenInformation extends Observable implements IReceiver{
 	private int currentSampleDelay = 0;
 	private PenSample currentSample;
 
-	/**
-	 * Default Constructor
-	 * @param doPen the DoObject for the pen
-	 */
-	public PenInformation(DoIPen doPen, GUID nodeID) {
-		this.doPen = doPen;
-		this.nodeId = nodeID.toString();
+	public PenInformation(String penId) {
+		this.penId = penId;
 	}
 
 	/**
@@ -66,19 +53,7 @@ public class PenInformation extends Observable implements IReceiver{
 	 * @return the penId
 	 */
 	public String getPenID() {
-		if (penId.equals("")) {
-			penId = doPen.penId();
-		}
 		return penId;
-
-	}
-
-	/**
-	 * get the nodeId from the node to which the pen is connected
-	 * @return
-	 */
-	public String getNodeId() {
-		return this.nodeId;
 	}
 
 	/**
@@ -144,7 +119,7 @@ public class PenInformation extends Observable implements IReceiver{
 	 * @return state description
 	 */
 	private String penStateAsString(int penState) {
-		switch (doPen.penState()) {
+		switch (penState) {
 		case IPenState.OFF:
 			return "off";
 		case IPenState.ON:
@@ -159,28 +134,19 @@ public class PenInformation extends Observable implements IReceiver{
 		return "unknown";
 	}
 
-	/**
-	 * Method from interface {@link org.mundo.rt.IReceiver}
-	 * <br>
-	 * Only messages containing {@link org.letras.api.pen.PenSample}s
-	 * or {@link org.letras.api.pen.PenEvent}s will be handled
-	 */
 	@Override
-	public void received(Message arg0, MessageContext arg1) {
-		final Object obj = arg0.getObject();
-		if (obj instanceof PenSample) {
-			currentSample = (PenSample) obj;
-			currentSampleDelay = (int) (System.currentTimeMillis() - currentSample.getTimestamp());
-		} else if (obj instanceof PenEvent) {
-			final PenEvent event = (PenEvent) obj;
-			penState = event.state;
-			lastPenState = event.oldState;
-		}
-
-		//notify observers
-		if (currentSample != null) {
-			setChanged();
-			notifyObservers();
-		}
+	public void receivePenEvent(PenEvent penEvent) {
+		penState = penEvent.state;
+		lastPenState = penEvent.oldState;
+		setChanged();
+		notifyObservers();
 	}
+
+	@Override
+	public void receivePenSample(PenSample penSample) {
+		currentSample = penSample;
+		currentSampleDelay = (int) (System.currentTimeMillis() - currentSample.getTimestamp());
+		setChanged();
+		notifyObservers();
+	};
 }

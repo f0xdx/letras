@@ -39,6 +39,7 @@ import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.letras.Letras;
 import org.mundo.rt.Mundo;
 
 /**
@@ -60,22 +61,22 @@ public class PenMonitor extends JPanel {
 	 * window title
 	 */
 	static final String appName = "PenMonitor for Letras";
-	
+
 	/**
 	 * table listing all discovered pens
 	 */
 	private JTable penTable;
-	
+
 	/**
 	 * delegate (model) for the table
 	 */
 	private PenTableModel penTableModel;
-	
+
 	/**
 	 * the dialog in which additional information to the selected pen is displayed
 	 */
 	private InspectorDialog inspector;
-	
+
 	/**
 	 * default constructor
 	 */
@@ -83,84 +84,84 @@ public class PenMonitor extends JPanel {
 		initModel();
 		initComponents();
 	}
-	
+
 	/**
 	 * create the pen table model
 	 */
 	private void initModel() {
 		penTableModel = new PenTableModel();
 	}
-	
+
 	/**
 	 * initialize graphical components of the window
 	 */
 	private void initComponents() {
 		setLayout(new BorderLayout());
-		
+
 		penTable = new JTable(penTableModel);
-	
+
 		penTable.setColumnModel(createColumnModel());
 		penTable.setAutoCreateRowSorter(true);
 		penTable.setRowHeight(24);
 		penTable.setAutoResizeMode(JTable.AUTO_RESIZE_NEXT_COLUMN);
 		penTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		
-		Dimension tableSize = new Dimension();
+
+		final Dimension tableSize = new Dimension();
 		tableSize.width = penTable.getColumnModel().getTotalColumnWidth();
 		tableSize.height = 10 * penTable.getRowHeight();
 		penTable.setPreferredScrollableViewportSize(tableSize);
-		
+
 		penTable.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			@Override
 			public void valueChanged(ListSelectionEvent e) {
-					//try to get the selected PenInformation 
-					PenInformation penInfo = penTableModel.getPenInformation(e.getLastIndex());
-					if (penInfo != null)
-						getInspector().setSelectedPen(penInfo);
+				//try to get the selected PenInformation
+				final PenInformation penInfo = penTableModel.getPenInformation(e.getLastIndex());
+				if (penInfo != null)
+					getInspector().setSelectedPen(penInfo);
 			}
 		});
-		
-		JScrollPane scrollPane = new JScrollPane(penTable);
+
+		final JScrollPane scrollPane = new JScrollPane(penTable);
 		add(scrollPane, BorderLayout.CENTER);
-		
+
 	}
-	
+
 	/**
 	 * create a ColumnTableModel for the pen table
 	 * @return ColumnTableModel to be used for the pen table
 	 */
 	private TableColumnModel createColumnModel() {
-		DefaultTableColumnModel columnModel = new DefaultTableColumnModel();
-		
-		TableCellRenderer cellRenderer = new DefaultTableCellRenderer();
-	
+		final DefaultTableColumnModel columnModel = new DefaultTableColumnModel();
+
+		final TableCellRenderer cellRenderer = new DefaultTableCellRenderer();
+
 		TableColumn column = new TableColumn();
 		column.setModelIndex(PenTableModel.PENID_COLUMN);
 		column.setHeaderValue("Pen ID");
 		column.setPreferredWidth(140);
 		column.setCellRenderer(cellRenderer);
 		columnModel.addColumn(column);
-		
-		column = new TableColumn();
-		column.setModelIndex(PenTableModel.NODE_COLUMN);
-		column.setHeaderValue("Hostnode ID");
-		column.setPreferredWidth(230);
-		column.setCellRenderer(cellRenderer);
-		columnModel.addColumn(column);
-		
+
+		// column = new TableColumn();
+		// column.setModelIndex(PenTableModel.NODE_COLUMN);
+		// column.setHeaderValue("Hostnode ID");
+		// column.setPreferredWidth(230);
+		// column.setCellRenderer(cellRenderer);
+		// columnModel.addColumn(column);
+
 		column = new TableColumn();
 		column.setModelIndex(PenTableModel.STATE_COLUMN);
 		column.setHeaderValue("Pen State");
 		column.setPreferredWidth(30);
 		column.setCellRenderer(cellRenderer);
 		columnModel.addColumn(column);
-		
+
 		return columnModel;
 	}
-	
+
 	/**
-	 * get the inspector dialog. When no dialog is available it will be created 
-	 * inside this method. 
+	 * get the inspector dialog. When no dialog is available it will be created
+	 * inside this method.
 	 * @return inspectorDialog
 	 */
 	private InspectorDialog getInspector() {
@@ -169,29 +170,27 @@ public class PenMonitor extends JPanel {
 		inspector.setVisible(true);
 		return inspector;
 	}
-	
+
 	/**
 	 * start the penListener which is responsible for the discovery of connected pens
 	 */
 	private void start() {
-		PenListener penListener = new PenListener(penTableModel);
-		penListener.setServiceZone("lan");
-		Mundo.registerService(penListener);
+		Letras.getInstance().registerPenDiscovery(penTableModel);
 	}
-	
+
 	/**
 	 * main method for the PenMonitor app
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		javax.swing.SwingUtilities.invokeLater(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				Mundo.init();
-				JFrame frame = new JFrame(appName);
+				final JFrame frame = new JFrame(appName);
 				frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-				PenMonitor viewer = new PenMonitor();
+				final PenMonitor viewer = new PenMonitor();
 				frame.add(viewer);
 				frame.setSize(500,300);
 				frame.setVisible(true);
