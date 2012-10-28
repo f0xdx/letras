@@ -26,6 +26,8 @@ package org.letras.tools.penrecorder;
 import org.letras.api.pen.PenEvent;
 import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.IPen;
+import org.letras.psi.ipen.MundoPenEvent;
+import org.letras.psi.ipen.MundoPenSample;
 import org.mundo.rt.Message;
 import org.mundo.rt.Publisher;
 import org.mundo.rt.Service;
@@ -78,11 +80,11 @@ public class AbstractPenRecordingPlayer extends Service implements IPen {
 		synchronized(this) {
 			state = event.state;
 		}
-		publisher.send(Message.fromObject(event));
+		publisher.send(Message.fromObject(new MundoPenEvent(event.oldState, event.state)));
 	}
 
 	protected void processSample(PenSample sample) {
-		publisher.send(Message.fromObject(sample));
+		publisher.send(Message.fromObject(new MundoPenSample(sample.x, sample.y, sample.force, sample.timestamp)));
 	}
 
 }

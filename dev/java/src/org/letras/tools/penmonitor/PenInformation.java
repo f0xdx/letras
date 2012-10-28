@@ -42,7 +42,7 @@ public class PenInformation extends Observable implements IPenListener {
 	private int lastPenState = 0;
 
 	private int currentSampleDelay = 0;
-	private PenSample currentSample;
+	private PenSample currentSample = new PenSample(0.0, 0.0, 0, 0);
 
 	public PenInformation(String penId) {
 		this.penId = penId;

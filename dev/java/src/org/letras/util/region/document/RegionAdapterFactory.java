@@ -33,40 +33,41 @@ import org.mundo.rt.Service;
 
 public class RegionAdapterFactory extends Service {
 	private static RegionAdapterFactory instance;
-	
+
 	/**
 	 * This is the cache for region adapters. Because this factory is a singleton and thus
 	 * part of the root set, we need to make sure that {@link RegionAdapter}s that are no
 	 * longer in use can be gc'ed. Because of this, the adapters are only referenced weakly
 	 * here.
 	 */
-	private Map<String, WeakReference<RegionAdapter>> urisToAdaptersMap = new HashMap<String, WeakReference<RegionAdapter>>();
-	
+	private final Map<String, WeakReference<RegionAdapter>> urisToAdaptersMap = new HashMap<String, WeakReference<RegionAdapter>>();
+
 	private boolean initialized = false;
-	
+
 	private RegionAdapterFactory() {
 	}
-	
+
 	public static RegionAdapterFactory getInstance() {
 		if (instance == null) {
 			instance = new RegionAdapterFactory();
+			instance.setServiceZone("lan");
 		}
 		return instance;
 	}
-	
+
 	@Override
 	public void init() {
 		super.init();
 		initialized = true;
 	}
-	
+
 	public RegionAdapter adapt(IRegion region) {
 		if (!initialized) {
 			Mundo.registerService(this);
 		}
-		String uri = region.uri();
+		final String uri = region.uri();
 		RegionAdapter adapter = null;
-		WeakReference<RegionAdapter> adapterReference = urisToAdaptersMap.get(uri);
+		final WeakReference<RegionAdapter> adapterReference = urisToAdaptersMap.get(uri);
 		if (adapterReference != null)
 			adapter = adapterReference.get();
 		if (adapter == null) {

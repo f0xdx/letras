@@ -2,7 +2,9 @@ package org.letras.psi.ipen;
 
 import org.letras.api.pen.IPenState;
 import org.letras.api.pen.PenEvent;
+import org.mundo.annotation.mcSerialize;
 
+@mcSerialize
 public class MundoPenEvent {
 
 	// members
@@ -10,12 +12,12 @@ public class MundoPenEvent {
 	/**
 	 * state before the change
 	 */
-	public final int oldState;
+	protected int oldState;
 
 	/**
 	 * current state
 	 */
-	public final int state;
+	protected int state;
 
 	// constructors
 

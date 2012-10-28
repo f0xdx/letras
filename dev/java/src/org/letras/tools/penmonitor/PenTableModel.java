@@ -96,10 +96,10 @@ public class PenTableModel extends AbstractTableModel implements IPenDiscovery {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		final IPen pen = pens.get(rowIndex);
+		final PenInformation pen = listener.get(pens.get(rowIndex));
 		switch (columnIndex) {
 		case PENID_COLUMN:
-			return pen.getPenId();
+			return pen.getPenID();
 		case STATE_COLUMN:
 			return pen.getPenState();
 		}

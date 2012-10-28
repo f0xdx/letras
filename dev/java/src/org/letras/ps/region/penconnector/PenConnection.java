@@ -186,9 +186,9 @@ public class PenConnection implements org.letras.api.pen.IPen, IReceiver {
 		} else if (obj instanceof MundoPenEvent) {
 			final MundoPenEvent mundoPenEvent = (MundoPenEvent) obj;
 			//save the state
-			state = mundoPenEvent.state;
+			final PenEvent penEvent = mundoPenEvent.getPenEvent();
+			state = penEvent.state;
 			synchronized (listeners) {
-				final PenEvent penEvent = mundoPenEvent.getPenEvent();
 				for (final IPenListener listener : listeners) {
 					listener.receivePenEvent(penEvent);
 				}
