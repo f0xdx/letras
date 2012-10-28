@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.letras.ps.rawdata.penmanager;
 
-import org.letras.api.pen.PenSample;
 import org.letras.ps.rawdata.IPenAdapter;
+import org.letras.psi.ipen.MundoPenSample;
 
 /**
  * Generic implementation of the <code>IPenAdapter</code> interface. This is
@@ -58,7 +58,7 @@ public class GenericPenAdapter implements IPenAdapter {
 	}
 
 	// constructors
-	
+
 	/**
 	 * Simple constructor taking the used pen id and the service reference
 	 * as arguments
@@ -70,7 +70,7 @@ public class GenericPenAdapter implements IPenAdapter {
 		this.penId = penId;
 		this.service = service;
 	}
-	
+
 	// methods
 
 	/**
@@ -93,8 +93,7 @@ public class GenericPenAdapter implements IPenAdapter {
 	 * Interface method from {@link org.letras.ps.rawdata.IPenAdapter}.
 	 */
 	@Override
-	public void publishSample(PenSample sample) {
-		this.service.publishSample(sample);
+	public void publishSample(double x, double y, int force, long timestamp) {
+		this.service.publishSample(new MundoPenSample(x, y, force, timestamp));
 	}
-
 }

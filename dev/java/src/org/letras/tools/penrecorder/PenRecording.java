@@ -37,26 +37,26 @@ import org.letras.api.pen.PenEvent;
 import org.letras.api.pen.PenSample;
 
 public class PenRecording {
-	private List<Object> messages = new ArrayList<Object>();
+	private final List<Object> messages = new ArrayList<Object>();
 	private int currentMessage = 0;
 	private long startTime = Long.MAX_VALUE;
 	private long endTime = Long.MIN_VALUE;
 	private long currentTime = -1;
-	private List<IPositionListener> listeners = new LinkedList<IPositionListener>();
+	private final List<IPositionListener> listeners = new LinkedList<IPositionListener>();
 
 	public PenRecording() {
 	}
-	
+
 	public PenRecording(File f) {
 		BufferedReader r = null;
 		try {
 			r = new BufferedReader(new FileReader(f));
 			String line = r.readLine();
 			while (line != null) {
-				String[] fields = line.split(";");
+				final String[] fields = line.split(";");
 				if (fields.length != 5 && fields.length != 3)
 					throw new IllegalStateException("File format not recognized");
-				String type = fields[0].trim();
+				final String type = fields[0].trim();
 				if (type.equals("PenEvent")) {
 					messages.add(makeEvent(fields));
 				} else if (type.equals("PenSample")) {
@@ -68,18 +68,18 @@ public class PenRecording {
 			}
 			startTime = getStartTime();
 			endTime = getEndTime();
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		} finally {
 			if (r != null)
 				try {
 					r.close();
-				} catch (IOException e) {
+				} catch (final IOException e) {
 					e.printStackTrace();
 				}
 		}
 	}
-	
+
 	private PenSample makeSample(String[] fields) {
 		if (fields.length != 5)
 			throw new IllegalArgumentException("File format not recognized");
@@ -87,7 +87,7 @@ public class PenRecording {
 	}
 
 	private PenEvent makeEvent(String[] fields) {
-		if (fields.length != 3) 
+		if (fields.length != 3)
 			throw new IllegalArgumentException("File format not recognized");
 		return new PenEvent(Integer.valueOf(fields[1].trim()), Integer.valueOf(fields[2].trim()));
 	}
@@ -108,7 +108,7 @@ public class PenRecording {
 		PrintWriter pw = null;
 		try {
 			pw = new PrintWriter(new FileWriter(f));
-			for (Object o: messages) {
+			for (final Object o: messages) {
 				if (o instanceof PenSample) {
 					writeSample((PenSample) o, pw);
 				}
@@ -116,16 +116,16 @@ public class PenRecording {
 					writeEvent((PenEvent) o, pw);
 				}
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			e.printStackTrace();
 		} finally {
 			if (pw != null)
 				pw.close();
 		}
 	}
-	
+
 	private void writeEvent(PenEvent event, PrintWriter pw) {
-		pw.println("PenEvent; " + event.getOldState() + "; " + event.getNewState());
+		pw.println("PenEvent; " + event.oldState + "; " + event.state);
 	}
 
 	private void writeSample(PenSample sample, PrintWriter pw) {
@@ -135,19 +135,19 @@ public class PenRecording {
 	public boolean hasNext() {
 		return currentMessage < messages.size();
 	}
-	
+
 	public Object getNext() {
 		if (currentTime < 0) {
 			currentTime = startTime;
 		}
-		Object message = messages.get(currentMessage++);
+		final Object message = messages.get(currentMessage++);
 		if (message instanceof PenSample) {
 			currentTime = ((PenSample) message).getTimestamp();
 		}
 		firePositionChanged();
 		return message;
 	}
-	
+
 	private long getStartTime() {
 		for (int i=0; i < messages.size(); i++) {
 			if (messages.get(i) instanceof PenSample) {
@@ -156,7 +156,7 @@ public class PenRecording {
 		}
 		return 0;
 	}
-	
+
 	private long getEndTime() {
 		for (int i=messages.size() - 1; i >= 0; i--) {
 			if (messages.get(i) instanceof PenSample) {
@@ -165,25 +165,25 @@ public class PenRecording {
 		}
 		return 0;
 	}
-			
+
 	public long getLength() {
 		return endTime - startTime;
 	}
-	
+
 	public long getPosition() {
 		return currentTime - startTime;
 	}
-	
+
 	public void addPositionListener(IPositionListener l) {
 		listeners.add(l);
 	}
-	
+
 	public void removePositionListener(IPositionListener l) {
 		listeners.remove(l);
 	}
-	
+
 	protected void firePositionChanged() {
-		for (IPositionListener l: listeners) {
+		for (final IPositionListener l: listeners) {
 			l.positionChanged(getPosition(), getLength());
 		}
 	}

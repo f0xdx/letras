@@ -23,16 +23,13 @@
  ******************************************************************************/
 package org.letras.api.pen;
 
-import org.mundo.annotation.mcSerialize;
 
 /**
- * This class encapsulates all information transferred as part of a raw data sample. Such samples are streamed on a
- * Mundo channel for each active pen.
+ * This class encapsulates all information transferred as part of a raw data sample.
  * 
- * @author felix_h
+ * @author niklas
  * @version 0.3
  */
-@mcSerialize
 public class PenSample {
 
 	// members
@@ -40,35 +37,23 @@ public class PenSample {
 	/**
 	 * The x-coordinate in the global Anoto Pattern Space. One integer corresponds to around 0.3mm on paper.
 	 */
-	protected double x;
+	public final double x;
 
 	/**
 	 * The y-coordinate in the global Anoto Pattern Space. One integer corresponds to around 0.3mm on paper.
 	 */
-	protected double y;
+	public final double y;
 
 	/**
 	 * The force inflicted on the pen's tip when the sample was read. Higher value means more pressure
 	 */
-	protected int force;
+	public final int force;
 
 	/**
 	 * Time when this sample was read or created.
 	 */
-	protected long timestamp;
+	public final long timestamp;
 
-
-	// constructors
-
-	/**
-	 * No-argument constructor for serialization. Note that this constructor
-	 * does not initialize the class members with meaningful values. It should
-	 * be used by the serialization mechanism ONLY, use the constructor taking
-	 * values for the class members instead.
-	 */
-	public PenSample() {
-		this(0.0d,0.0d,0,System.currentTimeMillis());
-	}
 
 	/**
 	 * Most specific constructor for setting all members
@@ -91,31 +76,16 @@ public class PenSample {
 		return x;
 	}
 
-	public void setX(double x) {
-		this.x = x;
-	}
-
 	public double getY() {
 		return y;
-	}
-
-	public void setY(double y) {
-		this.y = y;
 	}
 
 	public int getForce() {
 		return force;
 	}
 
-	public void setForce(int force) {
-		this.force = force;
-	}
-
 	public long getTimestamp() {
 		return timestamp;
 	}
 
-	public void setTimestamp(long timestamp) {
-		this.timestamp = timestamp;
-	}
 }

@@ -32,35 +32,35 @@ import org.mundo.rt.GUID;
 @mcRemote
 public class PenRecordingStepper extends AbstractPenRecordingPlayer implements IPen {
 	private boolean up;
-	
+
 	public PenRecordingStepper() {
 		channel = "Letras Pen Stepper " + new GUID().toString();
 	}
-	
+
 	@Override
 	public void load(PenRecording penRecording) {
 		super.load(penRecording);
 	}
-	
+
 	public void step() {
-		Object message = currentRecording.getNext();
+		final Object message = currentRecording.getNext();
 		processMessage(message);
 	}
-	
+
 	public void stepFigure() {
 		up = false;
 		while (currentRecording.hasNext() && !up) {
 			processMessage(currentRecording.getNext());
 		}
 	}
-	
+
 	public boolean hasNext() {
 		return currentRecording.hasNext();
 	}
-	
+
 	@Override
 	protected void processEvent(PenEvent event) {
-		if (event.getNewState() == IPenState.UP)
+		if (event.state == IPenState.UP)
 			up = true;
 		super.processEvent(event);
 	}

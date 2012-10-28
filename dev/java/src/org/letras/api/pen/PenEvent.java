@@ -23,29 +23,26 @@
  ******************************************************************************/
 package org.letras.api.pen;
 
-import org.mundo.annotation.mcSerialize;
-
 /**
  * Event message for pen state changes. Will be send on the pen's channel.
  * 
  * @author felix_h
  * @version 0.3
  */
-@mcSerialize
 public class PenEvent {
-	
-	
+
+
 	// members
-	
+
 	/**
 	 * state before the change
 	 */
-	protected int oldState;
-	
+	public final int oldState;
+
 	/**
 	 * current state
 	 */
-	protected int newState;
+	public final int state;
 
 	// constructors
 
@@ -53,9 +50,9 @@ public class PenEvent {
 	 * Simple no-argument constructor.
 	 */
 	public PenEvent() {
-		this.oldState = this.newState = IPenState.OFF;
+		this.oldState = this.state = IPenState.OFF;
 	}
-	
+
 	/**
 	 * Simple constructor taking the old and the new
 	 * state as arguments.
@@ -65,26 +62,6 @@ public class PenEvent {
 	 */
 	public PenEvent(int oldState, int newState) {
 		this.oldState = oldState;
-		this.newState = newState;
+		this.state = newState;
 	}
-	
-	// methods
-	
-	/**
-	 * Returns the state of the pen (synonymous for <code>newState()</code>).
-	 * 
-	 * @return the state of the pen communicated by this event
-	 */
-	public int state() {
-		return this.newState;
-	}
-	
-	public int getOldState() {
-		return oldState;
-	}
-
-	public int getNewState() {
-		return newState;
-	}
-	
 }

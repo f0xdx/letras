@@ -39,8 +39,8 @@ import org.mundo.service.ServiceInfo;
 public class PageCalibrationService extends Service implements IReceiver {
 	private static Logger log = Logger.getLogger(PageCalibrationService.class);
 
-	private ServiceInfo penServiceInfo;
-	private IPageCalibrationListener listener;
+	private final ServiceInfo penServiceInfo;
+	private final IPageCalibrationListener listener;
 	boolean down = false;
 	boolean firstCornerIdentified = false;
 	private double xMin = Double.POSITIVE_INFINITY;
@@ -54,14 +54,14 @@ public class PageCalibrationService extends Service implements IReceiver {
 		this.listener = listener;
 		Mundo.registerService(this);
 	}
-	
+
 	@Override
 	public void init() {
 		super.init();
-		DoIPen doIPen = new DoIPen(penServiceInfo.doService);
+		final DoIPen doIPen = new DoIPen(penServiceInfo.doService);
 		subscriber = getSession().subscribe(penServiceInfo.zone, doIPen.channel(), this);
 	}
-	
+
 	public void close() {
 		subscriber.unsubscribe();
 		Mundo.unregisterService(this);
@@ -69,13 +69,12 @@ public class PageCalibrationService extends Service implements IReceiver {
 
 	@Override
 	public void received(Message message, MessageContext messageContext) {
-		Object obj = message.getObject();
+		final Object obj = message.getObject();
 		if (obj instanceof PenEvent) {
-			PenEvent event = (PenEvent) obj;
-			if (event.state() == IPenState.DOWN) {
+			final PenEvent event = (PenEvent) obj;
+			if (event.state == IPenState.DOWN) {
 				down = true;
-			}
-			else if (down && event.state() == IPenState.UP) {
+			} else if (down && event.state == IPenState.UP) {
 				down = false;
 				if (!firstCornerIdentified) {
 					log.info("first corner of page identified");
@@ -89,7 +88,7 @@ public class PageCalibrationService extends Service implements IReceiver {
 				}
 			}
 		} else if (down && obj instanceof PenSample) {
-			PenSample currentSample = (PenSample) obj;
+			final PenSample currentSample = (PenSample) obj;
 			xMin = Math.min(xMin, currentSample.getX());
 			yMin = Math.min(yMin, currentSample.getY());
 			xMax = Math.max(xMax, currentSample.getX());

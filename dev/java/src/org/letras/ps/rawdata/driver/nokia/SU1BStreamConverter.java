@@ -23,12 +23,11 @@
  ******************************************************************************/
 package org.letras.ps.rawdata.driver.nokia;
 
-import org.letras.api.pen.PenSample;
 import org.letras.ps.rawdata.IPenAdapter;
 
 /**
- * The SU1BStreamConverter class converts the byte stream coming from 
- * the Bluetooth Serial Port Profile into RawDataSamples by assuming that 
+ * The SU1BStreamConverter class converts the byte stream coming from
+ * the Bluetooth Serial Port Profile into RawDataSamples by assuming that
  * the source is a Nokia SU-1B digital pen.
  * 
  * @author niklas
@@ -38,14 +37,14 @@ import org.letras.ps.rawdata.IPenAdapter;
 class SU1BStreamConverter extends ByteStreamConverter{
 
 	//SU-1B protocol specific values
-	
+
 	/**
 	 * Different fields in the serial protocol.
 	 */
 	private static enum StreamingField {
 		FORCE, HEADER, X, X_FRACTION, Y, Y_FRACTION
 	}
-	
+
 	/**
 	 * PenUP Event Identifier
 	 */
@@ -67,7 +66,7 @@ class SU1BStreamConverter extends ByteStreamConverter{
 	private static final byte LENGTH_SIMPLE_COORD = 0x0B;
 
 	//members
-	
+
 	/**
 	 * Bytes to store the header in
 	 */
@@ -76,13 +75,13 @@ class SU1BStreamConverter extends ByteStreamConverter{
 	/**
 	 * Byte array to store bytes for later conversion into coordinates
 	 */
-	private int[] coordinateBuffer = new int[4];
-	
+	private final int[] coordinateBuffer = new int[4];
+
 	/**
 	 * Temporary variables to hold the sample data
 	 */
 	private double x,y;
-	private int force; 
+	private int force;
 
 	/**
 	 * Segment which is currently being transmitted
@@ -99,7 +98,7 @@ class SU1BStreamConverter extends ByteStreamConverter{
 	 */
 	private boolean penIsUp = true;
 
-	
+
 	/**
 	 * Standard constructor
 	 * @param adapter to which the extracted RawDataSamples will be relayed
@@ -111,32 +110,32 @@ class SU1BStreamConverter extends ByteStreamConverter{
 
 	@Override
 	public void handleByte(int currentByte) {
-		
+
 		// looking for the header portion of the data
 		if (nextUpStreamSegment == StreamingField.HEADER) {
-			
+
 			// we got a new byte, so we push the others back
 			bLastLast = bLast;
 			bLast = bCurrent;
 			bCurrent = currentByte;
-			
+
 			//check what type of event we are receiving
 			if (bCurrent == LENGTH_SIMPLE_COORD && bLast == 0x00 && bLastLast == ID_SIMPLE_COORD) {
 				// we are now in the sample event mode
 				// we should read the next 0x0B bytes as coordinates and force
 				nextUpStreamSegment = StreamingField.X;
 				numBytesCoord = 0;
-			} 
+			}
 			else if (bCurrent == LENGTH_PEN_UP && bLast == 0x00 && bLastLast == ID_PEN_UP) {
 				penIsUp = true;
 				penUp();
 			}
-		} 
-		else if (nextUpStreamSegment == StreamingField.X || nextUpStreamSegment == StreamingField.Y) { 
+		}
+		else if (nextUpStreamSegment == StreamingField.X || nextUpStreamSegment == StreamingField.Y) {
 			//store 4 bytes for each coordinate
 			coordinateBuffer[numBytesCoord] = currentByte;
 			numBytesCoord++;
-			
+
 			if (numBytesCoord == 4) {
 				// after four loops, all bytes for the coordinate have arrived so we can convert it
 				if (nextUpStreamSegment == StreamingField.X) {
@@ -148,22 +147,22 @@ class SU1BStreamConverter extends ByteStreamConverter{
 				}
 				numBytesCoord = 0;
 			}
-		} 
+		}
 		else if (nextUpStreamSegment == StreamingField.X_FRACTION) {
 			// convert and save the value
 			x += convertByteToFraction(currentByte);
 			nextUpStreamSegment = StreamingField.Y_FRACTION;
-		} 
+		}
 		else if (nextUpStreamSegment == StreamingField.Y_FRACTION) {
 			// convert and save the value
 			y += convertByteToFraction(currentByte);
 			nextUpStreamSegment = StreamingField.FORCE;
-		} 
+		}
 		else if (nextUpStreamSegment == StreamingField.FORCE) {
 			// convert and save the value
 			// original calculation from PaperToolkit
 			// force = 128 - (((int) bCurrent) & 0xFF)
-			
+
 			force = 255 - (currentByte)*2;
 			if (force < 0) {
 				force = 0;
@@ -183,14 +182,8 @@ class SU1BStreamConverter extends ByteStreamConverter{
 				penDown();
 			}
 
-			final PenSample finishedSample = new PenSample();
-			finishedSample.setX(x);
-			finishedSample.setY(y);
-			finishedSample.setForce(force);
-			finishedSample.setTimestamp(System.currentTimeMillis());
-			
-			sendSample(finishedSample);
-		
+			sendSample(x, y, force, System.currentTimeMillis());
+
 			// reset the temp. variables
 			x = 0.0;
 			y = 0.0;
@@ -201,12 +194,12 @@ class SU1BStreamConverter extends ByteStreamConverter{
 		}
 	}
 
-	 
+
 	/**
 	 * 
 	 */
 	private float convertByteToFraction(int fractionByte) {
-		 // use only the leftmost three bits of the byte
+		// use only the leftmost three bits of the byte
 		return ((fractionByte >> 5) & 0x7) * 0.125f;
 	}
 
@@ -216,10 +209,10 @@ class SU1BStreamConverter extends ByteStreamConverter{
 	 * @return
 	 */
 	private long convertBufferToCoordinate(int[] coordinateBuffer) {
-		
-		return (  (long) coordinateBuffer[0] << 24 
+
+		return (  (long) coordinateBuffer[0] << 24
 				| ((long) coordinateBuffer[1] << 16)
 				| ((long) coordinateBuffer[2] << 8)
-				| (long) coordinateBuffer[3]) & 0x00000000FFFFFFFF;
+				| coordinateBuffer[3]) & 0x00000000FFFFFFFF;
 	}
 }
