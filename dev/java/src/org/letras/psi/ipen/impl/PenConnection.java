@@ -21,12 +21,9 @@
  * Niklas Lochschmidt
  * Jannik Jochem
  ******************************************************************************/
-package org.letras.ps.region.penconnector;
+package org.letras.psi.ipen.impl;
 
 import java.util.HashSet;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -67,18 +64,6 @@ public class PenConnection implements org.letras.api.pen.IPen, IReceiver {
 	public static PenConnection createPenConnectionFromServiceInfo(ServiceInfo serviceInfo) {
 		return new PenConnection(new DoIPen(serviceInfo.doService), serviceInfo.zone);
 	}
-
-	// static members
-
-	public static Executor threadPool = Executors.newCachedThreadPool(new ThreadFactory() {
-		@Override
-		public Thread newThread(Runnable arg0) {
-			final Thread thread = new Thread(arg0);
-			thread.setDaemon(true);
-			return thread;
-		}
-	});
-
 
 	//members
 

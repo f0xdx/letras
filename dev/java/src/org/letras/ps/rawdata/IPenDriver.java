@@ -23,7 +23,6 @@
  ******************************************************************************/
 package org.letras.ps.rawdata;
 
-import org.letras.ps.rawdata.penmanager.PenManager;
 
 /**
  * This interface must be provided by the main class of each pen driver. 

@@ -32,6 +32,7 @@ import org.letras.api.pen.IPen;
 import org.letras.api.pen.IPen.IPenListener;
 import org.letras.api.pen.IPenDiscovery;
 import org.letras.ps.region.sampleprocessor.ISampleProcessorFactory;
+import org.letras.psi.ipen.impl.PenConnection;
 import org.mundo.rt.TypedMap;
 
 /**
@@ -86,15 +87,16 @@ public class PenAccessManager implements IPenAccessConfiguration {
 		penAccessConfiguration = new PenAccessConfiguration();
 		connectedPens = new HashMap<String, PenEntry>();
 		penDiscoveryCallback = new IPenDiscovery() {
-
 			@Override
 			public void penConnected(IPen pen) {
-
+				final PenConnection penConnection = (PenConnection) pen;
+				PenAccessManager.this.penDiscovered(penConnection);
 			}
 
 			@Override
 			public void penDisconnected(IPen pen) {
-
+				final PenConnection penConnection = (PenConnection) pen;
+				PenAccessManager.this.penLost(penConnection);
 			}
 		};
 	}

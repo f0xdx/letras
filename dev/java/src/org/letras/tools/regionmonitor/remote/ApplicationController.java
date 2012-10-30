@@ -36,8 +36,8 @@ import org.letras.ps.region.RegionManager;
 import org.letras.ps.region.RegionSampleProcessor;
 import org.letras.ps.region.RegionTreeNode;
 import org.letras.ps.region.broker.simple.SimpleRegionBroker;
-import org.letras.ps.region.penconnector.PenConnection;
 import org.letras.psi.ipen.IPen;
+import org.letras.psi.ipen.impl.PenConnection;
 import org.letras.psi.iregion.IRegion;
 import org.mundo.rt.Mundo;
 

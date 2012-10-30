@@ -30,22 +30,22 @@ import org.letras.psi.iregion.IDigitalInkConsumer;
 import org.letras.psi.iregion.IRegion;
 
 public class RegionDocumentReceiver implements IDigitalInkConsumer, IRegionDocumentListener {
-	
+
 	private IDigitalInkConsumer activeConsumer;
-	private RegionDocument document;
+	private final RegionDocument document;
 
 	public RegionDocumentReceiver(RegionDocument document) {
 		this.document = document;
 		this.document.addDocumentListener(this);
-		for (RegionData region: document.getRegions()) {
-			RegionAdapterFactory.getInstance().adapt(region).addConsumer(this);
+		for (final RegionData region: document.getRegions()) {
+			regionAdded(region);
 		}
 	}
-	
+
 	public void setActiveConsumer(IDigitalInkConsumer activeConsumer) {
 		this.activeConsumer = activeConsumer;
 	}
-	
+
 	@Override
 	public void consume(IRegion source, RegionSample regionSample) {
 		if (activeConsumer != null)
@@ -57,9 +57,9 @@ public class RegionDocumentReceiver implements IDigitalInkConsumer, IRegionDocum
 		if (activeConsumer != null)
 			activeConsumer.consume(source, regionEvent);
 	}
-	
+
 	public void shutdown() {
-		for (RegionData region: document.getRegions()) {
+		for (final RegionData region: document.getRegions()) {
 			RegionAdapterFactory.getInstance().adapt(region).removeConsumer(this);
 		}
 	}

@@ -30,7 +30,6 @@ import java.util.logging.Logger;
 
 import org.letras.api.pen.IPenDiscovery;
 import org.letras.ps.region.penconnector.PenAccessManager;
-import org.letras.ps.region.penconnector.PenConnection;
 import org.mundo.service.ResultSet;
 import org.mundo.service.ServiceInfo;
 import org.mundo.service.ServiceInfoFilter;
