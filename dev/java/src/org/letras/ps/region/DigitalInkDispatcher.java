@@ -26,7 +26,7 @@ package org.letras.ps.region;
 import java.util.Map;
 import java.util.WeakHashMap;
 
-import org.letras.api.pen.PenSample;
+import org.letras.api.pen.IPenSample;
 import org.letras.api.region.RegionEvent;
 import org.letras.api.region.RegionSample;
 import org.letras.psi.iregion.IRegion;
@@ -58,7 +58,7 @@ public class DigitalInkDispatcher extends Service {
 	 * @param sample
 	 * @param target
 	 */
-	public void dispatchSample(PenSample sample, IRegion target) {
+	public void dispatchSample(IPenSample sample, IRegion target) {
 		final RegionSample normalizedSample = new RegionSample(sample, target.shape().getBounds(), getPenId());
 		final Publisher publisher = getPublisherLazy(target.channel());
 		publisher.send(Message.fromObject(normalizedSample));

@@ -24,13 +24,14 @@
 package org.letras.api.pen;
 
 
+
 /**
  * This class encapsulates all information transferred as part of a raw data sample.
  * 
  * @author niklas
  * @version 0.3
  */
-public class PenSample {
+public class PenSample implements IPenSample {
 
 	// members
 
@@ -86,6 +87,10 @@ public class PenSample {
 
 	public long getTimestamp() {
 		return timestamp;
+	}
+
+	public PenSample getPenSample() {
+		return this;
 	}
 
 }

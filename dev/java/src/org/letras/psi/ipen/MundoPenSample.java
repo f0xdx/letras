@@ -1,10 +1,11 @@
 package org.letras.psi.ipen;
 
+import org.letras.api.pen.IPenSample;
 import org.letras.api.pen.PenSample;
 import org.mundo.annotation.mcSerialize;
 
 @mcSerialize
-public class MundoPenSample {
+public class MundoPenSample implements IPenSample {
 
 	protected double x;
 	protected double y;
@@ -22,10 +23,12 @@ public class MundoPenSample {
 		this.timestamp = timestamp;
 	}
 
+	@Override
 	public PenSample getPenSample() {
 		return new PenSample(x, y, force, timestamp);
 	}
 
+	@Override
 	public double getX() {
 		return x;
 	}
@@ -34,6 +37,7 @@ public class MundoPenSample {
 		this.x = x;
 	}
 
+	@Override
 	public double getY() {
 		return y;
 	}
@@ -42,6 +46,7 @@ public class MundoPenSample {
 		this.y = y;
 	}
 
+	@Override
 	public int getForce() {
 		return force;
 	}
@@ -50,6 +55,7 @@ public class MundoPenSample {
 		this.force = force;
 	}
 
+	@Override
 	public long getTimestamp() {
 		return timestamp;
 	}

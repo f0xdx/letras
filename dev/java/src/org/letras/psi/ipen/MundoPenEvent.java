@@ -1,11 +1,12 @@
 package org.letras.psi.ipen;
 
+import org.letras.api.pen.IPenEvent;
 import org.letras.api.pen.IPenState;
 import org.letras.api.pen.PenEvent;
 import org.mundo.annotation.mcSerialize;
 
 @mcSerialize
-public class MundoPenEvent {
+public class MundoPenEvent implements IPenEvent {
 
 	// members
 
@@ -39,6 +40,17 @@ public class MundoPenEvent {
 		this.state = newState;
 	}
 
+	@Override
+	public int getState() {
+		return state;
+	}
+
+	@Override
+	public int getOldState() {
+		return oldState;
+	}
+
+	@Override
 	public PenEvent getPenEvent() {
 		return new PenEvent(oldState, state);
 	}

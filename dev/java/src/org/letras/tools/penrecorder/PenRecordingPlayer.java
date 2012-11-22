@@ -27,44 +27,44 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.letras.api.pen.PenSample;
+import org.letras.api.pen.IPenSample;
 import org.letras.psi.ipen.IPen;
 import org.mundo.annotation.mcRemote;
 import org.mundo.rt.GUID;
 
 @mcRemote
 public class PenRecordingPlayer extends AbstractPenRecordingPlayer implements Runnable, IPen {
-	
-	private Lock playLock = new ReentrantLock();
-	private AtomicBoolean play = new AtomicBoolean();
+
+	private final Lock playLock = new ReentrantLock();
+	private final AtomicBoolean play = new AtomicBoolean();
 	private double speed = 1.0;
 
 	public PenRecordingPlayer() {
 		channel = "Letras Player " + new GUID().toString();
 	}
-	
+
 	public void play(PenRecording penRecording) {
 		playLock.lock();
 		load(penRecording);
 		new Thread(this).start();
 		playLock.unlock();
 	}
-	
+
 	public void playSync(PenRecording penRecording) {
 		load(penRecording);
 		run();
 	}
-	
+
 	public synchronized void setSpeed(double newSpeed) {
 		speed = newSpeed;
 	}
-	
+
 	@Override
 	public void run() {
 		playLock.lock();
 		play.set(true);
 		while (currentRecording.hasNext()) {
-			Object message = currentRecording.getNext();
+			final Object message = currentRecording.getNext();
 			if (!play.get())
 				break;
 			processMessage(message);
@@ -75,7 +75,7 @@ public class PenRecordingPlayer extends AbstractPenRecordingPlayer implements Ru
 	}
 
 	@Override
-	protected void processSample(PenSample sample) {
+	protected void processSample(IPenSample sample) {
 		if (currentTime == -1)
 			currentTime = sample.getTimestamp();
 		else {
@@ -85,7 +85,7 @@ public class PenRecordingPlayer extends AbstractPenRecordingPlayer implements Ru
 					currentSpeed = speed;
 				}
 				Thread.sleep((long) ((sample.getTimestamp() - currentTime) / currentSpeed));
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -96,5 +96,5 @@ public class PenRecordingPlayer extends AbstractPenRecordingPlayer implements Ru
 	public void stop() {
 		play.set(false);
 	}
-	
+
 }

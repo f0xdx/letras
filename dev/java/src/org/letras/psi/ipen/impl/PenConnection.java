@@ -28,8 +28,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenEvent;
-import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.DoIPen;
 import org.letras.psi.ipen.IPen;
 import org.letras.psi.ipen.MundoPenEvent;
@@ -150,7 +148,7 @@ public class PenConnection implements org.letras.api.pen.IPen, IReceiver {
 			//we simulate a penUp event here
 			synchronized (listeners) {
 				for (final IPenListener listener : this.listeners) {
-					listener.receivePenEvent(new PenEvent(state, state = IPenState.UP));
+					listener.receivePenEvent(new MundoPenEvent(state, state = IPenState.UP));
 				}
 			}
 			subscriber = null;
@@ -163,19 +161,17 @@ public class PenConnection implements org.letras.api.pen.IPen, IReceiver {
 		if (obj instanceof MundoPenSample) {
 			final MundoPenSample mundoPenSample = (MundoPenSample) obj;
 			synchronized (listeners) {
-				final PenSample penSample = mundoPenSample.getPenSample();
 				for (final IPenListener listener : listeners) {
-					listener.receivePenSample(penSample);
+					listener.receivePenSample(mundoPenSample);
 				}
 			}
 		} else if (obj instanceof MundoPenEvent) {
 			final MundoPenEvent mundoPenEvent = (MundoPenEvent) obj;
 			//save the state
-			final PenEvent penEvent = mundoPenEvent.getPenEvent();
-			state = penEvent.state;
+			state = mundoPenEvent.getState();
 			synchronized (listeners) {
 				for (final IPenListener listener : listeners) {
-					listener.receivePenEvent(penEvent);
+					listener.receivePenEvent(mundoPenEvent);
 				}
 			}
 		}

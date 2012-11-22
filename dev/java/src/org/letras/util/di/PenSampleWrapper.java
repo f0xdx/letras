@@ -3,12 +3,11 @@
  */
 package org.letras.util.di;
 
-import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.MundoPenSample;
 
 /**
- * Sample that wraps a {@link PenSample}. The coordinates (x and y) of this
- * sample are provided in pattern space coordinates (PSC).
+ * Sample that wraps a {@link MundoPenSample}. The coordinates (x and y) of this sample are provided in pattern space
+ * coordinates (PSC).
  * 
  * @author Felix Heinrichs <felix.heinrichs@cs.tu-darmstadt.de>
  * @version 0.3.0

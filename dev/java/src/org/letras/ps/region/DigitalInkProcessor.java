@@ -26,7 +26,7 @@ package org.letras.ps.region;
 import java.util.List;
 
 import org.letras.api.pen.IPen;
-import org.letras.api.pen.PenSample;
+import org.letras.api.pen.IPenSample;
 import org.letras.api.region.RegionEvent;
 import org.letras.psi.iregion.IRegion;
 import org.mundo.rt.GUID;
@@ -87,7 +87,7 @@ public class DigitalInkProcessor {
 	 * @param intersectedRegions the post-ordered list of regions that contain the sample
 	 * @param sample the sample to process
 	 */
-	public void processSample(List<IRegion> intersectedRegions, final PenSample sample) {
+	public void processSample(List<IRegion> intersectedRegions, final IPenSample sample) {
 		if (intersectedRegions.isEmpty()) {
 			log.warning("No Region to dispatch sample " + sample + " to.");
 			return;

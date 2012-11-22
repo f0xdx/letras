@@ -23,6 +23,7 @@
  ******************************************************************************/
 package org.letras.api.region;
 
+import org.letras.api.pen.IPenSample;
 import org.letras.api.pen.PenSample;
 import org.letras.api.region.shape.Bounds;
 import org.letras.api.region.shape.IShape;
@@ -47,13 +48,13 @@ import org.mundo.annotation.mcSerialize;
  */
 @mcSerialize
 public class RegionSample implements IVector2d {
-	
+
 	// members
 
 	protected double pscX;
-	
+
 	protected double pscY;
-	
+
 	protected String penID;
 
 	protected double x;
@@ -63,19 +64,19 @@ public class RegionSample implements IVector2d {
 	protected int force;
 
 	protected long timestamp;
-	
+
 	// constructors
 
 	/**
 	 * No-argument constructor for serialization. Note that this constructor
 	 * does not initialize the class members with meaningful values. It should
 	 * be used by the serialization mechanism ONLY, use the constructor taking
-	 * values for the class members instead. 
+	 * values for the class members instead.
 	 */
 	public RegionSample() {
 		super();
 	}
-	
+
 	/**
 	 * Constructor taking all enclosed data explicitly. Note that when using this
 	 * constructor, the Caller takes responsibility, for providing the coordinates
@@ -88,7 +89,7 @@ public class RegionSample implements IVector2d {
 	 * @param force		force of the sample
 	 * @param timestamp	time-stamp of the sample
 	 */
-	public RegionSample(double x, double y, double pscX, double pscY, 
+	public RegionSample(double x, double y, double pscX, double pscY,
 			int force, long timestamp, String penId) {
 		this.x = x;
 		this.y = y;
@@ -98,7 +99,7 @@ public class RegionSample implements IVector2d {
 		this.pscY = pscY;
 		this.penID = penId;
 	}
-	
+
 	/**
 	 * Constructor creating a {@link RegionSample} out of the data represented in the provided
 	 * {@link PenSample} and its enclosing regions bound (in form of an {@link Bounds}).
@@ -107,16 +108,16 @@ public class RegionSample implements IVector2d {
 	 * 						by the {@link RegionSample}
 	 * @param regionBounds	the {@link Bounds} of an enclosing {@link IRegion}s {@link IShape}
 	 */
-	public RegionSample(PenSample ps, Bounds regionBounds, String penId) {
+	public RegionSample(IPenSample ps, Bounds regionBounds, String penId) {
 		this.pscX = ps.getX();
 		this.pscY = ps.getY();
 		this.force = ps.getForce();
 		this.timestamp = ps.getTimestamp();
-		this.normalizeCoordinates(regionBounds.getX(), regionBounds.getY(), 
+		this.normalizeCoordinates(regionBounds.getX(), regionBounds.getY(),
 				regionBounds.getWidth(), regionBounds.getHeight());
 		this.penID = penId;
 	}
-	
+
 	// methods
 
 	/**
@@ -146,17 +147,18 @@ public class RegionSample implements IVector2d {
 	public void setPscY(double pscY) {
 		this.pscY = pscY;
 	}
-	
+
 	/**
 	 * @return the penID
 	 */
 	public String getPenID() {
 		return penID;
 	}
-	
+
 	/**
 	 * @return the normalized horizontal position of this sample
 	 */
+	@Override
 	public double getX() {
 		return x;
 	}
@@ -164,6 +166,7 @@ public class RegionSample implements IVector2d {
 	/**
 	 * @param x the normalized horizontal position of this sample
 	 */
+	@Override
 	public void setX(double x) {
 		this.x = x;
 	}
@@ -171,6 +174,7 @@ public class RegionSample implements IVector2d {
 	/**
 	 * @return the normalized vertical position of this sample
 	 */
+	@Override
 	public double getY() {
 		return y;
 	}
@@ -178,6 +182,7 @@ public class RegionSample implements IVector2d {
 	/**
 	 * @param y the normalized vertical position of this sample
 	 */
+	@Override
 	public void setY(double y) {
 		this.y = y;
 	}
@@ -209,7 +214,7 @@ public class RegionSample implements IVector2d {
 	public void setTimestamp(long timestamp) {
 		this.timestamp = timestamp;
 	}
-	
+
 	/**
 	 * Normalize this samples x and y coordinates to the rectangular region specified
 	 * (compute normalized region coordinates).
@@ -229,11 +234,11 @@ public class RegionSample implements IVector2d {
 		this.x = (wr == 0.0) ? 0.0 : (this.pscX - xr) / wr;
 		this.y = (hr == 0.0) ? 0.0 : (this.pscY - yr) / hr;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "region_sample([" + x + "," + y
-			+ "], [" + pscX + "," + pscY
-			+ "], " + force + ", " + timestamp + ") from pen '" + penID + "'";
+				+ "], [" + pscX + "," + pscY
+				+ "], " + force + ", " + timestamp + ") from pen '" + penID + "'";
 	}
-}	
+}

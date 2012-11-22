@@ -5,7 +5,7 @@ package org.letras.api.pen;
  * You can do the following:
  * <ul>
  * <li>Get information about the state of the pen</li>
- * <li>Register a {@link IPenListener} to receive {@link PenEvent}s and {@link PenSample}s</li>
+ * <li>Register a {@link IPenListener} to receive {@link IPenEvent}s and {@link IPenSample}s</li>
  * </ul>
  * 
  * @version 0.3
@@ -52,14 +52,14 @@ public interface IPen {
 		 * 
 		 * @param penevent
 		 */
-		void receivePenEvent(PenEvent penEvent);
+		void receivePenEvent(IPenEvent penEvent);
 
 		/**
 		 * receive a pen sample
 		 * 
 		 * @param pensample
 		 */
-		void receivePenSample(PenSample penSample);
+		void receivePenSample(IPenSample penSample);
 	}
 
 

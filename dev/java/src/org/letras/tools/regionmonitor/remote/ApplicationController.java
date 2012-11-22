@@ -30,13 +30,14 @@ import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.letras.api.pen.IPenSample;
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenSample;
 import org.letras.ps.region.RegionManager;
 import org.letras.ps.region.RegionSampleProcessor;
 import org.letras.ps.region.RegionTreeNode;
 import org.letras.ps.region.broker.simple.SimpleRegionBroker;
 import org.letras.psi.ipen.IPen;
+import org.letras.psi.ipen.MundoPenSample;
 import org.letras.psi.ipen.impl.PenConnection;
 import org.letras.psi.iregion.IRegion;
 import org.mundo.rt.Mundo;
@@ -44,85 +45,85 @@ import org.mundo.rt.Mundo;
 public class ApplicationController {
 
 	static {
-		Logger logger = Logger.getLogger("org.letras.ps.region");
+		final Logger logger = Logger.getLogger("org.letras.ps.region");
 		logger.setLevel(Level.FINEST);
 		logger.setUseParentHandlers(false);
 		logger.addHandler(new ConsoleHandler());
 	}
-	
+
 	class InstrumentedRegionManager extends RegionManager {
-		
+
 		public InstrumentedRegionManager() {
 			super();
 		}
-		
+
 		@Override
 		public void addRegion(IRegion regionToAdd) {
 			super.addRegion(regionToAdd);
 			delegate.updateView();
 		}
-		
+
 		@Override
 		public void updateRegion(IRegion regionToUpdate) {
 			super.updateRegion(regionToUpdate);
 		}
-		
+
 		@Override
 		public void deleteRegion(IRegion regionToDelete) {
 			super.deleteRegion(regionToDelete);
 		}
-		
+
 		public RegionTreeNode getTopLevelRegionTreeNode() {
 			return super.getModel();
 		}
-		
+
 	}
-	
+
 	class SimplifiedRegionSampleProcessor {
-		
-		IRegion lastIntersectingRegion = null; 
-		
-		public List<IRegion> handleSample(PenSample sample) {
-			List<IRegion> regions = regionManager.getIntersectingRegionInfos(lastIntersectingRegion, sample);
-			
+
+		IRegion lastIntersectingRegion = null;
+
+		public List<IRegion> handleSample(IPenSample sample) {
+			final List<IRegion> regions = regionManager.getIntersectingRegionInfos(lastIntersectingRegion, sample);
+
 			// cache last hit if hit occured
 			if (!regions.isEmpty())
 				lastIntersectingRegion = regions.get(0);
 			return regions;
 		}
 	}
-	
-	
+
+
 	IPen MockIpen = new IPen() {
-		
+
 		@Override
 		public int penState() {return IPenState.ON;}
-		
+
 		@Override
 		public String penId() {
 			return "virtual";
 		}
-		
+
 		@Override
 		public String channel() {
 			return "virtual.pen";
 		}
 	};
-	
+
 	RegionSampleProcessor regionSampleProcessor;
 	InstrumentedRegionManager regionManager;
 	SimplifiedRegionSampleProcessor simpleRegionSampleProcessor = new SimplifiedRegionSampleProcessor();
 	RegionHoster regionHoster;
 	SimpleRegionBrokerAppMode delegate;
 	private SimpleRegionBroker regionBroker;
-	
+
 	public ApplicationController(SimpleRegionBrokerAppMode delegate) {
 		this.delegate = delegate;
 		regionManager = new InstrumentedRegionManager();
 	}
-	
+
 	void activate() {
-		if (Mundo.getState() == Mundo.STATE_UNINITIALIZED) 
+		if (Mundo.getState() == Mundo.STATE_UNINITIALIZED)
 			Mundo.init();
 		regionBroker = new SimpleRegionBroker();
 		regionManager.setBroker(regionBroker);
@@ -132,24 +133,24 @@ public class ApplicationController {
 		Mundo.registerService(regionBroker);
 		regionHoster = new RegionHoster();
 	}
-	
+
 	void deactivate() {
 		regionHoster.disconnectAllRegions();
 		Mundo.unregisterService(regionBroker);
 		regionBroker = null;
 		regionManager = null;
 	}
-	
+
 	public void discoverRegionsAt(Point2D.Double point) {
-		final PenSample sample = new PenSample(point.x, point.y, 128, System.currentTimeMillis());
+		final IPenSample sample = new MundoPenSample(point.x, point.y, 128, System.currentTimeMillis());
 		simpleRegionSampleProcessor.handleSample(sample);
 		delegate.updateView();
 	}
-	
+
 	public void createNewRegion(Rectangle2D area) {
-		regionHoster.hostNewRegion(area);	
+		regionHoster.hostNewRegion(area);
 	}
-	
+
 	public RegionTreeNode getTopLevelRegionTreeNode() {
 		return this.regionManager.getTopLevelRegionTreeNode();
 	}
@@ -161,7 +162,7 @@ public class ApplicationController {
 
 
 	public void penAtPosition(Point2D.Double point) {
-		final PenSample sample = new PenSample(point.x, point.y, 128, System.currentTimeMillis());
+		final IPenSample sample = new MundoPenSample(point.x, point.y, 128, System.currentTimeMillis());
 		regionSampleProcessor.handleSample(sample);
 	}
 

@@ -29,7 +29,7 @@ package org.letras.api.pen;
  * @author felix_h
  * @version 0.3
  */
-public class PenEvent {
+public class PenEvent implements IPenEvent {
 
 
 	// members
@@ -63,5 +63,20 @@ public class PenEvent {
 	public PenEvent(int oldState, int newState) {
 		this.oldState = oldState;
 		this.state = newState;
+	}
+
+	@Override
+	public int getOldState() {
+		return oldState;
+	}
+
+	@Override
+	public int getState() {
+		return state;
+	}
+
+	@Override
+	public PenEvent getPenEvent() {
+		return this;
 	}
 }

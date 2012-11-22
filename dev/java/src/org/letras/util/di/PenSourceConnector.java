@@ -3,8 +3,8 @@
  */
 package org.letras.util.di;
 
+import org.letras.api.pen.IPenEvent;
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenEvent;
 import org.letras.psi.ipen.DoIPen;
 import org.mundo.rt.DoObject;
 import org.mundo.rt.Message;
@@ -78,13 +78,13 @@ public class PenSourceConnector extends DigitalInkSourceConnector {
 	@Override
 	public void received(Message msg, MessageContext mc) {
 		final Object obj = msg.getObject();
-		if (obj instanceof PenEvent) {
-			final PenEvent evt = (PenEvent) obj;
-			if (evt.state == IPenState.DOWN) {
+		if (obj instanceof IPenEvent) {
+			final IPenEvent evt = (IPenEvent) obj;
+			if (evt.getState() == IPenState.DOWN) {
 				// Trace started
 				this.currentTrace = new Trace(this.penId);
 				this.notifyTraceStarted(this.penId, this.currentTrace);
-			} else if (evt.state == IPenState.UP) {
+			} else if (evt.getState() == IPenState.UP) {
 				// Trace somehow ended
 				if (this.currentTrace == null) return;
 				if (di != null) di.add(this.currentTrace);

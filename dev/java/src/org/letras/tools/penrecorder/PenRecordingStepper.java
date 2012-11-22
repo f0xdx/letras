@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.letras.tools.penrecorder;
 
+import org.letras.api.pen.IPenEvent;
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenEvent;
 import org.letras.psi.ipen.IPen;
 import org.mundo.annotation.mcRemote;
 import org.mundo.rt.GUID;
@@ -59,8 +59,8 @@ public class PenRecordingStepper extends AbstractPenRecordingPlayer implements I
 	}
 
 	@Override
-	protected void processEvent(PenEvent event) {
-		if (event.state == IPenState.UP)
+	protected void processEvent(IPenEvent event) {
+		if (event.getState() == IPenState.UP)
 			up = true;
 		super.processEvent(event);
 	}

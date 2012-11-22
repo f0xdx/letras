@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.letras.tools.penrecorder;
 
-import org.letras.api.pen.PenEvent;
-import org.letras.api.pen.PenSample;
+import org.letras.api.pen.IPenEvent;
+import org.letras.api.pen.IPenSample;
 import org.letras.psi.ipen.IPen;
 import org.letras.psi.ipen.MundoPenEvent;
 import org.letras.psi.ipen.MundoPenSample;
@@ -66,25 +66,26 @@ public class AbstractPenRecordingPlayer extends Service implements IPen {
 	}
 
 	protected void processMessage(Object message) {
-		if (message instanceof PenEvent) {
-			final PenEvent event = (PenEvent) message;
+		if (message instanceof IPenEvent) {
+			final IPenEvent event = (IPenEvent) message;
 			processEvent(event);
 		}
-		else if (message instanceof PenSample) {
-			final PenSample sample = (PenSample) message;
+ else if (message instanceof IPenSample) {
+			final IPenSample sample = (IPenSample) message;
 			processSample(sample);
 		}
 	}
 
-	protected void processEvent(PenEvent event) {
+	protected void processEvent(IPenEvent event) {
 		synchronized(this) {
-			state = event.state;
+			state = event.getState();
 		}
-		publisher.send(Message.fromObject(new MundoPenEvent(event.oldState, event.state)));
+		publisher.send(Message.fromObject(new MundoPenEvent(event.getOldState(), event.getState())));
 	}
 
-	protected void processSample(PenSample sample) {
-		publisher.send(Message.fromObject(new MundoPenSample(sample.x, sample.y, sample.force, sample.timestamp)));
+	protected void processSample(IPenSample sample) {
+		publisher.send(Message.fromObject(new MundoPenSample(sample.getX(), sample.getY(), sample.getForce(), sample
+				.getTimestamp())));
 	}
 
 }

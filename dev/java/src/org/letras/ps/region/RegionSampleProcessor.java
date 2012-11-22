@@ -26,7 +26,7 @@ package org.letras.ps.region;
 import java.util.List;
 
 import org.letras.api.pen.IPen;
-import org.letras.api.pen.PenSample;
+import org.letras.api.pen.IPenSample;
 import org.letras.ps.region.penconnector.ISampleProcessor;
 import org.letras.psi.iregion.IRegion;
 
@@ -63,7 +63,7 @@ public class RegionSampleProcessor implements ISampleProcessor {
 	 * @see org.letras.ps.region.penconnector.ISampleProcessor#handleSample(org.letras.psi.ipen.PenSample)
 	 */
 	@Override
-	public void handleSample(final PenSample sample) {
+	public void handleSample(final IPenSample sample) {
 		final List<IRegion> regions = regionManager.getIntersectingRegionInfos(lastIntersectingRegion, sample);
 
 		if (penDownQueued) {

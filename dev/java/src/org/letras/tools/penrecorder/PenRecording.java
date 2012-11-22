@@ -33,6 +33,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.letras.api.pen.IPenEvent;
+import org.letras.api.pen.IPenSample;
 import org.letras.api.pen.PenEvent;
 import org.letras.api.pen.PenSample;
 
@@ -80,19 +82,19 @@ public class PenRecording {
 		}
 	}
 
-	private PenSample makeSample(String[] fields) {
+	private IPenSample makeSample(String[] fields) {
 		if (fields.length != 5)
 			throw new IllegalArgumentException("File format not recognized");
 		return new PenSample(Double.valueOf(fields[1].trim()), Double.valueOf(fields[2].trim()), Integer.valueOf(fields[3].trim()), Long.valueOf(fields[4].trim()));
 	}
 
-	private PenEvent makeEvent(String[] fields) {
+	private IPenEvent makeEvent(String[] fields) {
 		if (fields.length != 3)
 			throw new IllegalArgumentException("File format not recognized");
 		return new PenEvent(Integer.valueOf(fields[1].trim()), Integer.valueOf(fields[2].trim()));
 	}
 
-	public void record(PenSample o) {
+	public void record(IPenSample o) {
 		currentTime = o.getTimestamp();
 		startTime = Math.min(startTime, currentTime);
 		endTime = Math.max(endTime, currentTime);
@@ -100,7 +102,7 @@ public class PenRecording {
 		messages.add(o);
 	}
 
-	public void record(PenEvent o) {
+	public void record(IPenEvent o) {
 		messages.add(o);
 	}
 
@@ -109,11 +111,11 @@ public class PenRecording {
 		try {
 			pw = new PrintWriter(new FileWriter(f));
 			for (final Object o: messages) {
-				if (o instanceof PenSample) {
-					writeSample((PenSample) o, pw);
+				if (o instanceof IPenSample) {
+					writeSample((IPenSample) o, pw);
 				}
-				else if (o instanceof PenEvent) {
-					writeEvent((PenEvent) o, pw);
+				else if (o instanceof IPenEvent) {
+					writeEvent((IPenEvent) o, pw);
 				}
 			}
 		} catch (final IOException e) {
@@ -124,11 +126,11 @@ public class PenRecording {
 		}
 	}
 
-	private void writeEvent(PenEvent event, PrintWriter pw) {
-		pw.println("PenEvent; " + event.oldState + "; " + event.state);
+	private void writeEvent(IPenEvent event, PrintWriter pw) {
+		pw.println("PenEvent; " + event.getOldState() + "; " + event.getState());
 	}
 
-	private void writeSample(PenSample sample, PrintWriter pw) {
+	private void writeSample(IPenSample sample, PrintWriter pw) {
 		pw.println("PenSample; " + sample.getX() + "; " + sample.getY() + "; " + sample.getForce() + "; " + sample.getTimestamp());
 	}
 
@@ -141,8 +143,8 @@ public class PenRecording {
 			currentTime = startTime;
 		}
 		final Object message = messages.get(currentMessage++);
-		if (message instanceof PenSample) {
-			currentTime = ((PenSample) message).getTimestamp();
+		if (message instanceof IPenSample) {
+			currentTime = ((IPenSample) message).getTimestamp();
 		}
 		firePositionChanged();
 		return message;
@@ -150,8 +152,8 @@ public class PenRecording {
 
 	private long getStartTime() {
 		for (int i=0; i < messages.size(); i++) {
-			if (messages.get(i) instanceof PenSample) {
-				return ((PenSample) messages.get(i)).getTimestamp();
+			if (messages.get(i) instanceof IPenSample) {
+				return ((IPenSample) messages.get(i)).getTimestamp();
 			}
 		}
 		return 0;
@@ -159,8 +161,8 @@ public class PenRecording {
 
 	private long getEndTime() {
 		for (int i=messages.size() - 1; i >= 0; i--) {
-			if (messages.get(i) instanceof PenSample) {
-				return ((PenSample) messages.get(i)).getTimestamp();
+			if (messages.get(i) instanceof IPenSample) {
+				return ((IPenSample) messages.get(i)).getTimestamp();
 			}
 		}
 		return 0;

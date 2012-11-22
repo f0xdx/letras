@@ -23,8 +23,8 @@
  ******************************************************************************/
 package org.letras.tools.penrecorder;
 
-import org.letras.api.pen.PenEvent;
-import org.letras.api.pen.PenSample;
+import org.letras.api.pen.IPenEvent;
+import org.letras.api.pen.IPenSample;
 import org.letras.psi.ipen.DoIPen;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Message;
@@ -35,35 +35,35 @@ import org.mundo.service.ServiceInfo;
 
 public class PenRecordingSession extends Service implements IReceiver {
 
-	private ServiceInfo penServiceInfo;
+	private final ServiceInfo penServiceInfo;
 	private PenRecording penRecording;
 	private Subscriber subscriber;
 
 	public PenRecordingSession(ServiceInfo penServiceInfo) {
 		this.penServiceInfo = penServiceInfo;
 	}
-	
+
 	@Override
 	public void received(Message msg, MessageContext ctx) {
-		Object o = msg.getObject();
-		if (o instanceof PenSample) {
-			penRecording.record((PenSample) o);
+		final Object o = msg.getObject();
+		if (o instanceof IPenSample) {
+			penRecording.record((IPenSample) o);
 		}
-		else if (o instanceof PenEvent) {
-			penRecording.record((PenEvent) o);
+ else if (o instanceof IPenEvent) {
+			penRecording.record((IPenEvent) o);
 		}
 	}
-	
+
 	public PenRecording getRecording() {
 		return penRecording;
 	}
 
 	public void record() {
 		penRecording = new PenRecording();
-		DoIPen pen = new DoIPen(penServiceInfo.doService);
+		final DoIPen pen = new DoIPen(penServiceInfo.doService);
 		subscriber = getSession().subscribe(penServiceInfo.zone, pen.channel(), this);
 	}
-	
+
 	public void stop() {
 		subscriber.unsubscribe();
 	}

@@ -26,8 +26,9 @@ package org.letras.tools.penmonitor;
 import java.util.Observable;
 
 import org.letras.api.pen.IPen.IPenListener;
+import org.letras.api.pen.IPenEvent;
+import org.letras.api.pen.IPenSample;
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenEvent;
 import org.letras.api.pen.PenSample;
 
 /**
@@ -42,7 +43,7 @@ public class PenInformation extends Observable implements IPenListener {
 	private int lastPenState = 0;
 
 	private int currentSampleDelay = 0;
-	private PenSample currentSample = new PenSample(0.0, 0.0, 0, 0);
+	private IPenSample currentSample = new PenSample(0.0, 0.0, 0, 0);
 
 	public PenInformation(String penId) {
 		this.penId = penId;
@@ -135,15 +136,15 @@ public class PenInformation extends Observable implements IPenListener {
 	}
 
 	@Override
-	public void receivePenEvent(PenEvent penEvent) {
-		penState = penEvent.state;
-		lastPenState = penEvent.oldState;
+	public void receivePenEvent(IPenEvent penEvent) {
+		penState = penEvent.getState();
+		lastPenState = penEvent.getOldState();
 		setChanged();
 		notifyObservers();
 	}
 
 	@Override
-	public void receivePenSample(PenSample penSample) {
+	public void receivePenSample(IPenSample penSample) {
 		currentSample = penSample;
 		currentSampleDelay = (int) (System.currentTimeMillis() - currentSample.getTimestamp());
 		setChanged();

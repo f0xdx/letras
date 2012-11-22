@@ -1,9 +1,9 @@
 package org.letras.ps.region.penconnector;
 
 import org.letras.api.pen.IPen.IPenListener;
+import org.letras.api.pen.IPenEvent;
+import org.letras.api.pen.IPenSample;
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenEvent;
-import org.letras.api.pen.PenSample;
 
 public class SampleProcessorAdapter implements IPenListener {
 
@@ -14,16 +14,16 @@ public class SampleProcessorAdapter implements IPenListener {
 	}
 
 	@Override
-	public void receivePenEvent(PenEvent penEvent) {
+	public void receivePenEvent(IPenEvent penEvent) {
 		// For now we treat all events accept DOWN as UP events
-		if ((penEvent.state & IPenState.DOWN) == IPenState.DOWN)
+		if ((penEvent.getState() & IPenState.DOWN) == IPenState.DOWN)
 			sampleProcessor.penDown();
 		else
 			sampleProcessor.penUp();
 	}
 
 	@Override
-	public void receivePenSample(PenSample penSample) {
+	public void receivePenSample(IPenSample penSample) {
 		this.sampleProcessor.handleSample(penSample);
 	}
 

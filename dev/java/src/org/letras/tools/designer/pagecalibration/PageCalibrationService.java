@@ -23,9 +23,9 @@
  ******************************************************************************/
 package org.letras.tools.designer.pagecalibration;
 
+import org.letras.api.pen.IPenEvent;
+import org.letras.api.pen.IPenSample;
 import org.letras.api.pen.IPenState;
-import org.letras.api.pen.PenEvent;
-import org.letras.api.pen.PenSample;
 import org.letras.psi.ipen.DoIPen;
 import org.mundo.rt.IReceiver;
 import org.mundo.rt.Logger;
@@ -70,11 +70,11 @@ public class PageCalibrationService extends Service implements IReceiver {
 	@Override
 	public void received(Message message, MessageContext messageContext) {
 		final Object obj = message.getObject();
-		if (obj instanceof PenEvent) {
-			final PenEvent event = (PenEvent) obj;
-			if (event.state == IPenState.DOWN) {
+		if (obj instanceof IPenEvent) {
+			final IPenEvent event = (IPenEvent) obj;
+			if (event.getState() == IPenState.DOWN) {
 				down = true;
-			} else if (down && event.state == IPenState.UP) {
+			} else if (down && event.getState() == IPenState.UP) {
 				down = false;
 				if (!firstCornerIdentified) {
 					log.info("first corner of page identified");
@@ -87,8 +87,8 @@ public class PageCalibrationService extends Service implements IReceiver {
 					Mundo.unregisterService(this);
 				}
 			}
-		} else if (down && obj instanceof PenSample) {
-			final PenSample currentSample = (PenSample) obj;
+		} else if (down && obj instanceof IPenSample) {
+			final IPenSample currentSample = (IPenSample) obj;
 			xMin = Math.min(xMin, currentSample.getX());
 			yMin = Math.min(yMin, currentSample.getY());
 			xMax = Math.max(xMax, currentSample.getX());

@@ -24,7 +24,7 @@
 package org.letras.ps.region.penconnector;
 
 import org.letras.api.pen.IPen;
-import org.letras.api.pen.PenSample;
+import org.letras.api.pen.IPenSample;
 
 /**
  * The ISampleProcessor interface provides method that are to be implemented
@@ -52,7 +52,7 @@ public interface ISampleProcessor {
 	 * penDown had been called beforehand and penUp has not yet been called.
 	 * @param sample the sample to be processed
 	 */
-	public void handleSample(PenSample sample);
+	public void handleSample(IPenSample sample);
 
 	/**
 	 * tell the sample processor that the pen has been lifted from the paper.
