@@ -75,17 +75,9 @@ public class RegionData implements IRegion {
 		return uri;
 	}
 
-	public void setUri(String uri) {
-		this.uri = uri;
-	}
-
 	@Override
 	public String channel() {
 		return channel;
-	}
-
-	public void setChannel(String channel) {
-		this.channel = channel;
 	}
 
 	@Override
@@ -93,20 +85,15 @@ public class RegionData implements IRegion {
 		return hungry;
 	}
 
-	public void setHungry(boolean hungry) {
-		this.hungry = hungry;
-	}
-
 	@Override
 	public IShape shape() {
 		return shape;
 	}
 
-	public void setShape(IShape shape) {
-		this.shape = shape;
-	}
-
-	public boolean deepEquals(RegionData other) {
+	public boolean deepEquals(Object obj) {
+		if (obj == null || !(obj instanceof RegionData))
+			return false;
+		final RegionData other = (RegionData) obj;
 		return uri().equals(other.uri()) && channel().equals(other.channel()) && hungry() == other.hungry() && shape().equals(other.shape());
 	}
 
