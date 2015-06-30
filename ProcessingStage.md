@@ -1,0 +1,1 @@
+A processing stage is a step in the architectural pipeline used to construct Letras. For a detailed description see the [Architecture](Architecture.md) page.

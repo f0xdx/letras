@@ -1,0 +1,1 @@
+rocessing stage interface is a logical interface in the high-level architecture of the pipeline, defining and encapsulating all relevant classes and interfaces needed by adjacent [ProcessingStage](ProcessingStage.md)s. For a detailed description see the [Architecture](Architecture.md) page.
